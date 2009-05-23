@@ -1,0 +1,14 @@
+ImageId,MinYaw,MaxYaw,MinPitch,MaxPitch,MinRoll,MaxRoll
+HeadUp,0,360,45,135,-180,180
+HeadLeft1,0,360,-30,30,-75,-45
+HeadLeft1,0,360,150,180,-75,-45
+HeadLeft1,0,360,-180,-150,-75,-45
+HeadLeft2,0,360,-30,30,-105,-75
+HeadLeft2,0,360,150,180,-105,-75
+HeadLeft2,0,360,-180,-150,-105,-75
+HeadRight1,0,360,-30,30,45,75
+HeadRight1,0,360,150,180,45,75
+HeadRight1,0,360,-180,-150,45,75
+HeadRight2,0,360,-30,30,75,105
+HeadRight2,0,360,150,180,75,105
+HeadRight2,0,360,-180,-150,75,105

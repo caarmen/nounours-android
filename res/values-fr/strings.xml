@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="hello">Hello World, NounoursActivity</string>
+	<string name="app_name">Nounours</string>
+	<string name="spin">Tourniquet</string>
+	<string name="cartwheel">La roue</string>
+	<string name="headbang">Hardos</string>
+	<string name="disco">Disco</string>
+	<string name="clap">Bravo</string>
+	<string name="sleepsound">Dodo</string>
+	<string name="shake">Trembler</string>
+	<string name="reverseSpin">Tourniquet à l\'envers</string>
+	<string name="macarena">Macarena</string>
+	<string name="boing">Boing !</string>
+	<string name="fly">Voler</string>
+	<string name="random">Aléatoire</string>
+	<string name="actions">Actions</string>
+	<string name="about">À propos</string>
+	<string name="abouttext">Nounours v 1.0.2\nPar Carmen Alvarez\nc@rmen.ca</string>
+	<string name="ok">Ok</string>
+	<string name="help">Aide</string>
+	<string name="disablesound">Désactiver son</string>
+	<string name="enablesound">Activer son</string>
+	<string name="wakeup">Effrayer</string>
+
+</resources>
