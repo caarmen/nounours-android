@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -63,7 +64,7 @@ public class NounoursActivity extends Activity {
 
         sensorListener = new AndroidNounoursSensorListener(nounours, this);
         imageView.setOnTouchListener(onTouchListener);
-
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         /*
          * if (useSimulator) { Hardware.mContentResolver = getContentResolver();
          * sensorManager = new SensorManagerSimulator(sensorManager);
