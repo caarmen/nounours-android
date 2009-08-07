@@ -10,13 +10,13 @@
 	<string name="sleepsound">Dodo</string>
 	<string name="shake">Trembler</string>
 	<string name="reverseSpin">Tourniquet à l\'envers</string>
-	<string name="ska">Ska</string>
+	<string name="ska">Macarenours</string>
 	<string name="boing">Boing !</string>
 	<string name="fly">Voler</string>
 	<string name="random">Aléatoire</string>
 	<string name="actions">Actions</string>
 	<string name="about">À propos</string>
-	<string name="abouttext">Nounours v 1.1.1\nPar Carmen Alvarez\nc@rmen.ca\nMúsique:\nB-Roll (ska): Kevin MacLeod (incompetech.com)</string>
+	<string name="abouttext">Nounours v 1.1.1\nPar Carmen Alvarez\nc@rmen.ca\nMúsique:\nB-Roll (Action Macarenours): Kevin MacLeod (incompetech.com)</string>
 	<string name="ok">Ok</string>
 	<string name="help">Aide</string>
 	<string name="disablesound">Désactiver son</string>

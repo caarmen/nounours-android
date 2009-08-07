@@ -7,7 +7,7 @@ Id,Label,Interval,Repeat,Sequence,Visible,Vibrate,Sound
 6,sleep,1000,200,Sleep1;Sleep2,false
 7,shake,60,20,SlightLeft;SlightRight,true,true,psychotoy
 8,reverseSpin,50,5,Default;SlightRight;Rotate430;Rotate300;Rotate130;Rotate1200;Rotate1030;Rotate900;Rotate730;SlightLeft,false,false,swoosh
-9,ska,100,1,d=4;RHFwd;BothFwd;LHFwd;Default;RHUp;BothUp;LHUp;Default;d=1;SlightRight;Rotate430;Rotate300;Rotate130;Rotate1200;Rotate1030;Rotate900;Rotate730;SlightLeft;d=4;RHUp;d=8;BothUp,true,false,kmacleod_broll
+9,ska,120,1,d=4;RHFwd;BothFwd;LHFwd;Default;RHUp;BothUp;LHUp;Default;d=1;SlightRight;Rotate430;Rotate300;Rotate130;Rotate1200;Rotate1030;Rotate900;Rotate730;SlightLeft;d=4;RHUp;d=8;BothUp,true,false,kmacleod_broll
 10,boing,300,4,BothUp;LeftEar;BothUp;RightEar,true,false,boing
 11,fly,100,1,d=7;HeadUp;d=2;BothUp;Default;BothUp;Default;BothUp;Default;BothUp;Default;d=1;BothUp;Default;BothUp;Default;BothUp;Default;BothUp;Default;d=2;Float;BothUpFloat;Float;d=1;LeftEar;Float;LeftEar;Float;BothUpFloat;Float;d=2;BothUpFloat;Float;BothUpFloat;d=1;LeftEar;Float;LeftEar;Float;d=3;BothUp;d=6;HeadUp,true
 12,sleepsound,1000,200,Sleep1;Sleep2,true,false,lullaby_musicbox
