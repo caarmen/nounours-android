@@ -9,7 +9,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.ImageView;
 
 /**
  * Manages touch events for Nounours on the Android device.
@@ -21,11 +20,9 @@ public class AndroidNounoursOnTouchListener implements OnTouchListener {
 
     private GestureDetector gestureDetector = null;
     private Nounours nounours = null;
-    private Activity activity = null;
 
     public AndroidNounoursOnTouchListener(Nounours nounours, Activity activity, GestureDetector gestureDetector) {
         this.nounours = nounours;
-        this.activity = activity;
         this.gestureDetector = gestureDetector;
     }
 
@@ -38,8 +35,6 @@ public class AndroidNounoursOnTouchListener implements OnTouchListener {
     @Override
     public boolean onTouch(final View v, final MotionEvent event) {
 
-        final ImageView view = (ImageView) activity.findViewById(R.id.ImageView01);
-        view.clearAnimation();
         if (gestureDetector != null) {
             gestureDetector.onTouchEvent(event);
         }
