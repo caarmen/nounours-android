@@ -10,13 +10,13 @@
 	<string name="sleepsound">Sleep</string>
 	<string name="shake">Shake</string>
 	<string name="reverseSpin">Reverse Spin</string>
-	<string name="macarena">Macarena</string>
+	<string name="ska">Ska</string>
 	<string name="boing">Boing!</string>
 	<string name="fly">Fly</string>
 	<string name="random">Random</string>
 	<string name="actions">Actions</string>
 	<string name="about">About</string>
-	<string name="abouttext">Nounours v 1.1.1\nBy Carmen Alvarez\nc@rmen.ca</string>
+	<string name="abouttext">Nounours v 1.1.1\nBy Carmen Alvarez\nc@rmen.ca\nCredits:\nB-Roll (ska): Kevin MacLeod (incompetech.com)</string>
 	<string name="ok">Ok</string>
 	<string name="help">Help</string>
 	<string name="disablesound">Turn sound off</string>
