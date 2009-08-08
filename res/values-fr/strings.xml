@@ -22,5 +22,6 @@
 	<string name="disablesound">Désactiver son</string>
 	<string name="enablesound">Activer son</string>
 	<string name="wakeup">Effrayer</string>
+    <string name="toast_remindMenuButton">Appuyez sur le bouton MENU pour plus d'options\u2026</string>
 
 </resources>

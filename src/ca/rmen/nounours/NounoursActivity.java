@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 import ca.rmen.nounours.data.Animation;
 
 /**
@@ -29,6 +30,9 @@ import ca.rmen.nounours.data.Animation;
  *
  */
 public class NounoursActivity extends Activity {
+
+    private Toast toast = null;
+
     private AndroidNounours nounours = null;
     private SensorManager sensorManager = null;
     private AndroidNounoursGestureDetector nounoursGestureDetector = null;
@@ -70,6 +74,11 @@ public class NounoursActivity extends Activity {
          * sensorManager = new SensorManagerSimulator(sensorManager);
          * SensorManagerSimulator.connectSimulator(); }
          */
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG);
+        toast.show();
 
     }
 

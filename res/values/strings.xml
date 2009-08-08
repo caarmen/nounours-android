@@ -22,4 +22,5 @@
 	<string name="disablesound">Turn sound off</string>
 	<string name="enablesound">Turn sound on</string>
 	<string name="startle">Startle</string>
+	<string name="toast_remindMenuButton">Press the MENU button for more options\u2026</string>
 </resources>
