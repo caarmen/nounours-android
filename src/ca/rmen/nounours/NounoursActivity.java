@@ -47,7 +47,9 @@ public class NounoursActivity extends Activity {
     private static final int MENU_RANDOM = 1002;
     private static final int MENU_HELP = 1003;
     private static final int MENU_TOGGLE_SOUND = 1004;
-    private static final int MENU_DOWNLOAD = 1005;
+    private static final int MENU_THEMES = 1005;
+    private static final int MENU_DEFAULT_THEME = 1006;
+
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
      * touch events).
@@ -167,13 +169,15 @@ public class NounoursActivity extends Activity {
         final MenuItem toggleSoundMenu = menu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++, R.string.disablesound);
         toggleSoundMenu.setIcon(R.drawable.ic_volume_off_small);
 
-        final SubMenu downloadMenu = menu.addSubMenu(Menu.NONE, MENU_DOWNLOAD, mainMenuIdx++, R.string.download);
-        downloadMenu.setIcon(R.drawable.ic_menu_gallery);
+        final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
+        themesMenu.setIcon(R.drawable.ic_menu_gallery);
+
         final Map<String, ImageSet> imageSets = nounours.getImageSets();
         int imageSetIdx = 0;
+        themesMenu.add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
         for (ImageSet imageSet : imageSets.values()) {
             int imageSetId = Integer.parseInt(imageSet.getId());
-            downloadMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(imageSet.getName(),
+            themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(imageSet.getName(),
                     "string", getClass().getPackage().getName()));
         }
 
@@ -211,6 +215,18 @@ public class NounoursActivity extends Activity {
     }
 
     /**
+     * Disable/enable any menu items.
+     */
+    public boolean onPrepareOptionsMenu(final Menu menu) {
+        // Prevent changing the theme in the middle of the animation.
+        MenuItem themesMenu = menu.findItem(MENU_THEMES);
+        if (themesMenu != null) {
+            themesMenu.setEnabled(!nounours.isAnimationRunning());
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
      * Handle menu item selections.
      *
      * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
@@ -244,6 +260,11 @@ public class NounoursActivity extends Activity {
         // The user picked the random animation
         else if (menuItem.getItemId() == MENU_RANDOM) {
             nounours.doRandomAnimation();
+            return true;
+        }
+        // The user picked the default image theme
+        else if (menuItem.getItemId() == MENU_DEFAULT_THEME) {
+            nounours.useImageSet(Nounours.DEFAULT_THEME_ID);
             return true;
         }
         // Show an animation or change the theme.

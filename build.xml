@@ -16,7 +16,7 @@
           target: build
          ================================= -->
 	<target name="copylibnounours">
-		<copy preservelastmodified="true" file="../Nounours/build/libnounours.jar" overwrite="true" todir="assets" />
+		<copy preservelastmodified="true" file="../Nounours/build/libnounours.jar" overwrite="true" todir="lib" />
 	</target>
 
 	<target name="init">

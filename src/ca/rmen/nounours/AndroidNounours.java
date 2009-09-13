@@ -61,7 +61,7 @@ public class AndroidNounours extends Nounours {
             Log.d(getClass().getName(), "Error initializing nounours", e); //$NON-NLS-1$
         }
 
-        cacheImages();
+
         // Cache animations.
         animationHandler.cacheAnimations();
     }
@@ -69,13 +69,12 @@ public class AndroidNounours extends Nounours {
     /**
      * Load the images into memory.
      */
-    private void cacheImages()
-    {
-        for(Image image: getImages().values())
-        {
-            getDrawableImage(image);
+    protected void cacheImages() {
+        for (Image image : getImages().values()) {
+            loadImage(image);
         }
     }
+
     /**
      * Display a picture on the screen.
      *
@@ -92,38 +91,6 @@ public class AndroidNounours extends Nounours {
     }
 
     /**
-     * Change the theme.
-     */
-    @Override
-    public void useImageSet(String id) {
-        super.useImageSet(id);
-
-        for (Image image : getImages().values()) {
-            debug("Loading " + image + " into memory");
-            // Load the new image
-            BitmapDrawable newDrawable = (BitmapDrawable) Drawable.createFromPath(image.getFilename());
-            BitmapDrawable oldDrawable = (BitmapDrawable) imageCache.get(image.getId());
-            // Error checking
-            if (oldDrawable == null) {
-                debug("No cached image found for " + image);
-                continue;
-            }
-            if (newDrawable == null) {
-                debug("Did not create image from " + image.getFilename());
-                continue;
-            }
-            // Draw the new image into the cached drawable
-            Canvas canvas = new Canvas(oldDrawable.getBitmap());
-            canvas.drawBitmap(newDrawable.getBitmap(), 0, 0, null);
-
-            // Get rid of the temporary image.
-            newDrawable.getBitmap().recycle();
-            System.gc();
-        }
-
-    }
-
-    /**
      * Find the Android image for the given nounours image.
      *
      * @param image
@@ -133,21 +100,60 @@ public class AndroidNounours extends Nounours {
         Drawable res = imageCache.get(image.getId());
         if (res == null) {
             debug("Loading drawable image " + image);
+            res = loadImage(image);
+        }
+        return res;
+    }
+
+    /**
+     * Load an image from the disk into memory. Return the Drawable for the
+     * iamge.
+     *
+     * @param image
+     * @return
+     */
+    private Drawable loadImage(final Image image) {
+        debug("Loading " + image + " into memory");
+        BitmapDrawable cachedDrawable = (BitmapDrawable) imageCache.get(image.getId());
+        BitmapDrawable newDrawable = null;
+        String themesDir = getProperty(PROP_DOWNLOADED_IMAGES_DIR);
+        // This is one of the default images bundled in the apk.
+        if (image.getFilename().contains(themesDir)) {
+            // Load the new image
+            debug("Load themed image.");
+            newDrawable = (BitmapDrawable) Drawable.createFromPath(image.getFilename());
+        }
+        // This is one of the downloaded images, in the sdcard.
+        else {
             final int imageResId = activity.getResources().getIdentifier(image.getFilename(), "drawable",
                     activity.getClass().getPackage().getName());
             // Load the image from the resource file.
-            BitmapDrawable drawable = (BitmapDrawable) activity.getResources().getDrawable(imageResId);
-            Bitmap bitmap = drawable.getBitmap();
-            // Make a mutable copy of the drawable.
-            Bitmap bitmapCopy = bitmap.copy(bitmap.getConfig(), true);
-            Canvas canvas = new Canvas(bitmapCopy);
-            drawable.draw(canvas);
-            res = new BitmapDrawable(bitmapCopy);
-            drawable.getBitmap().recycle();
-
-            imageCache.put(image.getId(), res);
+            debug("Load default image " + imageResId);
+            BitmapDrawable readOnlyDrawable = (BitmapDrawable) activity.getResources().getDrawable(imageResId);
+            // Store the newly loaded drawable in cache for the first time.
+            if (cachedDrawable == null) {
+                Bitmap readOnlyBitmap = readOnlyDrawable.getBitmap();
+                // Make a mutable copy of the drawable.
+                Bitmap bitmapCopy = readOnlyBitmap.copy(readOnlyBitmap.getConfig(), true);
+                Canvas canvas = new Canvas(bitmapCopy);
+                readOnlyDrawable.draw(canvas);
+                newDrawable = new BitmapDrawable(bitmapCopy);
+                readOnlyDrawable.getBitmap().recycle();
+                System.gc();
+                imageCache.put(image.getId(), newDrawable);
+                return newDrawable;
+            }
+            newDrawable = readOnlyDrawable;
         }
-        return res;
+        // We already cached a Drawable. Replace its contents.
+        // Draw the new image into the cached drawable
+        Canvas canvas = new Canvas(cachedDrawable.getBitmap());
+        canvas.drawBitmap(newDrawable.getBitmap(), 0, 0, null);
+
+        // Get rid of the temporary image.
+        newDrawable.getBitmap().recycle();
+        System.gc();
+        return cachedDrawable;
     }
 
     /**
