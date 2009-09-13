@@ -4,6 +4,7 @@
  */
 package ca.rmen.nounours;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -13,7 +14,6 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.widget.ImageView;
 import ca.rmen.nounours.data.Image;
@@ -85,7 +85,18 @@ public class AndroidNounours extends Nounours {
      */
     protected void cacheImages() {
         for (Image image : getImages().values()) {
-            loadImage(image);
+            // What a hack!
+            try {
+                loadImage(image);
+            } catch (OutOfMemoryError error) {
+                debug("Out of memory, garbage collecting!");
+                System.gc();
+                try {
+                    loadImage(image);
+                } catch (OutOfMemoryError error2) {
+                    debug("Giving up loading image " + image);
+                }
+            }
         }
     }
 
@@ -148,19 +159,32 @@ public class AndroidNounours extends Nounours {
         Bitmap cachedBitmap = imageCache.get(image.getId());
         Bitmap newBitmap = null;
         String themesDir = getProperty(PROP_DOWNLOADED_IMAGES_DIR);
-        // This is one of the default images bundled in the apk.
+        boolean useDefaultImage = true;
+        // This is one of the downloaded images, in the sdcard.
         if (image.getFilename().contains(themesDir)) {
             // Load the new image
             debug("Load themed image.");
             newBitmap = BitmapFactory.decodeFile(image.getFilename());
+            // If the image is corrupt or missing, use the default image.
+            if (newBitmap == null) {
+                File imageFile = new File(image.getFilename());
+                imageFile.delete();
+                String defaultImageFileName = imageFile.getName();
+                image.setFilename(defaultImageFileName);
+            }
+            // We have a valid theme image.
+            else
+                useDefaultImage = false;
         }
-        // This is one of the downloaded images, in the sdcard.
-        else {
+        // This is one of the default images bundled in the apk.
+        if (useDefaultImage) {
             final int imageResId = activity.getResources().getIdentifier(image.getFilename(), "drawable",
                     activity.getClass().getPackage().getName());
             // Load the image from the resource file.
             debug("Load default image " + imageResId);
-            Bitmap readOnlyBitmap = ((BitmapDrawable)activity.getResources().getDrawable(imageResId)).getBitmap();
+            Bitmap readOnlyBitmap = BitmapFactory.decodeResource(activity.getResources(), imageResId);// ((BitmapDrawable)
+            // activity.getResources().getDrawable(imageResId)).getBitmap();
+            debug("default image mutable = " + readOnlyBitmap.isMutable() + ", recycled=" + readOnlyBitmap.isRecycled());
             // Store the newly loaded drawable in cache for the first time.
             if (cachedBitmap == null) {
                 // Make a mutable copy of the drawable.
@@ -173,13 +197,20 @@ public class AndroidNounours extends Nounours {
             }
             newBitmap = readOnlyBitmap;
         }
+        if (cachedBitmap.isRecycled()) {
+            debug("Cached image was recycled!");
+        }
+        if (newBitmap == null || newBitmap.isRecycled()) {
+            debug("New bitmap was recycled!");
+        }
         // We already cached a Drawable. Replace its contents.
         // Draw the new image into the cached drawable
         Canvas canvas = new Canvas(cachedBitmap);
         canvas.drawBitmap(newBitmap, 0, 0, null);
 
         // Get rid of the temporary image.
-        newBitmap.recycle();
+        if (newBitmap != null)
+            newBitmap.recycle();
         return cachedBitmap;
     }
 
