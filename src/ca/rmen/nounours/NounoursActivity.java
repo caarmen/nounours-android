@@ -168,6 +168,7 @@ public class NounoursActivity extends Activity {
         toggleSoundMenu.setIcon(R.drawable.ic_volume_off_small);
 
         final SubMenu downloadMenu = menu.addSubMenu(Menu.NONE, MENU_DOWNLOAD, mainMenuIdx++, R.string.download);
+        downloadMenu.setIcon(R.drawable.ic_menu_gallery);
         final Map<String, ImageSet> imageSets = nounours.getImageSets();
         int imageSetIdx = 0;
         for (ImageSet imageSet : imageSets.values()) {
