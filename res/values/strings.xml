@@ -16,6 +16,8 @@
 	<string name="random">Random</string>
 	<string name="actions">Actions</string>
 	<string name="about">About</string>
+	<string name="download">Themes</string>
+	<string name="rainbow">Rainbow background</string>
 	<string name="abouttext">Nounours v 1.1.1\nBy Carmen Alvarez\nc@rmen.ca\nCredits:\nB-Roll (Macarenours action): Kevin MacLeod (incompetech.com)</string>
 	<string name="ok">Ok</string>
 	<string name="help">Help</string>

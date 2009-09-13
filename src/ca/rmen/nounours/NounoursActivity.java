@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 import ca.rmen.nounours.data.Animation;
+import ca.rmen.nounours.data.ImageSet;
 
 /**
  * Android activity class which delegates nounours-specific logic to the
@@ -46,7 +47,7 @@ public class NounoursActivity extends Activity {
     private static final int MENU_RANDOM = 1002;
     private static final int MENU_HELP = 1003;
     private static final int MENU_TOGGLE_SOUND = 1004;
-
+    private static final int MENU_DOWNLOAD = 1005;
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
      * touch events).
@@ -166,6 +167,15 @@ public class NounoursActivity extends Activity {
         final MenuItem toggleSoundMenu = menu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++, R.string.disablesound);
         toggleSoundMenu.setIcon(R.drawable.ic_volume_off_small);
 
+        final SubMenu downloadMenu = menu.addSubMenu(Menu.NONE, MENU_DOWNLOAD, mainMenuIdx++, R.string.download);
+        final Map<String, ImageSet> imageSets = nounours.getImageSets();
+        int imageSetIdx = 0;
+        for (ImageSet imageSet : imageSets.values()) {
+            int imageSetId = Integer.parseInt(imageSet.getId());
+            downloadMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(imageSet.getName(),
+                    "string", getClass().getPackage().getName()));
+        }
+
         // Set up the help menu
         final MenuItem helpMenu = menu.add(Menu.NONE, MENU_HELP, mainMenuIdx++, R.string.help);
         helpMenu.setIcon(R.drawable.ic_menu_help);
@@ -235,16 +245,21 @@ public class NounoursActivity extends Activity {
             nounours.doRandomAnimation();
             return true;
         }
-        // Show an animation
+        // Show an animation or change the theme.
         else {
             final Map<String, Animation> animations = nounours.getAnimations();
+            final Map<String, ImageSet> imageSets = nounours.getImageSets();
             final Animation animation = animations.get("" + menuItem.getItemId());
             if (animation != null) {
                 nounours.doAnimation(animation);
                 return true;
             }
+            ImageSet imageSet = imageSets.get("" + menuItem.getItemId());
+            if (imageSet != null) {
+                nounours.useImageSet(imageSet.getId());
+                return true;
+            }
             return super.onOptionsItemSelected(menuItem);
         }
     }
-
 }
