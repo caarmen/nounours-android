@@ -11,9 +11,9 @@ import java.util.Map;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.ImageView;
 import ca.rmen.nounours.data.Image;
@@ -31,7 +31,7 @@ public class AndroidNounours extends Nounours {
     NounoursActivity activity = null;
     ProgressDialog progressDialog;
 
-    static Map<String, Drawable> imageCache = new HashMap<String, Drawable>();
+    static Map<String, Bitmap> imageCache = new HashMap<String, Bitmap>();
 
     /**
      * Open the CSV data files and call the superclass
@@ -87,7 +87,6 @@ public class AndroidNounours extends Nounours {
         for (Image image : getImages().values()) {
             loadImage(image);
         }
-
     }
 
     /**
@@ -117,9 +116,9 @@ public class AndroidNounours extends Nounours {
         if (image == null) {
             return;
         }
-        final Drawable drawable = getDrawableImage(image);
+        final Bitmap bitmap = getDrawableImage(image);
         final ImageView imageView = (ImageView) activity.findViewById(R.id.ImageView01);
-        imageView.setImageDrawable(drawable);
+        imageView.setImageBitmap(bitmap);
     }
 
     /**
@@ -128,8 +127,8 @@ public class AndroidNounours extends Nounours {
      * @param image
      * @return
      */
-    Drawable getDrawableImage(final Image image) {
-        Drawable res = imageCache.get(image.getId());
+    Bitmap getDrawableImage(final Image image) {
+        Bitmap res = imageCache.get(image.getId());
         if (res == null) {
             debug("Loading drawable image " + image);
             res = loadImage(image);
@@ -144,16 +143,16 @@ public class AndroidNounours extends Nounours {
      * @param image
      * @return
      */
-    Drawable loadImage(final Image image) {
+    Bitmap loadImage(final Image image) {
         debug("Loading " + image + " into memory");
-        BitmapDrawable cachedDrawable = (BitmapDrawable) imageCache.get(image.getId());
-        BitmapDrawable newDrawable = null;
+        Bitmap cachedBitmap = imageCache.get(image.getId());
+        Bitmap newBitmap = null;
         String themesDir = getProperty(PROP_DOWNLOADED_IMAGES_DIR);
         // This is one of the default images bundled in the apk.
         if (image.getFilename().contains(themesDir)) {
             // Load the new image
             debug("Load themed image.");
-            newDrawable = (BitmapDrawable) Drawable.createFromPath(image.getFilename());
+            newBitmap = BitmapFactory.decodeFile(image.getFilename());
         }
         // This is one of the downloaded images, in the sdcard.
         else {
@@ -161,31 +160,27 @@ public class AndroidNounours extends Nounours {
                     activity.getClass().getPackage().getName());
             // Load the image from the resource file.
             debug("Load default image " + imageResId);
-            BitmapDrawable readOnlyDrawable = (BitmapDrawable) activity.getResources().getDrawable(imageResId);
+            Bitmap readOnlyBitmap = ((BitmapDrawable)activity.getResources().getDrawable(imageResId)).getBitmap();
             // Store the newly loaded drawable in cache for the first time.
-            if (cachedDrawable == null) {
-                Bitmap readOnlyBitmap = readOnlyDrawable.getBitmap();
+            if (cachedBitmap == null) {
                 // Make a mutable copy of the drawable.
                 Bitmap bitmapCopy = readOnlyBitmap.copy(readOnlyBitmap.getConfig(), true);
                 Canvas canvas = new Canvas(bitmapCopy);
-                readOnlyDrawable.draw(canvas);
-                newDrawable = new BitmapDrawable(bitmapCopy);
-                readOnlyDrawable.getBitmap().recycle();
-                System.gc();
-                imageCache.put(image.getId(), newDrawable);
-                return newDrawable;
+                canvas.drawBitmap(readOnlyBitmap, 0, 0, null);
+                readOnlyBitmap.recycle();
+                imageCache.put(image.getId(), bitmapCopy);
+                return bitmapCopy;
             }
-            newDrawable = readOnlyDrawable;
+            newBitmap = readOnlyBitmap;
         }
         // We already cached a Drawable. Replace its contents.
         // Draw the new image into the cached drawable
-        Canvas canvas = new Canvas(cachedDrawable.getBitmap());
-        canvas.drawBitmap(newDrawable.getBitmap(), 0, 0, null);
+        Canvas canvas = new Canvas(cachedBitmap);
+        canvas.drawBitmap(newBitmap, 0, 0, null);
 
         // Get rid of the temporary image.
-        newDrawable.getBitmap().recycle();
-        System.gc();
-        return cachedDrawable;
+        newBitmap.recycle();
+        return cachedBitmap;
     }
 
     /**

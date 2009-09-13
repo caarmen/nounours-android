@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 import ca.rmen.nounours.data.Animation;
@@ -28,6 +30,7 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
     Activity activity = null;
     static Map<String, AnimationDrawable> animationCache = new HashMap<String, AnimationDrawable>();
 
+    static Map<Bitmap,BitmapDrawable> bitmapDrawables = new HashMap<Bitmap,BitmapDrawable>();
     public AndroidNounoursAnimationHandler(AndroidNounours nounours, Activity activity) {
         this.nounours = nounours;
         this.activity = activity;
@@ -143,18 +146,34 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
                     return null;
                 }
                 // Get the android image and add it to the android animation.
-                final Drawable drawable = nounours.getDrawableImage(image);
+                final Bitmap bitmap = nounours.getDrawableImage(image);
+
+                BitmapDrawable drawable = getDrawable(bitmap);
                 animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));
 
             }
         }
         // Add the default image at the end.
-        final Drawable drawable = nounours.getDrawableImage(nounours.getDefaultImage());
+        final Bitmap bitmap = nounours.getDrawableImage(nounours.getDefaultImage());
+        BitmapDrawable drawable = getDrawable(bitmap);
         animationDrawable.addFrame(drawable, animation.getInterval());
         animationCache.put(animation.getId(), animationDrawable);
         Trace.debug(this, "Loaded animation " + animation.getId());
 
         return animationDrawable;
+    }
+
+	/**
+	 * Store bitmap drawables for bitmaps in cache.
+	 */
+    private BitmapDrawable getDrawable(Bitmap bitmap)
+    {
+        BitmapDrawable result = bitmapDrawables.get(bitmap);
+        if(result != null)
+            return result;
+        result = new BitmapDrawable(bitmap);
+        bitmapDrawables.put(bitmap, result);
+        return result;
     }
 
     /**
