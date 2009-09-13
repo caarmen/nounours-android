@@ -34,7 +34,7 @@ public class NounoursActivity extends Activity {
 
     private Toast toast = null;
 
-    private AndroidNounours nounours = null;
+    AndroidNounours nounours = null;
     private SensorManager sensorManager = null;
     private AndroidNounoursGestureDetector nounoursGestureDetector = null;
     private AndroidNounoursSensorListener sensorListener = null;
@@ -49,6 +49,7 @@ public class NounoursActivity extends Activity {
     private static final int MENU_TOGGLE_SOUND = 1004;
     private static final int MENU_THEMES = 1005;
     private static final int MENU_DEFAULT_THEME = 1006;
+
 
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
@@ -264,6 +265,7 @@ public class NounoursActivity extends Activity {
         }
         // The user picked the default image theme
         else if (menuItem.getItemId() == MENU_DEFAULT_THEME) {
+
             nounours.useImageSet(Nounours.DEFAULT_THEME_ID);
             return true;
         }
@@ -276,7 +278,7 @@ public class NounoursActivity extends Activity {
                 nounours.doAnimation(animation);
                 return true;
             }
-            ImageSet imageSet = imageSets.get("" + menuItem.getItemId());
+            final ImageSet imageSet = imageSets.get("" + menuItem.getItemId());
             if (imageSet != null) {
                 nounours.useImageSet(imageSet.getId());
                 return true;

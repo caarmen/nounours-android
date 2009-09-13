@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,6 +29,7 @@ import ca.rmen.nounours.util.Trace;
 public class AndroidNounours extends Nounours {
 
     NounoursActivity activity = null;
+    ProgressDialog progressDialog;
 
     static Map<String, Drawable> imageCache = new HashMap<String, Drawable>();
 
@@ -40,9 +42,17 @@ public class AndroidNounours extends Nounours {
      *            The android activity.
      */
     public AndroidNounours(final NounoursActivity activity) {
+
         this.activity = activity;
-        AndroidNounoursAnimationHandler animationHandler = new AndroidNounoursAnimationHandler(this, activity);
-        AndroidNounoursSoundHandler soundHandler = new AndroidNounoursSoundHandler(this, activity);
+
+        /*
+         * Runnable task = new Runnable() {
+         *
+         * @Override public void run() {
+         */
+        AndroidNounoursAnimationHandler animationHandler = new AndroidNounoursAnimationHandler(AndroidNounours.this,
+                activity);
+        AndroidNounoursSoundHandler soundHandler = new AndroidNounoursSoundHandler(AndroidNounours.this, activity);
         AndroidNounoursVibrateHandler vibrateHandler = new AndroidNounoursVibrateHandler(activity);
         final InputStream propertiesFile = activity.getResources().openRawResource(R.raw.nounours);
         final InputStream imageFile = activity.getResources().openRawResource(R.raw.image);
@@ -61,9 +71,13 @@ public class AndroidNounours extends Nounours {
             Log.d(getClass().getName(), "Error initializing nounours", e); //$NON-NLS-1$
         }
 
-
         // Cache animations.
         animationHandler.cacheAnimations();
+        /*
+         * }
+         *
+         * }; runTaskWithProgressBar(task, true);
+         */
     }
 
     /**
@@ -73,6 +87,24 @@ public class AndroidNounours extends Nounours {
         for (Image image : getImages().values()) {
             loadImage(image);
         }
+
+    }
+
+    /**
+     * Load the new image set in a separate thread, showing the progress bar
+     */
+    @Override
+    public void useImageSet(final String id) {
+        Runnable imageCacher = new Runnable() {
+            @SuppressWarnings("synthetic-access")
+            @Override
+            public void run() {
+
+                AndroidNounours.super.useImageSet(id);
+            }
+        };
+        runTaskWithProgressBar(imageCacher, false);
+
     }
 
     /**
@@ -112,7 +144,7 @@ public class AndroidNounours extends Nounours {
      * @param image
      * @return
      */
-    private Drawable loadImage(final Image image) {
+    Drawable loadImage(final Image image) {
         debug("Loading " + image + " into memory");
         BitmapDrawable cachedDrawable = (BitmapDrawable) imageCache.get(image.getId());
         BitmapDrawable newDrawable = null;
@@ -174,5 +206,31 @@ public class AndroidNounours extends Nounours {
     protected void runTask(final Runnable task) {
         final ImageView imageView = (ImageView) activity.findViewById(R.id.ImageView01);
         imageView.post(task);
+    }
+
+    /**
+     * Run a task, showing the progress bar while the task runs.
+     *
+     * @param task
+     * @param ui
+     *            if true, use the android api to run the task. Otherwise use
+     *            the standard java thread api.
+     */
+    protected void runTaskWithProgressBar(final Runnable task, boolean ui) {
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        progressDialog = ProgressDialog.show(activity, "", activity.getString(R.string.loading), true);
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                task.run();
+                progressDialog.dismiss();
+            }
+        };
+        if (ui)
+            runTask(runnable);
+        else
+            new Thread(runnable).start();
     }
 }
