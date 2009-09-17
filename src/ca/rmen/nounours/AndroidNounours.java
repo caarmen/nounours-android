@@ -11,9 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageView;
 import ca.rmen.nounours.data.Image;
@@ -30,6 +33,8 @@ public class AndroidNounours extends Nounours {
 
     NounoursActivity activity = null;
     ProgressDialog progressDialog;
+    private static final String PREF_THEME = "Theme";
+    private SharedPreferences sharedPreferences = null;
 
     static Map<String, Bitmap> imageCache = new HashMap<String, Bitmap>();
 
@@ -44,6 +49,9 @@ public class AndroidNounours extends Nounours {
     public AndroidNounours(final NounoursActivity activity) {
 
         this.activity = activity;
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
 
         /*
          * Runnable task = new Runnable() {
@@ -66,7 +74,8 @@ public class AndroidNounours extends Nounours {
 
         try {
             init(animationHandler, soundHandler, vibrateHandler, propertiesFile, imageFile, imageSetFile, featureFile,
-                    imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile, soundFile, "Default"); //$NON-NLS-1$
+                    imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile, soundFile,
+                    "Default", themeId); //$NON-NLS-1$
         } catch (final IOException e) {
             Log.d(getClass().getName(), "Error initializing nounours", e); //$NON-NLS-1$
         }
@@ -105,6 +114,9 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     public void useImageSet(final String id) {
+        Editor editor = sharedPreferences.edit();
+        editor.putString(PREF_THEME, id);
+        editor.commit();
         Runnable imageCacher = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -188,20 +200,23 @@ public class AndroidNounours extends Nounours {
             // Store the newly loaded drawable in cache for the first time.
             if (cachedBitmap == null) {
                 // Make a mutable copy of the drawable.
-                Bitmap bitmapCopy = readOnlyBitmap.copy(readOnlyBitmap.getConfig(), true);
-                Canvas canvas = new Canvas(bitmapCopy);
-                canvas.drawBitmap(readOnlyBitmap, 0, 0, null);
-                readOnlyBitmap.recycle();
-                imageCache.put(image.getId(), bitmapCopy);
-                return bitmapCopy;
+                cachedBitmap = copyAndCacheImage(readOnlyBitmap, image.getId());
+                return cachedBitmap;
             }
             newBitmap = readOnlyBitmap;
         }
-        if (cachedBitmap.isRecycled()) {
+        if (cachedBitmap == null || cachedBitmap.isRecycled()) {
             debug("Cached image was recycled!");
         }
         if (newBitmap == null || newBitmap.isRecycled()) {
             debug("New bitmap was recycled!");
+        }
+
+        // No cached bitmap, using a theme. This will happen if the user loads
+        // the app up with a non-default theme.
+        if (cachedBitmap == null) {
+            cachedBitmap = copyAndCacheImage(newBitmap, image.getId());
+            return cachedBitmap;
         }
         // We already cached a Drawable. Replace its contents.
         // Draw the new image into the cached drawable
@@ -212,6 +227,24 @@ public class AndroidNounours extends Nounours {
         if (newBitmap != null)
             newBitmap.recycle();
         return cachedBitmap;
+    }
+
+    /**
+     * Create a mutable copy of the given immutable bitmap, and store it in the
+     * cache.
+     *
+     * @param readOnlyBitmap
+     *            the immutable bitmap
+     * @param imageId
+     * @return
+     */
+    private Bitmap copyAndCacheImage(Bitmap readOnlyBitmap, String imageId) {
+        Bitmap mutableBitmap = readOnlyBitmap.copy(readOnlyBitmap.getConfig(), true);
+        Canvas canvas = new Canvas(mutableBitmap);
+        canvas.drawBitmap(readOnlyBitmap, 0, 0, null);
+        readOnlyBitmap.recycle();
+        imageCache.put(imageId, mutableBitmap);
+        return mutableBitmap;
     }
 
     /**
