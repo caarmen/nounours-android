@@ -11,7 +11,7 @@ http://creativecommons.org/licenses/by-nc-sa/3.0.
 Contact BoD@JRAF.org for more information.
 
 $Id: FileUtil.java 625 2009-04-26 22:45:17Z bod $
-*/
+ */
 package ca.rmen.nounours.util;
 
 import java.io.IOException;
@@ -23,7 +23,8 @@ import android.os.Environment;
 public class FileUtil {
     public static boolean isSdPresent() {
         final String externalStorageState = Environment.getExternalStorageState();
-        return externalStorageState.contains("mounted");
+        return externalStorageState.equals(Environment.MEDIA_MOUNTED)
+                || externalStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY);
     }
 
     public static long copy(final InputStream in, final OutputStream out) throws IOException {

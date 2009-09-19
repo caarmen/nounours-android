@@ -232,7 +232,10 @@ public class NounoursActivity extends Activity {
         // Prevent changing the theme in the middle of the animation.
         MenuItem themesMenu = menu.findItem(MENU_THEMES);
         if (themesMenu != null) {
-            themesMenu.setEnabled(!nounours.isAnimationRunning());
+            boolean enableThemes = true;
+            if(nounours.isAnimationRunning() || !FileUtil.isSdPresent())
+                enableThemes = false;
+            themesMenu.setEnabled(enableThemes);
         }
         return super.onPrepareOptionsMenu(menu);
     }
