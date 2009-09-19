@@ -6,7 +6,6 @@ package ca.rmen.nounours;
 
 import java.util.Map;
 
-
 import com.nullwire.trace.ExceptionHandler;
 
 import android.app.Activity;
@@ -25,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.ImageSet;
+import ca.rmen.nounours.util.FileUtil;
 
 /**
  * Android activity class which delegates nounours-specific logic to the
@@ -67,7 +67,6 @@ public class NounoursActivity extends Activity {
 
         // crash report
         ExceptionHandler.register(this, URL_CRASH_REPORT);
-
 
         setContentView(R.layout.main);
 
@@ -179,16 +178,18 @@ public class NounoursActivity extends Activity {
         final MenuItem toggleSoundMenu = menu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++, R.string.disablesound);
         toggleSoundMenu.setIcon(R.drawable.ic_volume_off_small);
 
-        final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
-        themesMenu.setIcon(R.drawable.ic_menu_gallery);
+        if (FileUtil.isSdPresent()) {
+            final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
+            themesMenu.setIcon(R.drawable.ic_menu_gallery);
 
-        final Map<String, ImageSet> imageSets = nounours.getImageSets();
-        int imageSetIdx = 0;
-        themesMenu.add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
-        for (ImageSet imageSet : imageSets.values()) {
-            int imageSetId = Integer.parseInt(imageSet.getId());
-            themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(imageSet.getName(),
-                    "string", getClass().getPackage().getName()));
+            final Map<String, ImageSet> imageSets = nounours.getImageSets();
+            int imageSetIdx = 0;
+            themesMenu.add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
+            for (ImageSet imageSet : imageSets.values()) {
+                int imageSetId = Integer.parseInt(imageSet.getId());
+                themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(imageSet.getName(),
+                        "string", getClass().getPackage().getName()));
+            }
         }
 
         // Set up the help menu

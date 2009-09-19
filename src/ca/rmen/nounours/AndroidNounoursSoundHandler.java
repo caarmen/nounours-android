@@ -14,6 +14,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Environment;
 import ca.rmen.nounours.data.Sound;
+import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -50,6 +51,8 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
     private File getSoundFile(final Sound sound) throws IOException {
 
         // Get the nounours directory on the sdcard
+        if (!FileUtil.isSdPresent())
+            return null;
         final File externalStorateDirectory = Environment.getExternalStorageDirectory();
         final File appRootDirectory = new File(externalStorateDirectory, APP_SD_DIR);
         if (!appRootDirectory.exists() && !appRootDirectory.mkdir()) {
@@ -80,6 +83,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
 
         // Write the file
         final FileOutputStream writer = new FileOutputStream(sdSoundFile);
+        FileUtil.copy(soundFileData, writer);
         final byte[] buffer = new byte[1024];
         for (int read = soundFileData.read(buffer, 0, buffer.length); read > 0; read = soundFileData.read(buffer, 0,
                 buffer.length)) {
@@ -102,8 +106,10 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
             final File soundFile = getSoundFile(sound);
             // Prepare the media player
             mediaPlayer.reset();
-            mediaPlayer.setDataSource(soundFile.getAbsolutePath());
-            mediaPlayer.prepare();
+            if (soundFile != null) {
+                mediaPlayer.setDataSource(soundFile.getAbsolutePath());
+                mediaPlayer.prepare();
+            }
 
             // Play the sound.
             mediaPlayer.start();
