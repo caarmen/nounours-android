@@ -359,6 +359,7 @@ public class AndroidNounours extends Nounours {
         progressDialog.setMax(max);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setProgress(0);
+        progressDialog.setCancelable(false);
         progressDialog.show();
         debug("createProgressDialog " + max + ": " + message);
     }
