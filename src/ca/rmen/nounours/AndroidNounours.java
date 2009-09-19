@@ -93,9 +93,13 @@ public class AndroidNounours extends Nounours {
      * Load the images into memory.
      */
     protected void cacheImages() {
+
+        int i = 0;
+        int max = getImages().size();
         for (Image image : getImages().values()) {
             // What a hack!
             loadImage(image, 3);
+            updateProgressBar(i++, max, activity.getString(R.string.loading));
         }
     }
 
@@ -115,8 +119,16 @@ public class AndroidNounours extends Nounours {
                 AndroidNounours.super.useImageSet(id);
             }
         };
-        runTaskWithProgressBar(imageCacher, false);
+        runTaskWithProgressBar(imageCacher, false, activity.getString(R.string.predownload), getImages().size());
 
+    }
+
+    /**
+     * Update the progress bar with the download status.
+     */
+    @Override
+    protected void updateDownloadProgress(int progress, int max) {
+        updateProgressBar(progress, max, activity.getString(R.string.downloading));
     }
 
     /**
@@ -221,8 +233,7 @@ public class AndroidNounours extends Nounours {
             return cachedBitmap;
         } catch (OutOfMemoryError error) {
             debug("Memory error loading " + image + ". " + retries + " retries left");
-            if (retries > 0)
-            {
+            if (retries > 0) {
                 System.gc();
                 try {
                     Thread.sleep(100);
@@ -282,10 +293,10 @@ public class AndroidNounours extends Nounours {
      *            if true, use the android api to run the task. Otherwise use
      *            the standard java thread api.
      */
-    protected void runTaskWithProgressBar(final Runnable task, boolean ui) {
+    protected void runTaskWithProgressBar(final Runnable task, boolean ui, String message, int max) {
         if (progressDialog != null)
             progressDialog.dismiss();
-        progressDialog = ProgressDialog.show(activity, "", activity.getString(R.string.loading), true);
+        createProgressDialog(max, message);
         Runnable runnable = new Runnable() {
 
             @Override
@@ -300,6 +311,51 @@ public class AndroidNounours extends Nounours {
             new Thread(runnable).start();
     }
 
+    /**
+     * Update the currently showing progress bar.
+     *
+     * @param progress
+     * @param max
+     * @param message
+     */
+    private void updateProgressBar(final int progress, final int max, final String message) {
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                // show the progress bar if it is not already showing.
+                if (progressDialog == null) {
+                    createProgressDialog(max, message);
+                }
+                // Update the progress
+                progressDialog.setProgress(progress);
+                progressDialog.setMessage(message);
+
+            }
+        };
+        runTask(runnable);
+    }
+
+    /**
+     * Create a determinate progress dialog with the given size and text.
+     *
+     * @param max
+     * @param message
+     */
+    void createProgressDialog(int max, String message) {
+        progressDialog = new ProgressDialog(activity);
+        progressDialog.setTitle("");
+        progressDialog.setMessage(message);
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(max);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.show();
+
+    }
+
+    /**
+     * Cleanup.
+     */
     public void onDestroy() {
         debug("destroy");
         for (String imageId : imageCache.keySet()) {

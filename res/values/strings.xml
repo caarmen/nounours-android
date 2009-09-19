@@ -19,7 +19,9 @@
 	<string name="themes">Themes</string>
 	<string name="rainbow">Rainbow background</string>
 	<string name="greenshirtbluebkg">Green shirt, blue background</string>
-	<string name="loading">Loading</string>
+	<string name="predownload">Looking for my theme</string>
+	<string name="downloading">Downloading my theme online</string>
+	<string name="loading">Loading my theme</string>
 	<string name="defaultTheme">Default</string>
 	<string name="abouttext">Nounours v 1.1.1\nBy Carmen Alvarez\nc@rmen.ca\nCredits:\nB-Roll (Macarenours action): Kevin MacLeod (incompetech.com)</string>
 	<string name="ok">Ok</string>
