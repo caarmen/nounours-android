@@ -324,9 +324,7 @@ public class AndroidNounours extends Nounours {
             @Override
             public void run() {
                 // show the progress bar if it is not already showing.
-                if (progressDialog == null) {
-                    createProgressDialog(max, message);
-                }
+                createProgressDialog(max, message);
                 // Update the progress
                 progressDialog.setProgress(progress);
                 progressDialog.setMessage(message);
@@ -343,7 +341,8 @@ public class AndroidNounours extends Nounours {
      * @param message
      */
     void createProgressDialog(int max, String message) {
-        progressDialog = new ProgressDialog(activity);
+        if (progressDialog == null)
+            progressDialog = new ProgressDialog(activity);
         progressDialog.setTitle("");
         progressDialog.setMessage(message);
         progressDialog.setIndeterminate(false);
