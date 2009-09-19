@@ -35,6 +35,7 @@ public class AndroidNounours extends Nounours {
     ProgressDialog progressDialog;
     private static final String PREF_THEME = "Theme";
     private SharedPreferences sharedPreferences = null;
+    private AndroidNounoursAnimationHandler animationHandler = null;
 
     static Map<String, Bitmap> imageCache = new HashMap<String, Bitmap>();
 
@@ -58,8 +59,7 @@ public class AndroidNounours extends Nounours {
          *
          * @Override public void run() {
          */
-        AndroidNounoursAnimationHandler animationHandler = new AndroidNounoursAnimationHandler(AndroidNounours.this,
-                activity);
+        animationHandler = new AndroidNounoursAnimationHandler(AndroidNounours.this, activity);
         AndroidNounoursSoundHandler soundHandler = new AndroidNounoursSoundHandler(AndroidNounours.this, activity);
         AndroidNounoursVibrateHandler vibrateHandler = new AndroidNounoursVibrateHandler(activity);
         final InputStream propertiesFile = activity.getResources().openRawResource(R.raw.nounours);
@@ -95,17 +95,7 @@ public class AndroidNounours extends Nounours {
     protected void cacheImages() {
         for (Image image : getImages().values()) {
             // What a hack!
-            try {
-                loadImage(image);
-            } catch (OutOfMemoryError error) {
-                debug("Out of memory, garbage collecting!");
-                System.gc();
-                try {
-                    loadImage(image);
-                } catch (OutOfMemoryError error2) {
-                    debug("Giving up loading image " + image);
-                }
-            }
+            loadImage(image, 3);
         }
     }
 
@@ -154,7 +144,7 @@ public class AndroidNounours extends Nounours {
         Bitmap res = imageCache.get(image.getId());
         if (res == null) {
             debug("Loading drawable image " + image);
-            res = loadImage(image);
+            res = loadImage(image, 3);
         }
         return res;
     }
@@ -166,67 +156,84 @@ public class AndroidNounours extends Nounours {
      * @param image
      * @return
      */
-    Bitmap loadImage(final Image image) {
+    Bitmap loadImage(final Image image, int retries) {
         debug("Loading " + image + " into memory");
         Bitmap cachedBitmap = imageCache.get(image.getId());
         Bitmap newBitmap = null;
         String themesDir = getProperty(PROP_DOWNLOADED_IMAGES_DIR);
-        boolean useDefaultImage = true;
-        // This is one of the downloaded images, in the sdcard.
-        if (image.getFilename().contains(themesDir)) {
-            // Load the new image
-            debug("Load themed image.");
-            newBitmap = BitmapFactory.decodeFile(image.getFilename());
-            // If the image is corrupt or missing, use the default image.
-            if (newBitmap == null) {
-                File imageFile = new File(image.getFilename());
-                imageFile.delete();
-                String defaultImageFileName = imageFile.getName();
-                image.setFilename(defaultImageFileName);
+        try {
+            boolean useDefaultImage = true;
+            // This is one of the downloaded images, in the sdcard.
+            if (image.getFilename().contains(themesDir)) {
+                // Load the new image
+                debug("Load themed image.");
+                newBitmap = BitmapFactory.decodeFile(image.getFilename());
+                // If the image is corrupt or missing, use the default image.
+                if (newBitmap == null) {
+                    File imageFile = new File(image.getFilename());
+                    imageFile.delete();
+                    String defaultImageFileName = imageFile.getName();
+                    image.setFilename(defaultImageFileName);
+                }
+                // We have a valid theme image.
+                else
+                    useDefaultImage = false;
             }
-            // We have a valid theme image.
-            else
-                useDefaultImage = false;
-        }
-        // This is one of the default images bundled in the apk.
-        if (useDefaultImage) {
-            final int imageResId = activity.getResources().getIdentifier(image.getFilename(), "drawable",
-                    activity.getClass().getPackage().getName());
-            // Load the image from the resource file.
-            debug("Load default image " + imageResId);
-            Bitmap readOnlyBitmap = BitmapFactory.decodeResource(activity.getResources(), imageResId);// ((BitmapDrawable)
-            // activity.getResources().getDrawable(imageResId)).getBitmap();
-            debug("default image mutable = " + readOnlyBitmap.isMutable() + ", recycled=" + readOnlyBitmap.isRecycled());
-            // Store the newly loaded drawable in cache for the first time.
+            // This is one of the default images bundled in the apk.
+            if (useDefaultImage) {
+                final int imageResId = activity.getResources().getIdentifier(image.getFilename(), "drawable",
+                        activity.getClass().getPackage().getName());
+                // Load the image from the resource file.
+                debug("Load default image " + imageResId);
+                Bitmap readOnlyBitmap = BitmapFactory.decodeResource(activity.getResources(), imageResId);// ((BitmapDrawable)
+                // activity.getResources().getDrawable(imageResId)).getBitmap();
+                debug("default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
+                        + readOnlyBitmap.isRecycled());
+                // Store the newly loaded drawable in cache for the first time.
+                if (cachedBitmap == null) {
+                    // Make a mutable copy of the drawable.
+                    cachedBitmap = copyAndCacheImage(readOnlyBitmap, image.getId());
+                    return cachedBitmap;
+                }
+                newBitmap = readOnlyBitmap;
+            }
             if (cachedBitmap == null) {
-                // Make a mutable copy of the drawable.
-                cachedBitmap = copyAndCacheImage(readOnlyBitmap, image.getId());
+                debug("Image not in cache");
+            } else if (cachedBitmap.isRecycled()) {
+                debug("Cached image was recycled!");
+            }
+
+            // No cached bitmap, using a theme. This will happen if the user
+            // loads
+            // the app up with a non-default theme.
+            if (cachedBitmap == null) {
+                cachedBitmap = copyAndCacheImage(newBitmap, image.getId());
                 return cachedBitmap;
             }
-            newBitmap = readOnlyBitmap;
-        }
-        if (cachedBitmap == null || cachedBitmap.isRecycled()) {
-            debug("Cached image was recycled!");
-        }
-        if (newBitmap == null || newBitmap.isRecycled()) {
-            debug("New bitmap was recycled!");
-        }
+            // We already cached a Drawable. Replace its contents.
+            // Draw the new image into the cached drawable
+            Canvas canvas = new Canvas(cachedBitmap);
+            canvas.drawBitmap(newBitmap, 0, 0, null);
 
-        // No cached bitmap, using a theme. This will happen if the user loads
-        // the app up with a non-default theme.
-        if (cachedBitmap == null) {
-            cachedBitmap = copyAndCacheImage(newBitmap, image.getId());
+            // Get rid of the temporary image.
+            if (newBitmap != null)
+                newBitmap.recycle();
             return cachedBitmap;
+        } catch (OutOfMemoryError error) {
+            debug("Memory error loading " + image + ". " + retries + " retries left");
+            if (retries > 0)
+            {
+                System.gc();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                return loadImage(image, retries - 1);
+            }
+            return null;
         }
-        // We already cached a Drawable. Replace its contents.
-        // Draw the new image into the cached drawable
-        Canvas canvas = new Canvas(cachedBitmap);
-        canvas.drawBitmap(newBitmap, 0, 0, null);
-
-        // Get rid of the temporary image.
-        if (newBitmap != null)
-            newBitmap.recycle();
-        return cachedBitmap;
     }
 
     /**
@@ -291,5 +298,16 @@ public class AndroidNounours extends Nounours {
             runTask(runnable);
         else
             new Thread(runnable).start();
+    }
+
+    public void onDestroy() {
+        debug("destroy");
+        for (String imageId : imageCache.keySet()) {
+            Bitmap bitmap = imageCache.get(imageId);
+            if (!bitmap.isRecycled())
+                bitmap.recycle();
+        }
+        imageCache.clear();
+        animationHandler.onDestroy();
     }
 }

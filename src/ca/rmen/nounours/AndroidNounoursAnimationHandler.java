@@ -30,7 +30,8 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
     Activity activity = null;
     static Map<String, AnimationDrawable> animationCache = new HashMap<String, AnimationDrawable>();
 
-    static Map<Bitmap,BitmapDrawable> bitmapDrawables = new HashMap<Bitmap,BitmapDrawable>();
+    static Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<Bitmap, BitmapDrawable>();
+
     public AndroidNounoursAnimationHandler(AndroidNounours nounours, Activity activity) {
         this.nounours = nounours;
         this.activity = activity;
@@ -163,13 +164,12 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
         return animationDrawable;
     }
 
-	/**
-	 * Store bitmap drawables for bitmaps in cache.
-	 */
-    private BitmapDrawable getDrawable(Bitmap bitmap)
-    {
+    /**
+     * Store bitmap drawables for bitmaps in cache.
+     */
+    private BitmapDrawable getDrawable(Bitmap bitmap) {
         BitmapDrawable result = bitmapDrawables.get(bitmap);
-        if(result != null)
+        if (result != null)
             return result;
         result = new BitmapDrawable(bitmap);
         bitmapDrawables.put(bitmap, result);
@@ -198,4 +198,8 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
         // Do nothing
     }
 
+    public void onDestroy() {
+        animationCache.clear();
+        bitmapDrawables.clear();
+    }
 }

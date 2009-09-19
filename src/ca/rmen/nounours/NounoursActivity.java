@@ -286,4 +286,14 @@ public class NounoursActivity extends Activity {
             return super.onOptionsItemSelected(menuItem);
         }
     }
+
+    /* (non-Javadoc)
+     * @see android.app.Activity#onDestroy()
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        nounours.onDestroy();
+        System.exit(0);
+    }
 }
