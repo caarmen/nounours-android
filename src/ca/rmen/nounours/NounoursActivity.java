@@ -6,6 +6,9 @@ package ca.rmen.nounours;
 
 import java.util.Map;
 
+
+import com.nullwire.trace.ExceptionHandler;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -50,6 +53,7 @@ public class NounoursActivity extends Activity {
     private static final int MENU_THEMES = 1005;
     private static final int MENU_DEFAULT_THEME = 1006;
 
+    static final String URL_CRASH_REPORT = "http://r24591.ovh.net/crashreport/";
 
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
@@ -60,6 +64,11 @@ public class NounoursActivity extends Activity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // crash report
+        ExceptionHandler.register(this, URL_CRASH_REPORT);
+
+
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
@@ -287,7 +296,9 @@ public class NounoursActivity extends Activity {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     *
      * @see android.app.Activity#onDestroy()
      */
     @Override
