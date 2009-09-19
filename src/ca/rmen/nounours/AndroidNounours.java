@@ -98,8 +98,8 @@ public class AndroidNounours extends Nounours {
         int max = getImages().size();
         for (Image image : getImages().values()) {
             // What a hack!
-            loadImage(image, 3);
-            updateProgressBar(i++, max, activity.getString(R.string.loading));
+            loadImage(image, 10);
+            updateProgressBar(max + (i++), 2 * max, activity.getString(R.string.loading));
         }
     }
 
@@ -119,7 +119,7 @@ public class AndroidNounours extends Nounours {
                 AndroidNounours.super.useImageSet(id);
             }
         };
-        runTaskWithProgressBar(imageCacher, false, activity.getString(R.string.predownload), getImages().size());
+        runTaskWithProgressBar(imageCacher, false, activity.getString(R.string.predownload), 2 * getImages().size());
 
     }
 
@@ -128,7 +128,11 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void updateDownloadProgress(int progress, int max) {
-        updateProgressBar(progress, max, activity.getString(R.string.downloading));
+        updateProgressBar(progress, 2 * max, activity.getString(R.string.downloading));
+    }
+
+    protected void updatePreloadProgress(int progress, int max) {
+        updateProgressBar(progress, 2 * max, activity.getString(R.string.predownload));
     }
 
     /**
@@ -156,7 +160,7 @@ public class AndroidNounours extends Nounours {
         Bitmap res = imageCache.get(image.getId());
         if (res == null) {
             debug("Loading drawable image " + image);
-            res = loadImage(image, 3);
+            res = loadImage(image, 10);
         }
         return res;
     }
@@ -236,7 +240,7 @@ public class AndroidNounours extends Nounours {
             if (retries > 0) {
                 System.gc();
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(250);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -324,10 +328,12 @@ public class AndroidNounours extends Nounours {
             @Override
             public void run() {
                 // show the progress bar if it is not already showing.
-                createProgressDialog(max, message);
+                if (progressDialog == null || !progressDialog.isShowing())
+                    createProgressDialog(max, message);
                 // Update the progress
                 progressDialog.setProgress(progress);
                 progressDialog.setMessage(message);
+                debug("updateProgressBar " + progress + "/" + max + ": " + message);
 
             }
         };
@@ -341,15 +347,15 @@ public class AndroidNounours extends Nounours {
      * @param message
      */
     void createProgressDialog(int max, String message) {
-        if (progressDialog == null)
-            progressDialog = new ProgressDialog(activity);
+        progressDialog = new ProgressDialog(activity);
         progressDialog.setTitle("");
         progressDialog.setMessage(message);
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(max);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setProgress(0);
         progressDialog.show();
-
+        debug("createProgressDialog " + max + ": " + message);
     }
 
     /**
