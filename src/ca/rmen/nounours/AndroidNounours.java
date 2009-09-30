@@ -85,8 +85,6 @@ public class AndroidNounours extends Nounours {
             Log.d(getClass().getName(), "Error initializing nounours", e); //$NON-NLS-1$
         }
 
-        // Cache animations.
-        animationHandler.cacheAnimations();
         /*
          * }
          *
@@ -106,6 +104,9 @@ public class AndroidNounours extends Nounours {
             loadImage(image, 10);
             updateProgressBar(max + (i++), 2 * max, activity.getString(R.string.loading));
         }
+        // Cache animations.
+        animationHandler.cacheAnimations();
+        
     }
 
     /**
