@@ -27,9 +27,9 @@ import ca.rmen.nounours.util.Trace;
 /**
  * Implementation of the abstract Nounours class, containing logic specific to
  * Android.
- *
+ * 
  * @author Carmen Alvarez
- *
+ * 
  */
 public class AndroidNounours extends Nounours {
 
@@ -45,7 +45,7 @@ public class AndroidNounours extends Nounours {
      * Open the CSV data files and call the superclass
      * {@link #init(InputStream, InputStream, InputStream, InputStream, InputStream, String)}
      * method.
-     *
+     * 
      * @param activity
      *            The android activity.
      */
@@ -55,13 +55,13 @@ public class AndroidNounours extends Nounours {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
-        if(!FileUtil.isSdPresent())
+        if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
         PhoneHome.phoneHome(activity, sharedPreferences, themeId, "");
 
         /*
          * Runnable task = new Runnable() {
-         *
+         * 
          * @Override public void run() {
          */
         animationHandler = new AndroidNounoursAnimationHandler(AndroidNounours.this, activity);
@@ -87,7 +87,7 @@ public class AndroidNounours extends Nounours {
 
         /*
          * }
-         *
+         * 
          * }; runTaskWithProgressBar(task, true);
          */
     }
@@ -99,14 +99,19 @@ public class AndroidNounours extends Nounours {
 
         int i = 0;
         int max = getImages().size();
-        for (Image image : getImages().values()) {
-            // What a hack!
+        for (final Image image : getImages().values()) {
             loadImage(image, 10);
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    setImage(image);
+                }
+            };
+            runTask(runnable);
             updateProgressBar(max + (i++), 2 * max, activity.getString(R.string.loading));
         }
         // Cache animations.
         animationHandler.cacheAnimations();
-        
+
     }
 
     /**
@@ -143,7 +148,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Display a picture on the screen.
-     *
+     * 
      * @see ca.rmen.nounours.Nounours#displayImage(ca.rmen.nounours.Image)
      */
     @Override
@@ -158,7 +163,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Find the Android image for the given nounours image.
-     *
+     * 
      * @param image
      * @return
      */
@@ -174,7 +179,7 @@ public class AndroidNounours extends Nounours {
     /**
      * Load an image from the disk into memory. Return the Drawable for the
      * iamge.
-     *
+     * 
      * @param image
      * @return
      */
@@ -260,7 +265,7 @@ public class AndroidNounours extends Nounours {
     /**
      * Create a mutable copy of the given immutable bitmap, and store it in the
      * cache.
-     *
+     * 
      * @param readOnlyBitmap
      *            the immutable bitmap
      * @param imageId
@@ -277,7 +282,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Trace.
-     *
+     * 
      */
     @Override
     protected void debug(final Object o) {
@@ -286,7 +291,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * UI threads should be run with an Android thread call.
-     *
+     * 
      * @see ca.rmen.nounours.Nounours#runTask(java.lang.Runnable)
      */
     @Override
@@ -297,7 +302,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Run a task, showing the progress bar while the task runs.
-     *
+     * 
      * @param task
      * @param ui
      *            if true, use the android api to run the task. Otherwise use
@@ -323,7 +328,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Update the currently showing progress bar.
-     *
+     * 
      * @param progress
      * @param max
      * @param message
@@ -348,7 +353,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Create a determinate progress dialog with the given size and text.
-     *
+     * 
      * @param max
      * @param message
      */
