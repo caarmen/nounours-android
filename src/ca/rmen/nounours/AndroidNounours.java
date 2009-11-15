@@ -21,7 +21,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.util.FileUtil;
-import ca.rmen.nounours.util.PhoneHome;
+import ca.rmen.nounours.util.GoogleAnalyticsHelper;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -36,6 +36,7 @@ public class AndroidNounours extends Nounours {
     NounoursActivity activity = null;
     ProgressDialog progressDialog;
     private static final String PREF_THEME = "Theme";
+    private static final String ANALYTICS_TRACKER_ID = "UA-XXXXXXXX-1";
     private SharedPreferences sharedPreferences = null;
     private AndroidNounoursAnimationHandler animationHandler = null;
 
@@ -57,7 +58,7 @@ public class AndroidNounours extends Nounours {
         String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        PhoneHome.phoneHome(activity, sharedPreferences, themeId, "");
+        GoogleAnalyticsHelper.track(activity, sharedPreferences, false, ANALYTICS_TRACKER_ID, themeId, null);
 
         /*
          * Runnable task = new Runnable() {
