@@ -29,9 +29,9 @@ import com.nullwire.trace.ExceptionHandler;
 /**
  * Android activity class which delegates nounours-specific logic to the
  * {@link AndroidNounours} class.
- *
+ * 
  * @author Carmen Alvarez
- *
+ * 
  */
 public class NounoursActivity extends Activity {
 
@@ -58,7 +58,7 @@ public class NounoursActivity extends Activity {
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
      * touch events).
-     *
+     * 
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
@@ -98,7 +98,7 @@ public class NounoursActivity extends Activity {
      * Called when the application is started or becomes active. Register for
      * sensor events, enable pinging for idle activity, and call
      * nounours.onResume().
-     *
+     * 
      * @see android.app.Activity#onResume()
      */
     @Override
@@ -118,7 +118,7 @@ public class NounoursActivity extends Activity {
     /**
      * The application was stopped or exited. Stop listening for sensor events,
      * stop pinging for idleness, and stop any sound.
-     *
+     * 
      * @see android.app.Activity#onStop()
      */
     @Override
@@ -130,7 +130,7 @@ public class NounoursActivity extends Activity {
     /**
      * The application is paused. Stop listening for sensor events, stop pinging
      * for idleness, stop any sound.
-     *
+     * 
      * @see android.app.Activity#onPause()
      */
     @Override
@@ -152,7 +152,7 @@ public class NounoursActivity extends Activity {
 
     /**
      * Create menu items for the different animations.
-     *
+     * 
      * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
      */
     @Override
@@ -184,11 +184,19 @@ public class NounoursActivity extends Activity {
 
             final Map<String, Theme> imageSets = nounours.getThemes();
             int imageSetIdx = 0;
-            themesMenu.add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
+            Theme curTheme = nounours.getCurrentTheme();
+            String curThemeId = (curTheme == null) ? null : curTheme.getId();
+
+            MenuItem themeMenuItem = themesMenu
+                    .add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
+            if (Nounours.DEFAULT_THEME_ID.equals(curThemeId))
+                themeMenuItem.setEnabled(false);
             for (Theme imageSet : imageSets.values()) {
                 int imageSetId = Integer.parseInt(imageSet.getId());
-                themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(imageSet.getName(),
-                        "string", getClass().getPackage().getName()));
+                themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(
+                        imageSet.getName(), "string", getClass().getPackage().getName()));
+                if (imageSet.getId().equals(curThemeId))
+                    themeMenuItem.setEnabled(false);
             }
         }
 
@@ -204,7 +212,7 @@ public class NounoursActivity extends Activity {
 
     /**
      * Show a dialog box
-     *
+     * 
      * @see android.app.Activity#onCreateDialog(int)
      */
     @Override
@@ -233,16 +241,38 @@ public class NounoursActivity extends Activity {
         MenuItem themesMenu = menu.findItem(MENU_THEMES);
         if (themesMenu != null) {
             boolean enableThemes = true;
-            if(nounours.isAnimationRunning() || !FileUtil.isSdPresent())
+            if (nounours.isAnimationRunning() || !FileUtil.isSdPresent())
                 enableThemes = false;
-            themesMenu.setEnabled(enableThemes);
+            else {
+                themesMenu.setEnabled(enableThemes);
+                Theme theme = nounours.getCurrentTheme();
+                String curThemeId = theme == null ? null : theme.getId();
+                SubMenu subMenu = themesMenu.getSubMenu();
+                MenuItem item = subMenu.findItem(MENU_DEFAULT_THEME);
+                if (item != null) {
+                    if (Nounours.DEFAULT_THEME_ID.equals(curThemeId))
+                        item.setEnabled(false);
+                    else
+                        item.setEnabled(true);
+                }
+                for (String themeId : nounours.getThemes().keySet()) {
+                    item = subMenu.findItem(Integer.parseInt(themeId));
+                    if (!themeId.equals(curThemeId))
+                        item.setEnabled(true);
+                    else
+                        item.setEnabled(false);
+                    nounours.debug("enable menu item " + themeId + ": " + item.isEnabled() + ": "
+                            + (themeId.equals(curThemeId)));
+
+                }
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
 
     /**
      * Handle menu item selections.
-     *
+     * 
      * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
      */
     @Override
@@ -303,7 +333,7 @@ public class NounoursActivity extends Activity {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see android.app.Activity#onDestroy()
      */
     @Override
