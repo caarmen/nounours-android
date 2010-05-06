@@ -161,19 +161,8 @@ public class NounoursActivity extends Activity {
         // Set up the actions menu
         final SubMenu actionMenu = menu.addSubMenu(Menu.NONE, MENU_ACTION, mainMenuIdx++, R.string.actions);
         actionMenu.setIcon(R.drawable.menu_action);
-        int actionMenuIdx = 0;
-        // Random action
-        actionMenu.add(Menu.NONE, MENU_RANDOM, actionMenuIdx++, R.string.random);
-        // All the animations
-        final Map<String, Animation> animations = nounours.getAnimations();
-        for (final Animation animation : animations.values()) {
-            if (animation.isVisible()) {
-                final int animationId = Integer.parseInt(animation.getId());
-                actionMenu.add(Menu.NONE, animationId, actionMenuIdx++, getResources().getIdentifier(
-                        animation.getLabel(), "string", getClass().getPackage().getName()));
-            }
+        setupAnimationMenu(actionMenu);
 
-        }
         // Set up the toggle sound menu
         final MenuItem toggleSoundMenu = menu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++, R.string.disablesound);
         toggleSoundMenu.setIcon(R.drawable.ic_volume_off_small);
@@ -208,6 +197,27 @@ public class NounoursActivity extends Activity {
         final MenuItem aboutMenu = menu.add(Menu.NONE, MENU_ABOUT, mainMenuIdx++, R.string.about);
         aboutMenu.setIcon(R.drawable.ic_menu_info_details);
         return true;
+    }
+
+    private void setupAnimationMenu(SubMenu actionMenu) {
+        int actionMenuIdx = 0;
+        actionMenu.clear();
+        // All the animations
+        final Map<String, Animation> animations = nounours.getAnimations();
+        for (final Animation animation : animations.values()) {
+            if (animation.isVisible()) {
+                final int animationId = Integer.parseInt(animation.getId());
+                String animationLabel = animation.getLabel();
+                int labelIdx = getResources()
+                        .getIdentifier(animationLabel, "string", getClass().getPackage().getName());
+                if (labelIdx > 0)
+                    actionMenu.add(Menu.NONE, animationId, actionMenuIdx++, labelIdx);
+                else
+                    actionMenu.add(Menu.NONE, animationId, actionMenuIdx++, animationLabel);
+            }
+
+        }
+
     }
 
     /**
@@ -266,6 +276,10 @@ public class NounoursActivity extends Activity {
 
                 }
             }
+        }
+        MenuItem animationMenu = menu.findItem(MENU_ACTION);
+        if (animationMenu != null) {
+            setupAnimationMenu(animationMenu.getSubMenu());
         }
         return super.onPrepareOptionsMenu(menu);
     }
