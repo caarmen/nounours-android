@@ -65,9 +65,12 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
         File sdSoundFile = new File(sound.getFilename());
         if (theme.getId().equals(Nounours.DEFAULT_THEME_ID))
             sdSoundFile = new File(appRootDirectory, sound.getFilename());
+        else {
+            sdSoundFile = new File(appRootDirectory + File.separator + theme.getId() + File.separator
+                    + sound.getFilename());
+            return sdSoundFile;
+        }
         if (sdSoundFile.exists()) {
-            if (!theme.getId().equals(Nounours.DEFAULT_THEME_ID))
-                return sdSoundFile;
             // See if the file needs to be replaced
             final String resourcePathStr = activity.getPackageResourcePath();
             final File resourcePath = new File(resourcePathStr);
@@ -113,7 +116,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
             final File soundFile = getSoundFile(sound);
             // Prepare the media player
             mediaPlayer.reset();
-            if (soundFile != null) {
+            if (soundFile != null && soundFile.exists()) {
                 mediaPlayer.setDataSource(soundFile.getAbsolutePath());
                 mediaPlayer.prepare();
             }
