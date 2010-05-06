@@ -14,14 +14,15 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Environment;
 import ca.rmen.nounours.data.Sound;
+import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
 
 /**
  * Manages sound effects and music for Nounours on the Android device.
- *
+ * 
  * @author Carmen Alvarez
- *
+ * 
  */
 public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListener {
     private static final String APP_SD_DIR = "nounours";
@@ -43,7 +44,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
     /**
      * For some reason, sounds will only play if they are on the sdcard. The
      * first time we try to play a sound, copy it first to the sdcard.
-     *
+     * 
      * @param sound
      * @return
      * @throws IOException
@@ -60,8 +61,13 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
         }
 
         // Check if the sound file exists already.
-        final File sdSoundFile = new File(appRootDirectory, sound.getFilename());
+        Theme theme = nounours.getCurrentTheme();
+        File sdSoundFile = new File(sound.getFilename());
+        if (theme.getId().equals(Nounours.DEFAULT_THEME_ID))
+            sdSoundFile = new File(appRootDirectory, sound.getFilename());
         if (sdSoundFile.exists()) {
+            if (!theme.getId().equals(Nounours.DEFAULT_THEME_ID))
+                return sdSoundFile;
             // See if the file needs to be replaced
             final String resourcePathStr = activity.getPackageResourcePath();
             final File resourcePath = new File(resourcePathStr);
@@ -76,6 +82,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
 
         // We need to create the sound file. Retrieve the sound file from the
         // raw resources.
+        Trace.debug(this, "Looking for " + sdSoundFile);
         final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
         final int soundResId = activity.getResources().getIdentifier(resourceSoundFileName, "raw",
                 activity.getClass().getPackage().getName());
@@ -95,7 +102,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
 
     /**
      * Play a sound.
-     *
+     * 
      * @see ca.rmen.nounours.Nounours#playSound(java.lang.String)
      */
     public void playSound(final String soundId) {
@@ -121,7 +128,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
 
     /**
      * Stop playing a sound.
-     *
+     * 
      * @see ca.rmen.nounours.Nounours#stopSound()
      */
     public void stopSound() {
@@ -130,7 +137,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
 
     /**
      * Mute or unmute the media player.
-     *
+     * 
      * @see ca.rmen.nounours.Nounours#setEnableSoundImpl(boolean)
      */
     public void setEnableSound(final boolean enableSound) {
@@ -143,7 +150,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
 
     /**
      * Some error occurred using the media player
-     *
+     * 
      * @see android.media.MediaPlayer.OnErrorListener#onError(android.media.MediaPlayer,
      *      int, int)
      */

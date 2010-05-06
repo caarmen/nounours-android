@@ -6,8 +6,6 @@ package ca.rmen.nounours;
 
 import java.util.Map;
 
-import com.nullwire.trace.ExceptionHandler;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -23,8 +21,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 import ca.rmen.nounours.data.Animation;
-import ca.rmen.nounours.data.ImageSet;
+import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.util.FileUtil;
+
+import com.nullwire.trace.ExceptionHandler;
 
 /**
  * Android activity class which delegates nounours-specific logic to the
@@ -182,10 +182,10 @@ public class NounoursActivity extends Activity {
             final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
             themesMenu.setIcon(R.drawable.ic_menu_gallery);
 
-            final Map<String, ImageSet> imageSets = nounours.getImageSets();
+            final Map<String, Theme> imageSets = nounours.getThemes();
             int imageSetIdx = 0;
             themesMenu.add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
-            for (ImageSet imageSet : imageSets.values()) {
+            for (Theme imageSet : imageSets.values()) {
                 int imageSetId = Integer.parseInt(imageSet.getId());
                 themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(imageSet.getName(),
                         "string", getClass().getPackage().getName()));
@@ -280,21 +280,21 @@ public class NounoursActivity extends Activity {
         // The user picked the default image theme
         else if (menuItem.getItemId() == MENU_DEFAULT_THEME) {
 
-            nounours.useImageSet(Nounours.DEFAULT_THEME_ID);
+            nounours.useTheme(Nounours.DEFAULT_THEME_ID);
             return true;
         }
         // Show an animation or change the theme.
         else {
             final Map<String, Animation> animations = nounours.getAnimations();
-            final Map<String, ImageSet> imageSets = nounours.getImageSets();
+            final Map<String, Theme> imageSets = nounours.getThemes();
             final Animation animation = animations.get("" + menuItem.getItemId());
             if (animation != null) {
                 nounours.doAnimation(animation);
                 return true;
             }
-            final ImageSet imageSet = imageSets.get("" + menuItem.getItemId());
+            final Theme imageSet = imageSets.get("" + menuItem.getItemId());
             if (imageSet != null) {
-                nounours.useImageSet(imageSet.getId());
+                nounours.useTheme(imageSet.getId());
                 return true;
             }
             return super.onOptionsItemSelected(menuItem);
