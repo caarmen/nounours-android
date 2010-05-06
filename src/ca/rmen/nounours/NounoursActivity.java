@@ -261,6 +261,7 @@ public class NounoursActivity extends Activity {
         // Enable or disable sound
         else if (menuItem.getItemId() == MENU_TOGGLE_SOUND) {
             nounours.setEnableSound(!nounours.isSoundEnabled());
+            nounours.setEnableVibrate(!nounours.isVibrateEnabled());
             if (nounours.isSoundEnabled()) {
                 menuItem.setIcon(R.drawable.ic_volume_off_small);
                 menuItem.setTitle(R.string.disablesound);
