@@ -27,8 +27,8 @@
 	<string name="abouttext">Nounours v 1.2.3\nPar Carmen Alvarez\nc@rmen.ca\nMúsique:\nB-Roll (Action Macarenours): Kevin MacLeod (incompetech.com)</string>
 	<string name="ok">Ok</string>
 	<string name="help">Aide</string>
-	<string name="disablesound">Désactiver son</string>
-	<string name="enablesound">Activer son</string>
+	<string name="disablesound">Désactiver son/vibreur</string>
+	<string name="enablesound">Activer son/vibreur</string>
 	<string name="wakeup">Effrayer</string>
     <string name="toast_remindMenuButton">Appuyez sur le bouton MENU pour plus d'options\u2026</string>
 

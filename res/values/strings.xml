@@ -27,8 +27,8 @@
 	<string name="abouttext">Nounours v 1.2.3\nBy Carmen Alvarez\nc@rmen.ca\nCredits:\nB-Roll (Macarenours action): Kevin MacLeod (incompetech.com)</string>
 	<string name="ok">Ok</string>
 	<string name="help">Help</string>
-	<string name="disablesound">Turn sound off</string>
-	<string name="enablesound">Turn sound on</string>
+	<string name="disablesound">Turn sound/vibrate off</string>
+	<string name="enablesound">Turn sound/vibrate on</string>
 	<string name="startle">Startle</string>
 	<string name="toast_remindMenuButton">Press the MENU button for more options\u2026</string>
 </resources>
