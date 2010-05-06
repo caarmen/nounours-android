@@ -4,12 +4,18 @@
  */
 package ca.rmen.nounours;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.Set;
 
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.OrientationImage;
+import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.OrientationImageReader;
 import ca.rmen.nounours.util.Trace;
 import android.app.Activity;
@@ -18,36 +24,70 @@ import android.hardware.SensorManager;
 
 /**
  * Manages shaking and tilting events for Nounours on the Android device.
- *
+ * 
  * @author Carmen Alvarez
- *
+ * 
  */
 public class AndroidNounoursSensorListener implements SensorListener {
     private float xAccel = Float.MAX_VALUE;
     private float yAccel = Float.MAX_VALUE;
     private float zAccel = Float.MAX_VALUE;
     private boolean isTiltImage = false;
-    private Set<OrientationImage> orientationImages = null;
+    private Set<OrientationImage> orientationImages = new HashSet<OrientationImage>();;
 
     private Nounours nounours = null;
 
     public AndroidNounoursSensorListener(Nounours nounours, Activity activity) {
         this.nounours = nounours;
-        final InputStream orientationImageFile = activity.getResources().openRawResource(R.raw.orientationimage);
+        InputStream orientationImageFile = getOrientationFile(activity);
+        if (orientationImageFile != null) {
+            OrientationImageReader orientationImageReader;
+            try {
+                orientationImageReader = new OrientationImageReader(orientationImageFile);
+                orientationImages = orientationImageReader.getOrentationImages();
+            } catch (IOException e) {
+                Trace.debug(this, e);
+            }
+        }
+    }
 
-        OrientationImageReader orientationImageReader;
+    /**
+     * Find the orientation file.
+     * 
+     * @param activity
+     * @return
+     */
+    private InputStream getOrientationFile(Activity activity) {
+        Theme theme = nounours.getCurrentTheme();
+
+        if (theme == null || theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
+            InputStream orientationImageFile = activity.getResources().openRawResource(R.raw.orientationimage);
+            return orientationImageFile;
+        }
+        String themesDir = nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR);
         try {
-            orientationImageReader = new OrientationImageReader(orientationImageFile);
-            orientationImages = orientationImageReader.getOrentationImages();
+            File orientationImageFile = new File(themesDir + File.separator + theme.getId() + File.separator
+                    + "orientationimage.csv");
+            if (!orientationImageFile.exists()) {
+                URI remoteOrientationImageFile = new URI(theme.getLocation() + "/orientationimage.csv");
+                Util.downloadFile(remoteOrientationImageFile, orientationImageFile);
+                if (!orientationImageFile.exists())
+                    return null;
+                return new FileInputStream(orientationImageFile);
+            }
         } catch (IOException e) {
             Trace.debug(this, e);
+        } catch (URISyntaxException e) {
+            Trace.debug(this, e);
         }
+        return null;
+
     }
 
     /**
      * Listen for accelerometer events, to know if we should shake. Listen for
      * orientation events to know if we should show a tilt image.
-     *
+     * 
      * @see android.hardware.SensorListener#onSensorChanged(int, float[])
      */
     @Override
