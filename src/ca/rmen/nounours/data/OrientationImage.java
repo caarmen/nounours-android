@@ -6,9 +6,9 @@ package ca.rmen.nounours.data;
 
 /**
  * Represents an image to display if the device is set in the given orientation.
- *
+ * 
  * @author Carmen Alvarez
- *
+ * 
  */
 public class OrientationImage {
 
@@ -68,5 +68,10 @@ public class OrientationImage {
 
     public float getMaxRoll() {
         return maxRoll;
+    }
+
+    public String toString() {
+        return "Orientation: " + imageId + ", Yaw between " + minYaw + " and " + maxYaw + ", pitch between " + minPitch
+                + " and " + maxPitch + ", roll between " + minRoll + " and " + maxRoll;
     }
 }
