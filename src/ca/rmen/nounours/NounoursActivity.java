@@ -330,6 +330,7 @@ public class NounoursActivity extends Activity {
         else if (menuItem.getItemId() == MENU_DEFAULT_THEME) {
 
             nounours.useTheme(Nounours.DEFAULT_THEME_ID);
+            sensorListener.rereadOrientationFile(this);
             return true;
         }
         // Show an animation or change the theme.
@@ -344,6 +345,7 @@ public class NounoursActivity extends Activity {
             final Theme imageSet = imageSets.get("" + menuItem.getItemId());
             if (imageSet != null) {
                 nounours.useTheme(imageSet.getId());
+                sensorListener.rereadOrientationFile(this);
                 return true;
             }
             return super.onOptionsItemSelected(menuItem);
