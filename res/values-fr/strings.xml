@@ -32,6 +32,6 @@
 	<string name="enablesound">Activer son/vibreur</string>
 	<string name="wakeup">Effrayer</string>
     <string name="toast_remindMenuButton">Appuyez sur le bouton MENU pour plus d'options\u2026</string>
-    <string name="themeLoadError">Oups, je n'ai pas pu charger ce thème! Veuillez essayer de nouveau</string>
+    <string name="themeLoadError">Oups, je n'ai pas pu charger ce thème! Essaie de nouveau. Vérifie ta connexion internet.</string>
 
 </resources>

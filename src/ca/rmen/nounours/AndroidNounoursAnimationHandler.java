@@ -162,6 +162,7 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
 
         // Create the android animation.
         animationDrawable = new AnimationDrawable();
+        animationCache.put(animation.getId(), animationDrawable);
 
         // Go through the list of images in the nounours animation, "repeat"
         // times.
@@ -175,17 +176,24 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
                 }
                 // Get the android image and add it to the android animation.
                 final Bitmap bitmap = nounours.getDrawableImage(image);
+                if(bitmap == null)
+                    return null;
 
                 BitmapDrawable drawable = getDrawable(bitmap);
+                if(drawable == null)
+                    return null;
                 animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));
 
             }
         }
         // Add the default image at the end.
         final Bitmap bitmap = nounours.getDrawableImage(nounours.getDefaultImage());
+        if(bitmap == null)
+            return null;
         BitmapDrawable drawable = getDrawable(bitmap);
+        if(drawable == null)
+            return null;
         animationDrawable.addFrame(drawable, animation.getInterval());
-        animationCache.put(animation.getId(), animationDrawable);
         Trace.debug(this, "Loaded animation " + animation.getId());
 
         return animationDrawable;
@@ -206,12 +214,15 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
     /**
      * Store all animations in memory for performance.
      */
-    void cacheAnimations() {
+    boolean cacheAnimations() {
         final Map<String, Animation> animations = nounours.getAnimations();
         for (final String animationId : animations.keySet()) {
             final Animation animation = animations.get(animationId);
-            createAnimation(animation);
+            AnimationDrawable animationDrawable = createAnimation(animation);
+            if(animationDrawable == null)
+                return false;
         }
+        return true;
     }
 
     /**
