@@ -36,6 +36,33 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
         this.nounours = nounours;
         this.activity = activity;
     }
+    
+    public void reset()
+    {
+        for(AnimationDrawable animationDrawable : animationCache.values())
+        {
+            animationDrawable.stop();
+            for(int i=0; i< animationDrawable.getNumberOfFrames(); i++)
+            {
+                Drawable frame = animationDrawable.getFrame(i);
+                if(frame instanceof BitmapDrawable)
+                {
+                    BitmapDrawable bmDrawable = (BitmapDrawable) frame;
+                    Bitmap bitmap = bmDrawable.getBitmap();
+                    if(bitmap != null && !bitmap.isRecycled())
+                        bitmap.recycle();
+                }
+            }
+        }
+        animationCache.clear();
+        for(Bitmap bitmap : bitmapDrawables.keySet())
+        {
+            BitmapDrawable drawable = bitmapDrawables.get(bitmap);
+            if(bitmap != null && !bitmap.isRecycled())
+                bitmap.recycle();
+        }
+        bitmapDrawables.clear();
+    }
 
     /**
      * @return true if an animation is currently active.
