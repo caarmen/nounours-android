@@ -21,9 +21,9 @@
 	<string name="rainbow">Rainbow background</string>
 	<string name="halloween">Halloween</string>
 	<string name="greenshirtbluebkg">Green shirt, blue backgrd</string>
-	<string name="predownload">Looking for my theme</string>
-	<string name="downloading">Downloading my theme online</string>
-	<string name="loading">Loading my theme</string>
+	<string name="predownload">Looking for my %s theme</string>
+	<string name="downloading">Downloading my %s theme online...</string>
+	<string name="loading">Loading my %s theme</string>
 	<string name="defaultTheme">Default</string>
 	<string name="abouttext">Nounours v 1.3.0\nBy Carmen Alvarez\nc@rmen.ca\nCredits:\nB-Roll (Macarenours action): Kevin MacLeod (incompetech.com)</string>
 	<string name="ok">Ok</string>
@@ -34,8 +34,13 @@
 	<string name="toast_remindMenuButton">Press the MENU button for more options\u2026</string>
 	<string name="themeLoadError">Oops, I couldn't load my theme. Try again! Check your network connection</string>
 	<string name="loadMoreThemes">Look for new themes...</string>
+	<string name="loadMoreThemesInProgress">Downloading theme list...</string>
     <string name="newThemesAvailable">New themes available! Restart to use them.</string>
     <string name="noNewThemes">Sorry, no new themes are available at this time!</string>
     <string name="errorLoadingThemeList">Oops! There was a problem downloading the theme list.  Check your internet connection.</string>
+    <string name="upateCurrentTheme">Check for updates to the %s theme...</string>
+	<string name="updatingCurrentTheme">Downloading files for the %s theme...</string>
+	<string name="updateCurrentThemeComplete">Files for the %s theme were downloaded! Please restart.</string>
+	<string name="updates">Updates</string>
 	
 </resources>

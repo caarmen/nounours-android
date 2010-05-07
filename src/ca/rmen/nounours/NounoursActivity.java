@@ -7,7 +7,6 @@ package ca.rmen.nounours;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,7 +57,9 @@ public class NounoursActivity extends Activity {
     private static final int MENU_TOGGLE_SOUND = 1004;
     private static final int MENU_THEMES = 1005;
     private static final int MENU_DEFAULT_THEME = 1006;
-    private static final int MENU_LOAD_MORE_THEMES = 1007;
+    private static final int MENU_UPDATES = 1007;
+    private static final int MENU_LOAD_MORE_THEMES = 1008;
+    private static final int MENU_UPDATE_THEME = 1009;
 
     static final String URL_CRASH_REPORT = "http://r24591.ovh.net/crashreport/";
 
@@ -189,17 +190,17 @@ public class NounoursActivity extends Activity {
                 themeMenuItem.setEnabled(false);
             for (Theme imageSet : imageSets.values()) {
                 int imageSetId = Integer.parseInt(imageSet.getId());
-                String themeLabel = imageSet.getName();
-                int themeLabelId = getResources().getIdentifier(imageSet.getName(), "string",
-                        getClass().getPackage().getName());
-                if (themeLabelId > 0)
-                    themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, themeLabelId);
-                else
-                    themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, themeLabel);
+                CharSequence themeLabel = nounours.getThemeLabel(imageSet);
+                themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, themeLabel);
                 if (imageSet.getId().equals(curThemeId))
                     themeMenuItem.setEnabled(false);
             }
-            themesMenu.add(Menu.NONE, MENU_LOAD_MORE_THEMES, imageSetIdx++, R.string.loadMoreThemes);
+
+            final SubMenu updatesMenu = menu.addSubMenu(Menu.NONE, MENU_UPDATES, mainMenuIdx++, R.string.updates);
+            updatesMenu.add(Menu.NONE, MENU_LOAD_MORE_THEMES, imageSetIdx++, R.string.loadMoreThemes);
+
+            updatesMenu.add(Menu.NONE, MENU_UPDATE_THEME, imageSetIdx++, getString(R.string.upateCurrentTheme, nounours
+                    .getCurrentThemeLabel()));
         }
 
         // Set up the help menu
@@ -261,6 +262,7 @@ public class NounoursActivity extends Activity {
      */
     public boolean onPrepareOptionsMenu(final Menu menu) {
         // Prevent changing the theme in the middle of the animation.
+        Theme theme = nounours.getCurrentTheme();
         MenuItem themesMenu = menu.findItem(MENU_THEMES);
         if (themesMenu != null) {
             boolean enableThemes = true;
@@ -268,7 +270,6 @@ public class NounoursActivity extends Activity {
                 enableThemes = false;
             else {
                 themesMenu.setEnabled(enableThemes);
-                Theme theme = nounours.getCurrentTheme();
                 String curThemeId = theme == null ? null : theme.getId();
                 SubMenu subMenu = themesMenu.getSubMenu();
                 MenuItem item = subMenu.findItem(MENU_DEFAULT_THEME);
@@ -289,6 +290,17 @@ public class NounoursActivity extends Activity {
 
                 }
             }
+        }
+        MenuItem updatesMenu = menu.findItem(MENU_UPDATES);
+        if (updatesMenu != null) {
+            SubMenu subMenu = updatesMenu.getSubMenu();
+            MenuItem item = subMenu.findItem(MENU_UPDATE_THEME);
+            CharSequence curThemeLabel = nounours.getCurrentThemeLabel();
+            getResources().getText(R.string.upateCurrentTheme, curThemeLabel);
+            if (theme != null && theme.getId().equals(Nounours.DEFAULT_THEME_ID))
+                item.setEnabled(false);
+            else
+                item.setEnabled(true);
         }
         MenuItem animationMenu = menu.findItem(MENU_ACTION);
         if (animationMenu != null) {
@@ -342,35 +354,62 @@ public class NounoursActivity extends Activity {
             sensorListener.rereadOrientationFile(theme, this);
             return true;
         } else if (menuItem.getItemId() == MENU_LOAD_MORE_THEMES) {
-            Set<String> curThemeList = nounours.getThemes().keySet();
-            String localThemeFileName = nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR) + File.separator
-                    + "themes.csv";
-            File localThemesFile = new File(localThemeFileName);
+            Runnable themeListUpdater = new Runnable() {
+                public void run() {
+                    Set<String> curThemeList = nounours.getThemes().keySet();
+                    String localThemeFileName = nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR)
+                            + File.separator + "themes.csv";
+                    File localThemesFile = new File(localThemeFileName);
 
-            String remoteThemeFile = nounours.getProperty(Nounours.PROP_THEME_LIST);
-            try {
-                if (!Util.downloadFile(new URI(remoteThemeFile), localThemesFile)) {
-                    throw new Exception();
+                    String remoteThemeFile = nounours.getProperty(Nounours.PROP_THEME_LIST);
+                    try {
+                        if (!Util.downloadFile(new URI(remoteThemeFile), localThemesFile)) {
+                            throw new Exception();
 
-                }
-                ThemeReader themeReader = new ThemeReader(new FileInputStream(localThemesFile));
-                Map<String, Theme> themes = themeReader.getThemes();
-                if (themes != null) {
-                    Set<String> newThemeList = themeReader.getThemes().keySet();
-                    if (!newThemeList.equals(curThemeList)) {
-                        nounours.showAlertDialog(getResources().getText(R.string.newThemesAvailable), null);
-                        return true;
-
+                        }
+                        ThemeReader themeReader = new ThemeReader(new FileInputStream(localThemesFile));
+                        Map<String, Theme> themes = themeReader.getThemes();
+                        if (themes != null) {
+                            Set<String> newThemeList = themeReader.getThemes().keySet();
+                            if (!newThemeList.equals(curThemeList)) {
+                                nounours.showAlertDialog(getResources().getText(R.string.newThemesAvailable), null);
+                            }
+                            nounours.showAlertDialog(getResources().getText(R.string.noNewThemes), null);
+                        }
+                        throw new Exception();
+                    } catch (Exception e) {
+                        nounours.showAlertDialog(getResources().getText(R.string.errorLoadingThemeList), null);
                     }
-                    nounours.showAlertDialog(getResources().getText(R.string.noNewThemes), null);
-                    return true;
-                }
-                throw new Exception();
-            } catch (Exception e) {
-                nounours.showAlertDialog(getResources().getText(R.string.errorLoadingThemeList), null);
-                return true;
-            }
 
+                }
+            };
+            String message = getString(R.string.loadMoreThemesInProgress);
+            nounours.runTaskWithProgressBar(themeListUpdater, false, message, -1);
+            return true;
+
+        } else if (menuItem.getItemId() == MENU_UPDATE_THEME) {
+
+            Runnable updateTheme = new Runnable() {
+                public void run() {
+                    try {
+                        boolean updated = nounours.getCurrentTheme().update(
+                                nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR));
+                        String message = null;
+                        CharSequence themeLabel = nounours.getCurrentThemeLabel();
+                        if (updated)
+                            message = getString(R.string.updateCurrentThemeComplete, themeLabel);
+                        else
+                            message = getString(R.string.themeLoadError);
+                        nounours.showAlertDialog(message, null);
+                    } catch (Exception e) {
+                        nounours.showAlertDialog(getString(R.string.themeLoadError), null);
+                    }
+                }
+            };
+            CharSequence themeLabel = nounours.getCurrentThemeLabel();
+            String message = getString(R.string.updatingCurrentTheme, themeLabel);
+            nounours.runTaskWithProgressBar(updateTheme, false, message, -1);
+            return true;
         }
         // Show an animation or change the theme.
         else {
