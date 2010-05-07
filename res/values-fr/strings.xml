@@ -32,6 +32,10 @@
 	<string name="enablesound">Activer son/vibreur</string>
 	<string name="wakeup">Effrayer</string>
     <string name="toast_remindMenuButton">Appuyez sur le bouton MENU pour plus d'options\u2026</string>
-    <string name="themeLoadError">Oups, je n'ai pas pu charger ce thème! Essaie de nouveau. Vérifie ta connexion internet.</string>
+    <string name="themeLoadError">Oups, je n'ai pas pu charger ce thème ! Essaie de nouveau. Vérifie ta connexion internet.</string>
+    <string name="loadMoreThemes">Chercher des nouveaux thèmes...</string>
+    <string name="newThemesAvailable">Des nouveaux thèmes sont disponibles. Redemarrer pour les utiliser</string>
+    <string name="noNewThemes">Desolé, il n'y a pas de nouveau thème en ce moment!</string>
+    <string name="errorLoadingThemeList">Oups! Je n'ai pas pu charger la liste des thèmes ! Vérifie ta connexion internet</string>
 
 </resources>

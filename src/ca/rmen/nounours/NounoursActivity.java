@@ -4,7 +4,12 @@
  */
 package ca.rmen.nounours;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URI;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
+import ca.rmen.nounours.io.ThemeReader;
 import ca.rmen.nounours.util.FileUtil;
 
 import com.nullwire.trace.ExceptionHandler;
@@ -52,6 +58,7 @@ public class NounoursActivity extends Activity {
     private static final int MENU_TOGGLE_SOUND = 1004;
     private static final int MENU_THEMES = 1005;
     private static final int MENU_DEFAULT_THEME = 1006;
+    private static final int MENU_LOAD_MORE_THEMES = 1007;
 
     static final String URL_CRASH_REPORT = "http://r24591.ovh.net/crashreport/";
 
@@ -192,6 +199,7 @@ public class NounoursActivity extends Activity {
                 if (imageSet.getId().equals(curThemeId))
                     themeMenuItem.setEnabled(false);
             }
+            themesMenu.add(Menu.NONE, MENU_LOAD_MORE_THEMES, imageSetIdx++, R.string.loadMoreThemes);
         }
 
         // Set up the help menu
@@ -333,6 +341,36 @@ public class NounoursActivity extends Activity {
             Theme theme = nounours.getDefaultTheme();
             sensorListener.rereadOrientationFile(theme, this);
             return true;
+        } else if (menuItem.getItemId() == MENU_LOAD_MORE_THEMES) {
+            Set<String> curThemeList = nounours.getThemes().keySet();
+            String localThemeFileName = nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR) + File.separator
+                    + "themes.csv";
+            File localThemesFile = new File(localThemeFileName);
+
+            String remoteThemeFile = nounours.getProperty(Nounours.PROP_THEME_LIST);
+            try {
+                if (!Util.downloadFile(new URI(remoteThemeFile), localThemesFile)) {
+                    throw new Exception();
+
+                }
+                ThemeReader themeReader = new ThemeReader(new FileInputStream(localThemesFile));
+                Map<String, Theme> themes = themeReader.getThemes();
+                if (themes != null) {
+                    Set<String> newThemeList = themeReader.getThemes().keySet();
+                    if (!newThemeList.equals(curThemeList)) {
+                        nounours.showAlertDialog(getResources().getText(R.string.newThemesAvailable), null);
+                        return true;
+
+                    }
+                    nounours.showAlertDialog(getResources().getText(R.string.noNewThemes), null);
+                    return true;
+                }
+                throw new Exception();
+            } catch (Exception e) {
+                nounours.showAlertDialog(getResources().getText(R.string.errorLoadingThemeList), null);
+                return true;
+            }
+
         }
         // Show an animation or change the theme.
         else {
@@ -346,7 +384,7 @@ public class NounoursActivity extends Activity {
             final Theme imageSet = imageSets.get("" + menuItem.getItemId());
             if (imageSet != null) {
                 nounours.useTheme(imageSet.getId());
-                sensorListener.rereadOrientationFile(imageSet,this);
+                sensorListener.rereadOrientationFile(imageSet, this);
                 return true;
             }
             return super.onOptionsItemSelected(menuItem);

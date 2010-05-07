@@ -33,4 +33,9 @@
 	<string name="startle">Startle</string>
 	<string name="toast_remindMenuButton">Press the MENU button for more options\u2026</string>
 	<string name="themeLoadError">Oops, I couldn't load my theme. Try again! Check your network connection</string>
+	<string name="loadMoreThemes">Look for new themes...</string>
+    <string name="newThemesAvailable">New themes available! Restart to use them.</string>
+    <string name="noNewThemes">Sorry, no new themes are available at this time!</string>
+    <string name="errorLoadingThemeList">Oops! There was a problem downloading the theme list.  Check your internet connection.</string>
+	
 </resources>
