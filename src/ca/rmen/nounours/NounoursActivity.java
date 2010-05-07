@@ -182,8 +182,13 @@ public class NounoursActivity extends Activity {
                 themeMenuItem.setEnabled(false);
             for (Theme imageSet : imageSets.values()) {
                 int imageSetId = Integer.parseInt(imageSet.getId());
-                themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, getResources().getIdentifier(
-                        imageSet.getName(), "string", getClass().getPackage().getName()));
+                String themeLabel = imageSet.getName();
+                int themeLabelId = getResources().getIdentifier(imageSet.getName(), "string",
+                        getClass().getPackage().getName());
+                if (themeLabelId > 0)
+                    themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, themeLabelId);
+                else
+                    themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, themeLabel);
                 if (imageSet.getId().equals(curThemeId))
                     themeMenuItem.setEnabled(false);
             }
