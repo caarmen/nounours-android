@@ -324,7 +324,7 @@ public class NounoursActivity extends Activity {
         // The user picked the default image theme
         else if (menuItem.getItemId() == MENU_DEFAULT_THEME) {
 
-            nounours.useTheme(Nounours.DEFAULT_THEME_ID, false);
+            nounours.useTheme(Nounours.DEFAULT_THEME_ID);
             return true;
         }
         // Show an animation or change the theme.
@@ -338,7 +338,7 @@ public class NounoursActivity extends Activity {
             }
             final Theme imageSet = imageSets.get("" + menuItem.getItemId());
             if (imageSet != null) {
-                nounours.useTheme(imageSet.getId(), false);
+                nounours.useTheme(imageSet.getId());
                 return true;
             }
             return super.onOptionsItemSelected(menuItem);
