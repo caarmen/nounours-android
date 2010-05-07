@@ -39,16 +39,25 @@ public class AndroidNounoursSensorListener implements SensorListener {
 
     public AndroidNounoursSensorListener(Nounours nounours, Activity activity) {
         this.nounours = nounours;
+        rereadOrientationFile(activity);
+    }
+
+    public void rereadOrientationFile(Activity activity) {
+        Trace.debug(this, "rereadOrientationFile");
+        orientationImages.clear();
         InputStream orientationImageFile = getOrientationFile(activity);
         if (orientationImageFile != null) {
             OrientationImageReader orientationImageReader;
             try {
                 orientationImageReader = new OrientationImageReader(orientationImageFile);
-                orientationImages = orientationImageReader.getOrentationImages();
+                orientationImages.addAll(orientationImageReader.getOrentationImages());
             } catch (IOException e) {
                 Trace.debug(this, e);
             }
         }
+        else
+            Trace.debug(this,"No orientation file!");
+
     }
 
     /**
@@ -75,6 +84,7 @@ public class AndroidNounoursSensorListener implements SensorListener {
                     return null;
                 return new FileInputStream(orientationImageFile);
             }
+            return new FileInputStream(orientationImageFile);
         } catch (IOException e) {
             Trace.debug(this, e);
         } catch (URISyntaxException e) {
@@ -127,6 +137,7 @@ public class AndroidNounoursSensorListener implements SensorListener {
             final float yaw = values[offsetIndex + SensorManager.DATA_X];
             final float pitch = values[offsetIndex + SensorManager.DATA_Y];
             final float roll = values[offsetIndex + SensorManager.DATA_Z];
+            Trace.debug(this, "orientatio! " + orientationImages + "yaw=" + yaw + ",pitch=" + pitch + ",roll="+roll);
             for (final OrientationImage orientationImage : orientationImages) {
                 if (yaw >= orientationImage.getMinYaw() && yaw <= orientationImage.getMaxYaw()
                         && pitch >= orientationImage.getMinPitch() && pitch <= orientationImage.getMaxPitch()
