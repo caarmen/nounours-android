@@ -38,9 +38,9 @@
     <string name="newThemesAvailable">Des nouveaux thèmes sont disponibles. Redemarrer pour les utiliser</string>
     <string name="noNewThemes">Desolé, il n'y a pas de nouveau thème en ce moment!</string>
     <string name="errorLoadingThemeList">Oups! Je n'ai pas pu charger la liste des thèmes ! Vérifie ta connexion internet</string>
-    <string name="upateCurrentTheme">Cherche des mises à jour pour le thème %s...</string>
+    <string name="upateCurrentTheme">Mise à jour de ce thème</string>
 	<string name="updatingCurrentTheme">Téléchargement des fichiers pour le thème %s...</string>
-	<string name="updateCurrentThemeComplete">Téléchargement des fichiers pour le thème %s terminé ! Redemarre.</string>
+	<string name="updateCurrentThemeComplete">Téléchargement des fichiers pour le thème %s terminé !</string>
 	<string name="updateCurrentThemeError">Je n'ai pas pu télécharger tous les fichiers.  Vérifie ta connexion internet</string>
 	<string name="updates">Mises à jour</string>
 	

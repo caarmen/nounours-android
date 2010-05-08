@@ -38,9 +38,9 @@
     <string name="newThemesAvailable">New themes available! Restart to use them.</string>
     <string name="noNewThemes">Sorry, no new themes are available at this time!</string>
     <string name="errorLoadingThemeList">Oops! There was a problem downloading the theme list.  Check your internet connection.</string>
-    <string name="upateCurrentTheme">Check for updates to the %s theme...</string>
+    <string name="upateCurrentTheme">Update this theme</string>
 	<string name="updatingCurrentTheme">Downloading files for the %s theme...</string>
-	<string name="updateCurrentThemeComplete">Files for the %s theme were downloaded! Please restart.</string>
+	<string name="updateCurrentThemeComplete">Files for the %s theme were downloaded!</string>
 	<string name="updateCurrentThemeError">Some files could not be downloaded.  Please check your network connection.</string>
 	<string name="updates">Updates</string>
 	

@@ -298,13 +298,10 @@ public class NounoursActivity extends Activity {
         if (updatesMenu != null) {
             SubMenu subMenu = updatesMenu.getSubMenu();
             MenuItem item = subMenu.findItem(MENU_UPDATE_THEME);
-            CharSequence curThemeLabel = nounours.getCurrentThemeLabel();
-            CharSequence title = getString(R.string.upateCurrentTheme, curThemeLabel);
-            item.setTitle(title);
             if (theme != null && theme.getId().equals(Nounours.DEFAULT_THEME_ID))
-                item.setEnabled(false);
+                item.setVisible(false);
             else
-                item.setEnabled(true);
+                item.setVisible(true);
         }
         MenuItem animationMenu = menu.findItem(MENU_ACTION);
         if (animationMenu != null) {
