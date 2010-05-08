@@ -308,6 +308,10 @@ public class NounoursActivity extends Activity {
         }
         MenuItem animationMenu = menu.findItem(MENU_ACTION);
         if (animationMenu != null) {
+            if (theme == null || theme.getAnimations().size() == 0)
+                animationMenu.setVisible(false);
+            else
+                animationMenu.setVisible(true);
             setupAnimationMenu(animationMenu.getSubMenu());
         }
         return super.onPrepareOptionsMenu(menu);
