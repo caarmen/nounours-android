@@ -41,6 +41,7 @@
     <string name="upateCurrentTheme">Check for updates to the %s theme...</string>
 	<string name="updatingCurrentTheme">Downloading files for the %s theme...</string>
 	<string name="updateCurrentThemeComplete">Files for the %s theme were downloaded! Please restart.</string>
+	<string name="updateCurrentThemeError">Some files could not be downloaded.  Please check your network connection.</string>
 	<string name="updates">Updates</string>
 	
 </resources>

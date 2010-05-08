@@ -27,6 +27,7 @@ import android.widget.Toast;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.ThemeReader;
+import ca.rmen.nounours.io.ThemeUpdateListener;
 import ca.rmen.nounours.util.FileUtil;
 
 import com.nullwire.trace.ExceptionHandler;
@@ -296,7 +297,8 @@ public class NounoursActivity extends Activity {
             SubMenu subMenu = updatesMenu.getSubMenu();
             MenuItem item = subMenu.findItem(MENU_UPDATE_THEME);
             CharSequence curThemeLabel = nounours.getCurrentThemeLabel();
-            getResources().getText(R.string.upateCurrentTheme, curThemeLabel);
+            CharSequence title = getString(R.string.upateCurrentTheme, curThemeLabel);
+            item.setTitle(title);
             if (theme != null && theme.getId().equals(Nounours.DEFAULT_THEME_ID))
                 item.setEnabled(false);
             else
@@ -376,9 +378,11 @@ public class NounoursActivity extends Activity {
                             }
                             nounours.showAlertDialog(getResources().getText(R.string.noNewThemes), null);
                         }
-                        throw new Exception();
+                        else
+                            throw new Exception("Read 0 themes");
                     } catch (Exception e) {
                         nounours.showAlertDialog(getResources().getText(R.string.errorLoadingThemeList), null);
+                        nounours.debug(e);
                     }
 
                 }
@@ -388,27 +392,35 @@ public class NounoursActivity extends Activity {
             return true;
 
         } else if (menuItem.getItemId() == MENU_UPDATE_THEME) {
+            final CharSequence themeLabel = nounours.getCurrentThemeLabel();
+            final String message = getString(R.string.updatingCurrentTheme, themeLabel);
 
+            final ThemeUpdateListener updateListener = new ThemeUpdateListener() {
+
+                @Override
+                public void updatedFile(String fileName, int fileNumber, int totalFiles, boolean updateOk) {
+                    nounours.updateProgressBar(fileNumber, totalFiles, message);
+
+                }
+            };
             Runnable updateTheme = new Runnable() {
                 public void run() {
                     try {
                         boolean updated = nounours.getCurrentTheme().update(
-                                nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR));
-                        String message = null;
+                                nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR), updateListener);
+                        String updateResultMessage = null;
                         CharSequence themeLabel = nounours.getCurrentThemeLabel();
                         if (updated)
-                            message = getString(R.string.updateCurrentThemeComplete, themeLabel);
+                            updateResultMessage = getString(R.string.updateCurrentThemeComplete, themeLabel);
                         else
-                            message = getString(R.string.themeLoadError);
-                        nounours.showAlertDialog(message, null);
+                            updateResultMessage = getString(R.string.updateCurrentThemeError);
+                        nounours.showAlertDialog(updateResultMessage, null);
                     } catch (Exception e) {
-                        nounours.showAlertDialog(getString(R.string.themeLoadError), null);
+                        nounours.showAlertDialog(getString(R.string.updateCurrentThemeError), null);
                     }
                 }
             };
-            CharSequence themeLabel = nounours.getCurrentThemeLabel();
-            String message = getString(R.string.updatingCurrentTheme, themeLabel);
-            nounours.runTaskWithProgressBar(updateTheme, false, message, -1);
+            nounours.runTaskWithProgressBar(updateTheme, false, message, 100);
             return true;
         }
         // Show an animation or change the theme.
