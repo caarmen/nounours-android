@@ -373,12 +373,11 @@ public class NounoursActivity extends Activity {
                         Map<String, Theme> themes = themeReader.getThemes();
                         if (themes != null) {
                             Set<String> newThemeList = themeReader.getThemes().keySet();
-                            if (!newThemeList.equals(curThemeList)) {
+                            if (!newThemeList.equals(curThemeList))
                                 nounours.showAlertDialog(getResources().getText(R.string.newThemesAvailable), null);
-                            }
-                            nounours.showAlertDialog(getResources().getText(R.string.noNewThemes), null);
-                        }
-                        else
+                            else
+                                nounours.showAlertDialog(getResources().getText(R.string.noNewThemes), null);
+                        } else
                             throw new Exception("Read 0 themes");
                     } catch (Exception e) {
                         nounours.showAlertDialog(getResources().getText(R.string.errorLoadingThemeList), null);
