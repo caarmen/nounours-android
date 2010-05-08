@@ -202,6 +202,7 @@ public class NounoursActivity extends Activity {
 
             updatesMenu.add(Menu.NONE, MENU_UPDATE_THEME, imageSetIdx++, getString(R.string.upateCurrentTheme, nounours
                     .getCurrentThemeLabel()));
+            updatesMenu.setIcon(R.drawable.ic_menu_update);
         }
 
         // Set up the help menu
