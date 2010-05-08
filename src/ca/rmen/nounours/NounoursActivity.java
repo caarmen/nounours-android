@@ -218,6 +218,7 @@ public class NounoursActivity extends Activity {
     private void setupAnimationMenu(SubMenu actionMenu) {
         int actionMenuIdx = 0;
         actionMenu.clear();
+        actionMenu.add(Menu.NONE, MENU_RANDOM, actionMenuIdx++, R.string.random);
         // All the animations
         final Map<String, Animation> animations = nounours.getAnimations();
         for (final Animation animation : animations.values()) {
