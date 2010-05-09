@@ -101,8 +101,9 @@ public class AndroidNounoursSensorListener implements SensorListener {
      */
     @Override
     public void onSensorChanged(final int sensor, final float[] values) {
+
         // Don't do anything if we're shaking.
-        if (nounours.isShaking()) {
+        if (nounours.isShaking() || nounours.isLoading()) {
             xAccel = Float.MAX_VALUE;
             yAccel = Float.MAX_VALUE;
             zAccel = Float.MAX_VALUE;
