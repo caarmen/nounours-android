@@ -267,12 +267,12 @@ public class NounoursActivity extends Activity {
         // Prevent changing the theme in the middle of the animation.
         Theme theme = nounours.getCurrentTheme();
         MenuItem themesMenu = menu.findItem(MENU_THEMES);
+        boolean nounoursIsBusy = nounours.isAnimationRunning() || nounours.isLoading();
+        boolean hasSDCard = FileUtil.isSdPresent();
+
         if (themesMenu != null) {
-            boolean enableThemes = true;
-            if (nounours.isAnimationRunning() || !FileUtil.isSdPresent())
-                enableThemes = false;
-            else {
-                themesMenu.setEnabled(enableThemes);
+            themesMenu.setEnabled(hasSDCard && !nounoursIsBusy);
+            if (hasSDCard && !nounoursIsBusy) {
                 String curThemeId = theme == null ? null : theme.getId();
                 SubMenu subMenu = themesMenu.getSubMenu();
                 MenuItem item = subMenu.findItem(MENU_DEFAULT_THEME);
@@ -296,6 +296,7 @@ public class NounoursActivity extends Activity {
         }
         MenuItem updatesMenu = menu.findItem(MENU_UPDATES);
         if (updatesMenu != null) {
+            updatesMenu.setEnabled(hasSDCard && !nounoursIsBusy);
             SubMenu subMenu = updatesMenu.getSubMenu();
             MenuItem item = subMenu.findItem(MENU_UPDATE_THEME);
             if (theme != null && theme.getId().equals(Nounours.DEFAULT_THEME_ID))
@@ -305,6 +306,7 @@ public class NounoursActivity extends Activity {
         }
         MenuItem animationMenu = menu.findItem(MENU_ACTION);
         if (animationMenu != null) {
+            animationMenu.setEnabled(!nounoursIsBusy);
             if (theme == null || theme.getAnimations().size() == 0)
                 animationMenu.setVisible(false);
             else
