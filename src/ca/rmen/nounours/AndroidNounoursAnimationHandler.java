@@ -20,14 +20,15 @@ import ca.rmen.nounours.util.Trace;
 
 /**
  * Manages the Nounours animations displayed to the Android device.
- *
+ * 
  * @author Carmen Alvarez
- *
+ * 
  */
 public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
-    private AndroidNounours nounours = null;
+    AndroidNounours nounours = null;
     Activity activity = null;
+    AnimationDrawable lastRandomAnimation = null;
     static Map<String, AnimationDrawable> animationCache = new HashMap<String, AnimationDrawable>();
 
     static Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<Bitmap, BitmapDrawable>();
@@ -36,32 +37,33 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
         this.nounours = nounours;
         this.activity = activity;
     }
-    
-    public void reset()
-    {
-        for(AnimationDrawable animationDrawable : animationCache.values())
-        {
-            animationDrawable.stop();
-            for(int i=0; i< animationDrawable.getNumberOfFrames(); i++)
-            {
-                Drawable frame = animationDrawable.getFrame(i);
-                if(frame instanceof BitmapDrawable)
-                {
-                    BitmapDrawable bmDrawable = (BitmapDrawable) frame;
-                    Bitmap bitmap = bmDrawable.getBitmap();
-                    if(bitmap != null && !bitmap.isRecycled())
-                        bitmap.recycle();
-                }
-            }
+
+    public void reset() {
+        for (AnimationDrawable animationDrawable : animationCache.values()) {
+            purgeAnimationDrawable(animationDrawable);
         }
+     //   if (lastRandomAnimation != null)
+       //     purgeAnimationDrawable(lastRandomAnimation);
         animationCache.clear();
-        for(Bitmap bitmap : bitmapDrawables.keySet())
-        {
-            BitmapDrawable drawable = bitmapDrawables.get(bitmap);
-            if(bitmap != null && !bitmap.isRecycled())
+        for (Bitmap bitmap : bitmapDrawables.keySet()) {
+            if (bitmap != null && !bitmap.isRecycled())
                 bitmap.recycle();
         }
         bitmapDrawables.clear();
+    }
+
+    void purgeAnimationDrawable(AnimationDrawable animationDrawable) {
+        animationDrawable.stop();
+        for (int i = 0; i < animationDrawable.getNumberOfFrames(); i++) {
+            Drawable frame = animationDrawable.getFrame(i);
+            if (frame instanceof BitmapDrawable) {
+                BitmapDrawable bmDrawable = (BitmapDrawable) frame;
+                Bitmap bitmap = bmDrawable.getBitmap();
+                if (bitmap != null && !bitmap.isRecycled())
+                    bitmap.recycle();
+            }
+        }
+
     }
 
     /**
@@ -110,18 +112,27 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
 
     /**
      * The user selected an animation from the menu. Display the animation.
-     *
+     * 
      * @see ca.rmen.nounours.Nounours#doAnimation(java.lang.String)
      */
-    public void doAnimation(final Animation animation) {
+    public void doAnimation(final Animation animation, final boolean isDynamicAnimation) {
         final Runnable runnable = new Runnable() {
             public void run() {
+               /* if (lastRandomAnimation != null) {
+                    if (lastRandomAnimation.isRunning())
+                        lastRandomAnimation.stop();
+                    nounours.setImage(nounours.getDefaultImage());
+                    purgeAnimationDrawable(lastRandomAnimation);
+                    lastRandomAnimation = null;
+                }*/
                 // Create an Android animation.
-                final AnimationDrawable animationDrawable = createAnimation(animation);
+                final AnimationDrawable animationDrawable = createAnimation(animation, !isDynamicAnimation);
                 if (animationDrawable == null) {
                     Trace.debug(this, "No animation " + animation.getId());
                     return;
                 }
+                if (isDynamicAnimation)
+                    lastRandomAnimation = animationDrawable;
 
                 // Display the Android animation.
                 final ImageView view = (ImageView) activity.findViewById(R.id.ImageView01);
@@ -137,7 +148,7 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
 
     /**
      * Stop the currently running animation, if there is one.
-     *
+     * 
      * @see ca.rmen.nounours.Nounours#stopAnimationImpl()
      */
     public void stopAnimation() {
@@ -149,11 +160,11 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
 
     /**
      * Create an Android animation given the nounours animation data.
-     *
+     * 
      * @param animation
      * @return
      */
-    AnimationDrawable createAnimation(final Animation animation) {
+    AnimationDrawable createAnimation(final Animation animation, boolean doCache) {
         // First see if we have this stored in memory.
         AnimationDrawable animationDrawable = animationCache.get(animation.getId());
         if (animationDrawable != null) {
@@ -162,7 +173,8 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
 
         // Create the android animation.
         animationDrawable = new AnimationDrawable();
-        animationCache.put(animation.getId(), animationDrawable);
+        if (doCache)
+            animationCache.put(animation.getId(), animationDrawable);
 
         // Go through the list of images in the nounours animation, "repeat"
         // times.
@@ -176,11 +188,11 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
                 }
                 // Get the android image and add it to the android animation.
                 final Bitmap bitmap = nounours.getDrawableImage(image);
-                if(bitmap == null)
+                if (bitmap == null)
                     return null;
 
                 BitmapDrawable drawable = getDrawable(bitmap);
-                if(drawable == null)
+                if (drawable == null)
                     return null;
                 animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));
 
@@ -188,10 +200,10 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
         }
         // Add the default image at the end.
         final Bitmap bitmap = nounours.getDrawableImage(nounours.getDefaultImage());
-        if(bitmap == null)
+        if (bitmap == null)
             return null;
         BitmapDrawable drawable = getDrawable(bitmap);
-        if(drawable == null)
+        if (drawable == null)
             return null;
         animationDrawable.addFrame(drawable, animation.getInterval());
         Trace.debug(this, "Loaded animation " + animation.getId());
@@ -218,8 +230,8 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
         final Map<String, Animation> animations = nounours.getAnimations();
         for (final String animationId : animations.keySet()) {
             final Animation animation = animations.get(animationId);
-            AnimationDrawable animationDrawable = createAnimation(animation);
-            if(animationDrawable == null)
+            AnimationDrawable animationDrawable = createAnimation(animation, true);
+            if (animationDrawable == null)
                 return false;
         }
         return true;
@@ -229,7 +241,7 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
      * The implementing class may implement this to add the menu item for the
      * animation, as it is read from the CSV file. If this must be handled
      * later, the method {#link {@link #getAnimations()} may be used instead.
-     *
+     * 
      * @param animation
      */
     public void addAnimation(Animation animation) {
