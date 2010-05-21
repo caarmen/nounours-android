@@ -28,7 +28,6 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
 
     AndroidNounours nounours = null;
     Activity activity = null;
-    AnimationDrawable lastRandomAnimation = null;
     static Map<String, AnimationDrawable> animationCache = new HashMap<String, AnimationDrawable>();
 
     static Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<Bitmap, BitmapDrawable>();
@@ -42,8 +41,6 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
         for (AnimationDrawable animationDrawable : animationCache.values()) {
             purgeAnimationDrawable(animationDrawable);
         }
-     //   if (lastRandomAnimation != null)
-       //     purgeAnimationDrawable(lastRandomAnimation);
         animationCache.clear();
         for (Bitmap bitmap : bitmapDrawables.keySet()) {
             if (bitmap != null && !bitmap.isRecycled())
@@ -118,21 +115,12 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
     public void doAnimation(final Animation animation, final boolean isDynamicAnimation) {
         final Runnable runnable = new Runnable() {
             public void run() {
-               /* if (lastRandomAnimation != null) {
-                    if (lastRandomAnimation.isRunning())
-                        lastRandomAnimation.stop();
-                    nounours.setImage(nounours.getDefaultImage());
-                    purgeAnimationDrawable(lastRandomAnimation);
-                    lastRandomAnimation = null;
-                }*/
                 // Create an Android animation.
                 final AnimationDrawable animationDrawable = createAnimation(animation, !isDynamicAnimation);
                 if (animationDrawable == null) {
                     Trace.debug(this, "No animation " + animation.getId());
                     return;
                 }
-                if (isDynamicAnimation)
-                    lastRandomAnimation = animationDrawable;
 
                 // Display the Android animation.
                 final ImageView view = (ImageView) activity.findViewById(R.id.ImageView01);
