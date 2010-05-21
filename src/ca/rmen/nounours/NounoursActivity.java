@@ -379,7 +379,7 @@ public class NounoursActivity extends Activity {
                 menuItem.setTitle(R.string.enablesound);
             }
             Editor editor = sharedPreferences.edit();
-            editor.putBoolean(AndroidNounours.PREF_SOUND_AND_VIBRATE, nounours.isRandomAnimationsEnabled());
+            editor.putBoolean(AndroidNounours.PREF_SOUND_AND_VIBRATE, nounours.isSoundEnabled());
             editor.commit();
             return true;
 
