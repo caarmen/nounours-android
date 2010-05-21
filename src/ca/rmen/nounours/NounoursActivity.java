@@ -185,7 +185,6 @@ public class NounoursActivity extends Activity {
         // Set up the toggle sound menu
         final MenuItem toggleSoundMenu = optionsMenu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++,
                 R.string.disablesound);
-        toggleSoundMenu.setIcon(R.drawable.ic_volume_off_small);
 
         final MenuItem toggleRandomAnimationMeu = optionsMenu.add(Menu.NONE, MENU_TOGGLE_RANDOM_ANIMATIONS,
                 mainMenuIdx++, R.string.disableRandomAnimations);
@@ -331,10 +330,8 @@ public class NounoursActivity extends Activity {
         if (toggleSound != null) {
             if (nounours.isSoundEnabled()) {
                 toggleSound.setTitle(R.string.disablesound);
-                toggleSound.setIcon(R.drawable.ic_volume_off_small);
             } else {
                 toggleSound.setTitle(R.string.enablesound);
-                toggleSound.setIcon(R.drawable.ic_volume_small);
             }
         }
         MenuItem toggleRandomAnimations = menu.findItem(MENU_TOGGLE_RANDOM_ANIMATIONS);
@@ -372,10 +369,8 @@ public class NounoursActivity extends Activity {
             nounours.setEnableSound(!nounours.isSoundEnabled());
             nounours.setEnableVibrate(!nounours.isVibrateEnabled());
             if (nounours.isSoundEnabled()) {
-                menuItem.setIcon(R.drawable.ic_volume_off_small);
                 menuItem.setTitle(R.string.disablesound);
             } else {
-                menuItem.setIcon(R.drawable.ic_volume_small);
                 menuItem.setTitle(R.string.enablesound);
             }
             Editor editor = sharedPreferences.edit();
