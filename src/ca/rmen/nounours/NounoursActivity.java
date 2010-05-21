@@ -14,9 +14,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,6 +64,8 @@ public class NounoursActivity extends Activity {
     private static final int MENU_UPDATES = 1007;
     private static final int MENU_LOAD_MORE_THEMES = 1008;
     private static final int MENU_UPDATE_THEME = 1009;
+    private static final int MENU_TOGGLE_RANDOM_ANIMATIONS = 1010;
+    private static final int MENU_OPTIONS = 1011;
 
     static final String URL_CRASH_REPORT = "http://r24591.ovh.net/crashreport/";
 
@@ -81,6 +86,7 @@ public class NounoursActivity extends Activity {
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
         nounours = new AndroidNounours(this);
+
         nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
         imageView.setOnTouchListener(onTouchListener);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -167,14 +173,22 @@ public class NounoursActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         int mainMenuIdx = 0;
+
         // Set up the actions menu
         final SubMenu actionMenu = menu.addSubMenu(Menu.NONE, MENU_ACTION, mainMenuIdx++, R.string.actions);
         actionMenu.setIcon(R.drawable.menu_action);
         setupAnimationMenu(actionMenu);
 
+        final SubMenu optionsMenu = menu.addSubMenu(Menu.NONE, MENU_OPTIONS, mainMenuIdx++, R.string.options);
+        optionsMenu.setIcon(R.drawable.ic_menu_preferences);
+
         // Set up the toggle sound menu
-        final MenuItem toggleSoundMenu = menu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++, R.string.disablesound);
+        final MenuItem toggleSoundMenu = optionsMenu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++,
+                R.string.disablesound);
         toggleSoundMenu.setIcon(R.drawable.ic_volume_off_small);
+
+        final MenuItem toggleRandomAnimationMeu = optionsMenu.add(Menu.NONE, MENU_TOGGLE_RANDOM_ANIMATIONS,
+                mainMenuIdx++, R.string.disableRandomAnimations);
 
         if (FileUtil.isSdPresent()) {
             final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
@@ -313,6 +327,24 @@ public class NounoursActivity extends Activity {
                 animationMenu.setVisible(true);
             setupAnimationMenu(animationMenu.getSubMenu());
         }
+        MenuItem toggleSound = menu.findItem(MENU_TOGGLE_SOUND);
+        if (toggleSound != null) {
+            if (nounours.isSoundEnabled()) {
+                toggleSound.setTitle(R.string.disablesound);
+                toggleSound.setIcon(R.drawable.ic_volume_off_small);
+            } else {
+                toggleSound.setTitle(R.string.enablesound);
+                toggleSound.setIcon(R.drawable.ic_volume_small);
+            }
+        }
+        MenuItem toggleRandomAnimations = menu.findItem(MENU_TOGGLE_RANDOM_ANIMATIONS);
+        if (toggleRandomAnimations != null) {
+            if (nounours.isRandomAnimationsEnabled()) {
+                toggleRandomAnimations.setTitle(R.string.disableRandomAnimations);
+            } else {
+                toggleRandomAnimations.setTitle(R.string.enableRandomAnimations);
+            }
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -323,6 +355,7 @@ public class NounoursActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(final MenuItem menuItem) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Show the about dialog
         if (menuItem.getItemId() == MENU_ABOUT) {
             showDialog(MENU_ABOUT);
@@ -345,8 +378,22 @@ public class NounoursActivity extends Activity {
                 menuItem.setIcon(R.drawable.ic_volume_small);
                 menuItem.setTitle(R.string.enablesound);
             }
+            Editor editor = sharedPreferences.edit();
+            editor.putBoolean(AndroidNounours.PREF_SOUND_AND_VIBRATE, nounours.isRandomAnimationsEnabled());
+            editor.commit();
             return true;
 
+        } else if (menuItem.getItemId() == MENU_TOGGLE_RANDOM_ANIMATIONS) {
+            nounours.setEnableRandomAnimations(!nounours.isRandomAnimationsEnabled());
+            if (nounours.isRandomAnimationsEnabled()) {
+                menuItem.setTitle(R.string.disableRandomAnimations);
+            } else {
+                menuItem.setTitle(R.string.enableRandomAnimations);
+            }
+            Editor editor = sharedPreferences.edit();
+            editor.putBoolean(AndroidNounours.PREF_RANDOM, nounours.isRandomAnimationsEnabled());
+            editor.commit();
+            return true;
         }
         // The user picked the random animation
         else if (menuItem.getItemId() == MENU_RANDOM) {
