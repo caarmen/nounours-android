@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -204,8 +206,11 @@ public class NounoursActivity extends Activity {
                     .add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
             if (Nounours.DEFAULT_THEME_ID.equals(curThemeId))
                 themeMenuItem.setEnabled(false);
-            for (Theme imageSet : imageSets.values()) {
-                int imageSetId = Integer.parseInt(imageSet.getId());
+            SortedSet<String> sortedThemeList = new TreeSet<String>();
+            sortedThemeList.addAll(imageSets.keySet());
+            for (String imageSetIdStr : sortedThemeList) {
+                int imageSetId = Integer.parseInt(imageSetIdStr);
+                Theme imageSet = imageSets.get(imageSetIdStr);
                 CharSequence themeLabel = nounours.getThemeLabel(imageSet);
                 themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, themeLabel);
                 if (imageSet.getId().equals(curThemeId))
