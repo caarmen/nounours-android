@@ -66,6 +66,7 @@ public class NounoursActivity extends Activity {
     private static final int MENU_UPDATE_THEME = 1009;
     private static final int MENU_TOGGLE_RANDOM_ANIMATIONS = 1010;
     private static final int MENU_OPTIONS = 1011;
+    private static final int MENU_IDLE_TIMEOUT = 1012;
 
     static final String URL_CRASH_REPORT = "http://r24591.ovh.net/crashreport/";
 
@@ -188,6 +189,7 @@ public class NounoursActivity extends Activity {
 
         final MenuItem toggleRandomAnimationMeu = optionsMenu.add(Menu.NONE, MENU_TOGGLE_RANDOM_ANIMATIONS,
                 mainMenuIdx++, R.string.disableRandomAnimations);
+        optionsMenu.add(menu.NONE, MENU_IDLE_TIMEOUT, mainMenuIdx++, R.string.idleTimeout);
 
         if (FileUtil.isSdPresent()) {
             final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
@@ -263,12 +265,34 @@ public class NounoursActivity extends Activity {
             builder.setTitle(R.string.about);
             builder.setIcon(R.drawable.ic_dialog_info);
             builder.setView(View.inflate(this, R.layout.layout_about, null));
-            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                public void onClick(final DialogInterface dialog, final int whichButton) {
-                    // nothing
+            builder.setPositiveButton(R.string.ok, null);
+        } else if (id == MENU_IDLE_TIMEOUT) {
+            long currentIdleTimeout = nounours.getIdleTimeout();
+            int selectedItem = 0;
+            if (currentIdleTimeout == 30000)
+                selectedItem = 1;
+            else if (currentIdleTimeout == 60000)
+                selectedItem = 2;
+            else if (currentIdleTimeout == 120000)
+                selectedItem = 3;
+
+            builder.setTitle(R.string.idleTimeout);
+            builder.setNegativeButton(android.R.string.cancel, null);
+            builder.setSingleChoiceItems(R.array.idleTimeout, selectedItem, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    int idleTimeout = 15;
+                    if (which == 1)
+                        idleTimeout = 30;
+                    else if (which == 2)
+                        idleTimeout = 60;
+                    else if (which == 3)
+                        idleTimeout = 120;
+                    nounours.setIdleTimeout(idleTimeout * 1000);
+                    dialog.dismiss();
                 }
             });
-
         }
         return builder.create();
     }
@@ -467,6 +491,9 @@ public class NounoursActivity extends Activity {
                 }
             };
             nounours.runTaskWithProgressBar(updateTheme, false, message, 100);
+            return true;
+        } else if (menuItem.getItemId() == MENU_IDLE_TIMEOUT) {
+            showDialog(MENU_IDLE_TIMEOUT);
             return true;
         }
         // Show an animation or change the theme.

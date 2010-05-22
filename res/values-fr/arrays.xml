@@ -1,0 +1,8 @@
+<resources>
+	<string-array name="idleTimeout">
+		<item>15 secondes</item>
+		<item>30 secondes</item>
+		<item>1 minute</item>
+		<item>2 minutes</item>
+	</string-array>
+</resources>
