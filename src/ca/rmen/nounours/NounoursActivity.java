@@ -435,8 +435,7 @@ public class NounoursActivity extends Activity {
             Runnable themeListUpdater = new Runnable() {
                 public void run() {
                     Set<String> curThemeList = nounours.getThemes().keySet();
-                    String localThemeFileName = nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR)
-                            + File.separator + "themes.csv";
+                    String localThemeFileName = new File(nounours.getAppDir(), "themes.csv").getAbsolutePath();
                     File localThemesFile = new File(localThemeFileName);
 
                     String remoteThemeFile = nounours.getProperty(Nounours.PROP_THEME_LIST);
@@ -481,8 +480,8 @@ public class NounoursActivity extends Activity {
             Runnable updateTheme = new Runnable() {
                 public void run() {
                     try {
-                        boolean updated = nounours.getCurrentTheme().update(
-                                nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR), updateListener);
+                        File themeDir = nounours.getAppDir();
+                        boolean updated = nounours.getCurrentTheme().update(themeDir.getAbsolutePath(), updateListener);
                         String updateResultMessage = null;
                         CharSequence themeLabel = nounours.getCurrentThemeLabel();
                         if (updated)

@@ -21,6 +21,7 @@ import ca.rmen.nounours.util.Trace;
 import android.app.Activity;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
+import android.os.Environment;
 
 /**
  * Manages shaking and tilting events for Nounours on the Android device.
@@ -35,9 +36,9 @@ public class AndroidNounoursSensorListener implements SensorListener {
     private boolean isTiltImage = false;
     private Set<OrientationImage> orientationImages = new HashSet<OrientationImage>();;
 
-    private Nounours nounours = null;
+    private AndroidNounours nounours = null;
 
-    public AndroidNounoursSensorListener(Nounours nounours, Activity activity) {
+    public AndroidNounoursSensorListener(AndroidNounours nounours, Activity activity) {
         this.nounours = nounours;
         rereadOrientationFile(nounours.getCurrentTheme(), activity);
     }
@@ -54,9 +55,8 @@ public class AndroidNounoursSensorListener implements SensorListener {
             } catch (IOException e) {
                 Trace.debug(this, e);
             }
-        }
-        else
-            Trace.debug(this,"No orientation file!");
+        } else
+            Trace.debug(this, "No orientation file!");
 
     }
 
@@ -72,7 +72,7 @@ public class AndroidNounoursSensorListener implements SensorListener {
             InputStream orientationImageFile = activity.getResources().openRawResource(R.raw.orientationimage);
             return orientationImageFile;
         }
-        String themesDir = nounours.getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR);
+        String themesDir = nounours.getAppDir().getAbsolutePath();
         try {
             File orientationImageFile = new File(themesDir + File.separator + theme.getId() + File.separator
                     + "orientationimage.csv");
