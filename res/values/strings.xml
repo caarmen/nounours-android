@@ -25,7 +25,7 @@
 	<string name="downloading">Downloading my %s theme online...</string>
 	<string name="loading">Loading my %s theme</string>
 	<string name="defaultTheme">Default</string>
-	<string name="abouttext">Nounours v 1.3.4\nBy Carmen Alvarez\nc@rmen.ca\n\nCredits:\nB-Roll (Macarenours action): Kevin MacLeod (incompetech.com)\n\nThe Android(TM) Robot is created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.</string>
+	<string name="abouttext">Nounours v 1.3.5\nBy Carmen Alvarez\nc@rmen.ca\n\nCredits:\nB-Roll (Macarenours action): Kevin MacLeod (incompetech.com)\n\nThe Android(TM) Robot is created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.</string>
 	<string name="ok">Ok</string>
 	<string name="help">Help</string>
 	<string name="disablesound">Turn sound/vibrate off</string>
