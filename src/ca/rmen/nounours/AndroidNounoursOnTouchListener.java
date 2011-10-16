@@ -49,17 +49,17 @@ public class AndroidNounoursOnTouchListener implements OnTouchListener {
 		int pointerId = event.getPointerId(pointerIndex);*/
 		if (event.getAction() == MotionEvent.ACTION_DOWN
 				/*|| event.getAction() == MotionEvent.ACTION_POINTER_DOWN*/) {
-			int actionIndex = event.getActionIndex();
+			/*int actionIndex = event.getActionIndex();
 			int x = (int) event.getX(actionIndex);
-			int y = (int) event.getY(actionIndex);
+			int y = (int) event.getY(actionIndex);*/
 			//lastPointerId = pointerId;
-			nounours.onPress(x, y);
+			nounours.onPress((int) event.getX(), (int) event.getY());
 		} else if (event.getAction() == MotionEvent.ACTION_UP) {
 			nounours.onRelease();
 			//lastPointerId = -1;
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			int pointerCount = event.getPointerCount();
-			if (pointerCount == 1)
+			/*int pointerCount = event.getPointerCount();
+			if (pointerCount == 1)*/
 				nounours.onMove((int) event.getX(), (int) event.getY());
 			/*else {
 				for (int i = 0; i < event.getPointerCount(); i++) {
