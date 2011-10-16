@@ -18,6 +18,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -53,6 +54,10 @@ public class NounoursActivity extends Activity {
     private AndroidNounoursGestureDetector nounoursGestureDetector = null;
     private AndroidNounoursSensorListener sensorListener = null;
     private AndroidNounoursOnTouchListener onTouchListener = null;
+    private Sensor accelerometerSensor = null;
+    private Sensor orientationSensor = null;
+    private Sensor magneticFieldSensor = null;
+    
     private boolean wasPaused = false;
     // private boolean useSimulator = false;
 
@@ -93,9 +98,12 @@ public class NounoursActivity extends Activity {
         nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
         imageView.setOnTouchListener(onTouchListener);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        orientationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        
         final GestureDetector gestureDetector = new GestureDetector(nounoursGestureDetector);
         onTouchListener = new AndroidNounoursOnTouchListener(nounours, this, gestureDetector);
-
         sensorListener = new AndroidNounoursSensorListener(nounours, this);
         imageView.setOnTouchListener(onTouchListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -122,8 +130,10 @@ public class NounoursActivity extends Activity {
     @Override
     protected void onResume() {
 
-        sensorManager.registerListener(sensorListener, SensorManager.SENSOR_ACCELEROMETER
-                | SensorManager.SENSOR_ORIENTATION_RAW, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorListener, orientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_MAGNETIC_FIELD);
+
         super.onResume();
         if (wasPaused) {
             nounours.onResume();
