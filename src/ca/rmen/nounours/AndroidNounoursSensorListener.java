@@ -18,6 +18,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.OrientationImage;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.OrientationImageReader;
+import ca.rmen.nounours.util.NounoursApi8Helper;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -213,7 +215,8 @@ public class AndroidNounoursSensorListener implements SensorEventListener {
 		int x = SensorManager.AXIS_X;
 		int y = SensorManager.AXIS_Y;
 
-		switch (display.getRotation()) {
+		int rotation = getRotation(display);
+		switch (rotation) {
 		case Surface.ROTATION_90:
 			x = SensorManager.AXIS_Y;
 			y = SensorManager.AXIS_MINUS_X;
@@ -242,6 +245,13 @@ public class AndroidNounoursSensorListener implements SensorEventListener {
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// Do nothing
+	}
+	
+	private int getRotation(Display display) {
+		if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
+			return NounoursApi8Helper.getRotation(display);
+		}
+		return display.getOrientation();
 	}
 
 }
