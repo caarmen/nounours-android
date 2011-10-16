@@ -86,10 +86,10 @@ public class AndroidNounoursSensorListener implements SensorEventListener {
 		String themesDir = nounours.getAppDir().getAbsolutePath();
 		try {
 			File orientationImageFile = new File(themesDir + File.separator
-					+ theme.getId() + File.separator + "orientationimage.csv");
+					+ theme.getId() + File.separator + "orientationimage2.csv");
 			if (!orientationImageFile.exists()) {
 				URI remoteOrientationImageFile = new URI(theme.getLocation()
-						+ "/orientationimage.csv");
+						+ "/orientationimage2.csv");
 				Util.downloadFile(remoteOrientationImageFile,
 						orientationImageFile);
 				if (!orientationImageFile.exists())
