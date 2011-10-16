@@ -32,7 +32,7 @@
 	<string name="enablesound">Turn sound/vibrate on</string>
 	<string name="startle">Startle</string>
 	<string name="toast_remindMenuButton">Press the MENU button for more options\u2026</string>
-	<string name="themeLoadError">Oops, I couldn't load my theme. Try again! Check your network connection</string>
+	<string name="themeLoadError">Oops, I couldn\'t load my theme. Try again! Check your network connection</string>
 	<string name="loadMoreThemes">Look for new themes...</string>
 	<string name="loadMoreThemesInProgress">Downloading theme list...</string>
     <string name="newThemesAvailable">New themes available! Restart to use them.</string>
