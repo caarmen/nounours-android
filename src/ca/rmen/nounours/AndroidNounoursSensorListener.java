@@ -51,6 +51,7 @@ public class AndroidNounoursSensorListener implements SensorEventListener {
 			Context context) {
 		this.nounours = nounours;
 		rereadOrientationFile(nounours.getCurrentTheme(), context);
+		lastMagneticField = new float[] {0,0,-1};
 	}
 
 	public void rereadOrientationFile(Theme theme, Context context) {
