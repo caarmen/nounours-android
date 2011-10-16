@@ -35,6 +35,7 @@ import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.ThemeReader;
 import ca.rmen.nounours.io.ThemeUpdateListener;
 import ca.rmen.nounours.util.FileUtil;
+import ca.rmen.nounours.util.Trace;
 
 import com.nullwire.trace.ExceptionHandler;
 
@@ -132,7 +133,8 @@ public class NounoursActivity extends Activity {
 
         sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(sensorListener, orientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_MAGNETIC_FIELD);
+        if(!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_MAGNETIC_FIELD))
+        	Trace.debug(this, "Could not register for magnetic field sensor");
 
         super.onResume();
         if (wasPaused) {
