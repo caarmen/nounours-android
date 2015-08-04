@@ -33,8 +33,6 @@ import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
 
-//import android.util.DisplayMetrics;
-
 /**
  * Implementation of the abstract Nounours class, containing logic specific to
  * Android.
@@ -55,7 +53,6 @@ class AndroidNounours extends Nounours {
     private AndroidNounoursAnimationHandler animationHandler = null;
 
     private static final Map<String, Bitmap> imageCache = new HashMap<String, Bitmap>();
-    //private boolean useHd = false;
 
     /**
      * Open the CSV data files and call the superclass
@@ -75,11 +72,6 @@ class AndroidNounours extends Nounours {
         boolean enableSoundAndVibrate = sharedPreferences.getBoolean(PREF_SOUND_AND_VIBRATE, true);
         boolean enableRandomAnimations = sharedPreferences.getBoolean(PREF_RANDOM, true);
         long idleTimeout = sharedPreferences.getLong(PREF_IDLE_TIMEOUT, 30000);
-        /*
-         * Runnable task = new Runnable() {
-         * 
-         * @Override public void run() {
-         */
         animationHandler = new AndroidNounoursAnimationHandler(AndroidNounours.this, activity);
         AndroidNounoursSoundHandler soundHandler = new AndroidNounoursSoundHandler(AndroidNounours.this, activity);
         AndroidNounoursVibrateHandler vibrateHandler = new AndroidNounoursVibrateHandler(activity);
@@ -474,11 +466,6 @@ class AndroidNounours extends Nounours {
         final ImageView imageView = (ImageView) activity.findViewById(R.id.ImageView01);
         return imageView.getWidth();
     }
-    /*
-    @Override
-    protected boolean useHd(){
-    	return useHd;
-    }*/
 
     @Override
     protected boolean isThemeUpToDate(Theme theme) {
