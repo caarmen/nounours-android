@@ -6,7 +6,6 @@ package ca.rmen.nounours;
 
 //import java.util.HashMap;
 
-import android.app.Activity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,7 +17,7 @@ import android.view.View.OnTouchListener;
  * @author Carmen Alvarez
  * 
  */
-public class AndroidNounoursOnTouchListener implements OnTouchListener {
+class AndroidNounoursOnTouchListener implements OnTouchListener {
 
 	private GestureDetector gestureDetector = null;
 	private Nounours nounours = null;
@@ -27,7 +26,7 @@ public class AndroidNounoursOnTouchListener implements OnTouchListener {
 	private HashMap<Integer, Integer> lastYs = new HashMap<Integer, Integer>();
 	private int lastPointerId = -1;
 */
-	public AndroidNounoursOnTouchListener(Nounours nounours, Activity activity,
+	public AndroidNounoursOnTouchListener(Nounours nounours,
 			GestureDetector gestureDetector) {
 		this.nounours = nounours;
 		this.gestureDetector = gestureDetector;

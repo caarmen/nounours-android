@@ -179,7 +179,7 @@ public class ExceptionHandler {
 					// Read contents of stacktrace
 					StringBuilder contents = new StringBuilder();
 					BufferedReader input =  new BufferedReader(new FileReader(filePath));
-					String line = null;
+					String line;
 					String androidVersion = null;
 	                String phoneModel = null;
 	                while (( line = input.readLine()) != null){

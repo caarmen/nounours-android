@@ -14,11 +14,11 @@ $Id: FileUtil.java 625 2009-04-26 22:45:17Z bod $
  */
 package ca.rmen.nounours.util;
 
+import android.os.Environment;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import android.os.Environment;
 
 public class FileUtil {
     public static boolean isSdPresent() {
@@ -27,7 +27,7 @@ public class FileUtil {
                 || externalStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY);
     }
 
-    public static long copy(final InputStream in, final OutputStream out) throws IOException {
+    public static void copy(final InputStream in, final OutputStream out) throws IOException {
         long res = 0;
         final byte[] buffer = new byte[1500];
         int read;
@@ -36,6 +36,5 @@ public class FileUtil {
             out.flush();
             res += read;
         }
-        return res;
     }
 }

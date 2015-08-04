@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ca.rmen.nounours.data.OrientationImage;
-import ca.rmen.nounours.io.CSVReader;
-import ca.rmen.nounours.io.NounoursReader;
 
 /**
  * Reads a CSV file about which images to display when the device is in a given
@@ -31,7 +29,7 @@ public class OrientationImageReader extends NounoursReader {
     private static final String COL_MIN_ROLL = "MinRoll";
     private static final String COL_MAX_ROLL = "MaxRoll";
 
-    private Set<OrientationImage> orientationImages = new HashSet<OrientationImage>();
+    private final Set<OrientationImage> orientationImages = new HashSet<OrientationImage>();
 
     /**
      * Immediately reads the CSV content and caches the image-orientation data.
@@ -49,7 +47,6 @@ public class OrientationImageReader extends NounoursReader {
        - MaxRoll: integer between -180 and 180.  Maximum roll.
      * </code>
      *
-     * @param is
      * @throws IOException
      */
     public OrientationImageReader(InputStream is) throws IOException {
@@ -78,7 +75,7 @@ public class OrientationImageReader extends NounoursReader {
     /**
      * @return the set of OrientationImage objects read from the CSV file.
      */
-    public Set<OrientationImage> getOrentationImages() {
+    public Set<OrientationImage> getOrientationImages() {
         return Collections.unmodifiableSet(orientationImages);
     }
 

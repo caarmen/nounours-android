@@ -24,13 +24,13 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  * 
  */
-public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
+class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
-    AndroidNounours nounours = null;
-    Activity activity = null;
-    static Map<String, AnimationDrawable> animationCache = new HashMap<String, AnimationDrawable>();
+    private AndroidNounours nounours = null;
+    private Activity activity = null;
+    private static final Map<String, AnimationDrawable> animationCache = new HashMap<String, AnimationDrawable>();
 
-    static Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<Bitmap, BitmapDrawable>();
+    private static final Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<Bitmap, BitmapDrawable>();
 
     public AndroidNounoursAnimationHandler(AndroidNounours nounours, Activity activity) {
         this.nounours = nounours;
@@ -49,7 +49,7 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
         bitmapDrawables.clear();
     }
 
-    void purgeAnimationDrawable(AnimationDrawable animationDrawable) {
+    private void purgeAnimationDrawable(AnimationDrawable animationDrawable) {
         animationDrawable.stop();
         for (int i = 0; i < animationDrawable.getNumberOfFrames(); i++) {
             Drawable frame = animationDrawable.getFrame(i);
@@ -110,7 +110,7 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
     /**
      * The user selected an animation from the menu. Display the animation.
      * 
-     * @see ca.rmen.nounours.Nounours#doAnimation(java.lang.String)
+     * @see ca.rmen.nounours.Nounours#doAnimation(Animation, boolean)
      */
     public void doAnimation(final Animation animation, final boolean isDynamicAnimation) {
         final Runnable runnable = new Runnable() {
@@ -137,7 +137,7 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
     /**
      * Stop the currently running animation, if there is one.
      * 
-     * @see ca.rmen.nounours.Nounours#stopAnimationImpl()
+     * @see ca.rmen.nounours.Nounours#stopAnimation()
      */
     public void stopAnimation() {
         final AnimationDrawable animation = getCurrentAnimationDrawable();
@@ -149,10 +149,9 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
     /**
      * Create an Android animation given the nounours animation data.
      * 
-     * @param animation
-     * @return
+     * @param doCache if true, this image sequence will be stored in memory for future use.
      */
-    AnimationDrawable createAnimation(final Animation animation, boolean doCache) {
+    private AnimationDrawable createAnimation(final Animation animation, boolean doCache) {
         // First see if we have this stored in memory.
         AnimationDrawable animationDrawable = animationCache.get(animation.getId());
         if (animationDrawable != null) {
@@ -228,9 +227,7 @@ public class AndroidNounoursAnimationHandler implements NounoursAnimationHandler
     /**
      * The implementing class may implement this to add the menu item for the
      * animation, as it is read from the CSV file. If this must be handled
-     * later, the method {#link {@link #getAnimations()} may be used instead.
-     * 
-     * @param animation
+     * later, the method {#link {@link ca.rmen.nounours.data.Theme#getAnimations()} may be used instead.
      */
     public void addAnimation(Animation animation) {
         // Do nothing

@@ -14,7 +14,7 @@ import android.os.Vibrator;
  * @author Carmen Alvarez
  *
  */
-public class AndroidNounoursVibrateHandler implements NounoursVibrateHandler {
+class AndroidNounoursVibrateHandler implements NounoursVibrateHandler {
 
     private Activity activity = null;
 

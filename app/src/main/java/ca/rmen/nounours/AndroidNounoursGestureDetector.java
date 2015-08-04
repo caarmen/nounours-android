@@ -13,7 +13,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
  * @author Carmen Alvarez
  *
  */
-public class AndroidNounoursGestureDetector extends SimpleOnGestureListener {
+class AndroidNounoursGestureDetector extends SimpleOnGestureListener {
 
     private Nounours nounours = null;
 

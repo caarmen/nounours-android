@@ -4,6 +4,22 @@
  */
 package ca.rmen.nounours;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Display;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,27 +27,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
-import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.os.Environment;
-import android.preference.PreferenceManager;
-//import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.GoogleAnalyticsHelper;
 import ca.rmen.nounours.util.Trace;
+
+//import android.util.DisplayMetrics;
 
 /**
  * Implementation of the abstract Nounours class, containing logic specific to
@@ -40,13 +42,13 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  * 
  */
-public class AndroidNounours extends Nounours {
+class AndroidNounours extends Nounours {
 
 	//private static final double MIN_SIZE_INCHES_FOR_HD = 5.0;
 	
     NounoursActivity activity = null;
-    ProgressDialog progressDialog;
-    AlertDialog alertDialog;
+    private ProgressDialog progressDialog;
+    private AlertDialog alertDialog;
     private static final String PREF_THEME = "Theme";
     private static final String PREF_THEME_UPDATE = "ThemeUpdate";
     static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
@@ -56,12 +58,12 @@ public class AndroidNounours extends Nounours {
     private SharedPreferences sharedPreferences = null;
     private AndroidNounoursAnimationHandler animationHandler = null;
 
-    static Map<String, Bitmap> imageCache = new HashMap<String, Bitmap>();
+    private static final Map<String, Bitmap> imageCache = new HashMap<String, Bitmap>();
     //private boolean useHd = false;
 
     /**
      * Open the CSV data files and call the superclass
-     * {@link #init(InputStream, InputStream, InputStream, InputStream, InputStream, String)}
+     * {@link Nounours#init(NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, String)}
      * method.
      * 
      * @param activity
@@ -174,7 +176,7 @@ public class AndroidNounours extends Nounours {
         editor.putString(PREF_THEME, id);
         editor.commit();
         // MEMORY
-        clearImageache();
+        clearImageCache();
         Runnable imageCacher = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -264,7 +266,7 @@ public class AndroidNounours extends Nounours {
     /**
      * Display a picture on the screen.
      * 
-     * @see ca.rmen.nounours.Nounours#displayImage(ca.rmen.nounours.Image)
+     * @see ca.rmen.nounours.Nounours#displayImage(ca.rmen.nounours.data.Image)
      */
     @Override
     protected void displayImage(final Image image) {
@@ -278,7 +280,7 @@ public class AndroidNounours extends Nounours {
         imageView.setImageBitmap(bitmap);
     }
 
-    private void clearImageache() {
+    private void clearImageCache() {
 
         for (Bitmap bitmap : imageCache.values()) {
             if (!bitmap.isRecycled())
@@ -292,9 +294,6 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Find the Android image for the given nounours image.
-     * 
-     * @param image
-     * @return
      */
     Bitmap getDrawableImage(final Image image) {
         Bitmap res = imageCache.get(image.getId());
@@ -307,15 +306,14 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Load an image from the disk into memory. Return the Drawable for the
-     * iamge.
+     * image.
      * 
-     * @param image
-     * @return
+     * @param retries number of attempts to scale down the image if we run out of memory.
      */
-    Bitmap loadImage(final Image image, int retries) {
+    private Bitmap loadImage(final Image image, int retries) {
         debug("Loading " + image + " into memory");
         Bitmap cachedBitmap = imageCache.get(image.getId());
-        Bitmap newBitmap = null;
+        Bitmap newBitmap;
         try {
             // This is one of the downloaded images, in the sdcard.
             if (image.getFilename().contains(getAppDir().getAbsolutePath())) {
@@ -380,7 +378,7 @@ public class AndroidNounours extends Nounours {
      * @param readOnlyBitmap
      *            the immutable bitmap
      * @param imageId
-     * @return
+     * @return the mutable copy of the read-only bitmap.
      */
     private Bitmap copyAndCacheImage(Bitmap readOnlyBitmap, String imageId) {
         Bitmap mutableBitmap = readOnlyBitmap.copy(readOnlyBitmap.getConfig(), true);
@@ -414,12 +412,11 @@ public class AndroidNounours extends Nounours {
     /**
      * Run a task, showing the progress bar while the task runs.
      * 
-     * @param task
      * @param ui
      *            if true, use the android api to run the task. Otherwise use
      *            the standard java thread api.
      */
-    protected void runTaskWithProgressBar(final Runnable task, boolean ui, String message, int max) {
+    void runTaskWithProgressBar(final Runnable task, boolean ui, String message, int max) {
         if (progressDialog != null)
             progressDialog.dismiss();
         createProgressDialog(max, message);
@@ -439,10 +436,6 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Update the currently showing progress bar.
-     * 
-     * @param progress
-     * @param max
-     * @param message
      */
     void updateProgressBar(final int progress, final int max, final String message) {
         Runnable runnable = new Runnable() {
@@ -465,11 +458,8 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Create a determinate progress dialog with the given size and text.
-     * 
-     * @param max
-     * @param message
      */
-    void createProgressDialog(int max, String message) {
+    private void createProgressDialog(int max, String message) {
         progressDialog = new ProgressDialog(activity);
         progressDialog.setTitle("");
         progressDialog.setMessage(message);

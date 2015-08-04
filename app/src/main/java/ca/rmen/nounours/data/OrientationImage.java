@@ -24,12 +24,6 @@ public class OrientationImage {
      * @param imageId
      *            The image to display if the device is tilted in the given
      *            direction.
-     * @param minYaw
-     * @param maxYaw
-     * @param minPitch
-     * @param maxPitch
-     * @param minRoll
-     * @param maxRoll
      */
     public OrientationImage(String imageId, float minYaw, float maxYaw, float minPitch, float maxPitch, float minRoll,
             float maxRoll) {

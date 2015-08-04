@@ -4,15 +4,6 @@
  */
 package ca.rmen.nounours;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Set;
-
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -22,6 +13,16 @@ import android.os.Build;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Set;
+
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.OrientationImage;
 import ca.rmen.nounours.data.Theme;
@@ -35,17 +36,17 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  * 
  */
-public class AndroidNounoursSensorListener implements SensorEventListener {
+class AndroidNounoursSensorListener implements SensorEventListener {
 	private float xAccel = Float.MAX_VALUE;
 	private float yAccel = Float.MAX_VALUE;
 	private float zAccel = Float.MAX_VALUE;
 	private boolean isTiltImage = false;
-	private Set<OrientationImage> orientationImages = new HashSet<OrientationImage>();
+	private final Set<OrientationImage> orientationImages = new HashSet<OrientationImage>();
 
 	private AndroidNounours nounours = null;
 
-	float[] lastAcceleration = null;
-	float[] lastMagneticField = null;
+	private float[] lastAcceleration = null;
+	private float[] lastMagneticField = null;
 
 	public AndroidNounoursSensorListener(AndroidNounours nounours,
 			Context context) {
@@ -64,7 +65,7 @@ public class AndroidNounoursSensorListener implements SensorEventListener {
 				orientationImageReader = new OrientationImageReader(
 						orientationImageFile);
 				orientationImages.addAll(orientationImageReader
-						.getOrentationImages());
+						.getOrientationImages());
 			} catch (IOException e) {
 				Trace.debug(this, e);
 			}
@@ -76,15 +77,13 @@ public class AndroidNounoursSensorListener implements SensorEventListener {
 	/**
 	 * Find the orientation file.
 	 * 
-	 * @param context
-	 * @return
+	 * @return a stream to read the orientation file for the given theme.
 	 */
 	private InputStream getOrientationFile(Theme theme, Context context) {
 
 		if (theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
-			InputStream orientationImageFile = context.getResources()
+			return context.getResources()
 					.openRawResource(R.raw.orientationimage);
-			return orientationImageFile;
 		}
 		String themesDir = nounours.getAppDir().getAbsolutePath();
 		try {
@@ -219,7 +218,9 @@ public class AndroidNounoursSensorListener implements SensorEventListener {
 		int rotation = getRotation(display);
 		switch (rotation) {
 		case Surface.ROTATION_90:
+			//noinspection SuspiciousNameCombination
 			x = SensorManager.AXIS_Y;
+			//noinspection SuspiciousNameCombination
 			y = SensorManager.AXIS_MINUS_X;
 
 			break;
@@ -229,7 +230,9 @@ public class AndroidNounoursSensorListener implements SensorEventListener {
 
 			break;
 		case Surface.ROTATION_270:
+			//noinspection SuspiciousNameCombination
 			x = SensorManager.AXIS_MINUS_Y;
+			//noinspection SuspiciousNameCombination
 			y = SensorManager.AXIS_X;
 
 			break;

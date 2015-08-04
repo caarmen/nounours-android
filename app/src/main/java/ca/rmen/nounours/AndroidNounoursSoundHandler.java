@@ -4,15 +4,16 @@
  */
 package ca.rmen.nounours;
 
+import android.app.Activity;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnErrorListener;
+import android.os.Environment;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import android.app.Activity;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnErrorListener;
-import android.os.Environment;
 import ca.rmen.nounours.data.Sound;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.util.FileUtil;
@@ -24,7 +25,7 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  * 
  */
-public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListener {
+class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListener {
     private static final String APP_SD_DIR = "nounours";
     private MediaPlayer mediaPlayer = null;
 
@@ -45,8 +46,8 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
      * For some reason, sounds will only play if they are on the sdcard. The
      * first time we try to play a sound, copy it first to the sdcard.
      * 
-     * @param sound
-     * @return
+     * @param sound one of Nounours' sounds.
+     * @return The file for the given sound
      * @throws IOException
      */
     private File getSoundFile(final Sound sound) throws IOException {
@@ -54,15 +55,15 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
         // Get the nounours directory on the sdcard
         if (!FileUtil.isSdPresent())
             return null;
-        final File externalStorateDirectory = Environment.getExternalStorageDirectory();
-        final File appRootDirectory = new File(externalStorateDirectory, APP_SD_DIR);
+        final File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        final File appRootDirectory = new File(externalStorageDirectory, APP_SD_DIR);
         if (!appRootDirectory.exists() && !appRootDirectory.mkdir()) {
             return null;
         }
 
         // Check if the sound file exists already.
         Theme theme = nounours.getCurrentTheme();
-        File sdSoundFile = new File(sound.getFilename());
+        File sdSoundFile;
         if (theme.getId().equals(Nounours.DEFAULT_THEME_ID))
             sdSoundFile = new File(appRootDirectory, sound.getFilename());
         else {
@@ -105,8 +106,6 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
 
     /**
      * Play a sound.
-     * 
-     * @see ca.rmen.nounours.Nounours#playSound(java.lang.String)
      */
     public void playSound(final String soundId) {
         final Sound sound = nounours.getSound(soundId);
@@ -141,7 +140,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
     /**
      * Mute or unmute the media player.
      * 
-     * @see ca.rmen.nounours.Nounours#setEnableSoundImpl(boolean)
+     * @see ca.rmen.nounours.Nounours#setEnableSound(boolean)
      */
     public void setEnableSound(final boolean enableSound) {
         if (enableSound) {
@@ -159,7 +158,7 @@ public class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErro
      */
     @Override
     public boolean onError(final MediaPlayer mp, final int what, final int extra) {
-        Trace.debug(this, "Mediaplayer error: Mediaplayer = " + mp + "(" + mp.getClass() + "), what=" + what
+        Trace.debug(this, "MediaPlayer error: MediaPlayer = " + mp + "(" + mp.getClass() + "), what=" + what
                 + ", extra = " + extra);
         return false;
     }

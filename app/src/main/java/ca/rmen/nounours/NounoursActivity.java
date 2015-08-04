@@ -4,14 +4,6 @@
  */
 package ca.rmen.nounours;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,14 +22,23 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.nullwire.trace.ExceptionHandler;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.ThemeReader;
 import ca.rmen.nounours.io.ThemeUpdateListener;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
-
-import com.nullwire.trace.ExceptionHandler;
 
 /**
  * Android activity class which delegates nounours-specific logic to the
@@ -50,9 +51,8 @@ public class NounoursActivity extends Activity {
 
     private Toast toast = null;
 
-    AndroidNounours nounours = null;
+    private AndroidNounours nounours = null;
     private SensorManager sensorManager = null;
-    private AndroidNounoursGestureDetector nounoursGestureDetector = null;
     private AndroidNounoursSensorListener sensorListener = null;
     private AndroidNounoursOnTouchListener onTouchListener = null;
     private Sensor accelerometerSensor = null;
@@ -76,7 +76,7 @@ public class NounoursActivity extends Activity {
     private static final int MENU_OPTIONS = 1011;
     private static final int MENU_IDLE_TIMEOUT = 1012;
 
-    static final String URL_CRASH_REPORT = "http://r24591.ovh.net/crashreport/";
+    private static final String URL_CRASH_REPORT = "http://r24591.ovh.net/crashreport/";
 
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
@@ -96,7 +96,7 @@ public class NounoursActivity extends Activity {
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
         nounours = new AndroidNounours(this);
 
-        nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
+        AndroidNounoursGestureDetector nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
         imageView.setOnTouchListener(onTouchListener);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -104,7 +104,7 @@ public class NounoursActivity extends Activity {
         magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         
         final GestureDetector gestureDetector = new GestureDetector(nounoursGestureDetector);
-        onTouchListener = new AndroidNounoursOnTouchListener(nounours, this, gestureDetector);
+        onTouchListener = new AndroidNounoursOnTouchListener(nounours,  gestureDetector);
         sensorListener = new AndroidNounoursSensorListener(nounours, this);
         imageView.setOnTouchListener(onTouchListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -198,12 +198,12 @@ public class NounoursActivity extends Activity {
         optionsMenu.setIcon(R.drawable.ic_menu_preferences);
 
         // Set up the toggle sound menu
-        final MenuItem toggleSoundMenu = optionsMenu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++,
+        optionsMenu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++,
                 R.string.disablesound);
 
-        final MenuItem toggleRandomAnimationMeu = optionsMenu.add(Menu.NONE, MENU_TOGGLE_RANDOM_ANIMATIONS,
+        optionsMenu.add(Menu.NONE, MENU_TOGGLE_RANDOM_ANIMATIONS,
                 mainMenuIdx++, R.string.disableRandomAnimations);
-        optionsMenu.add(menu.NONE, MENU_IDLE_TIMEOUT, mainMenuIdx++, R.string.idleTimeout);
+        optionsMenu.add(Menu.NONE, MENU_IDLE_TIMEOUT, mainMenuIdx++, R.string.idleTimeout);
 
         if (FileUtil.isSdPresent()) {
             final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
@@ -232,7 +232,7 @@ public class NounoursActivity extends Activity {
             final SubMenu updatesMenu = menu.addSubMenu(Menu.NONE, MENU_UPDATES, mainMenuIdx++, R.string.updates);
             updatesMenu.add(Menu.NONE, MENU_LOAD_MORE_THEMES, imageSetIdx++, R.string.loadMoreThemes);
 
-            updatesMenu.add(Menu.NONE, MENU_UPDATE_THEME, imageSetIdx++, getString(R.string.upateCurrentTheme, nounours
+            updatesMenu.add(Menu.NONE, MENU_UPDATE_THEME, imageSetIdx, getString(R.string.upateCurrentTheme, nounours
                     .getCurrentThemeLabel()));
             updatesMenu.setIcon(R.drawable.ic_menu_update);
         }
@@ -242,7 +242,7 @@ public class NounoursActivity extends Activity {
         helpMenu.setIcon(R.drawable.ic_menu_help);
 
         // Set up the about menu
-        final MenuItem aboutMenu = menu.add(Menu.NONE, MENU_ABOUT, mainMenuIdx++, R.string.about);
+        final MenuItem aboutMenu = menu.add(Menu.NONE, MENU_ABOUT, mainMenuIdx, R.string.about);
         aboutMenu.setIcon(R.drawable.ic_menu_info_details);
         return true;
     }
@@ -494,7 +494,7 @@ public class NounoursActivity extends Activity {
                     try {
                         File themeDir = nounours.getAppDir();
                         boolean updated = nounours.getCurrentTheme().update(themeDir.getAbsolutePath(), updateListener);
-                        String updateResultMessage = null;
+                        String updateResultMessage;
                         CharSequence themeLabel = nounours.getCurrentThemeLabel();
                         if (updated)
                             updateResultMessage = getString(R.string.updateCurrentThemeComplete, themeLabel);
