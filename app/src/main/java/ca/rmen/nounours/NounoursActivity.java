@@ -60,7 +60,7 @@ public class NounoursActivity extends Activity {
     private Sensor magneticFieldSensor = null;
     
     private boolean wasPaused = false;
-    // private boolean useSimulator = false;
+    private boolean useSimulator = false;
 
     private static final int MENU_ABOUT = 1000;
     private static final int MENU_ACTION = 1001;
@@ -98,10 +98,14 @@ public class NounoursActivity extends Activity {
 
         AndroidNounoursGestureDetector nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
         imageView.setOnTouchListener(onTouchListener);
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        orientationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-        magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if(!useSimulator) {
+            sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        }
+        if(sensorManager != null) {
+            accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            orientationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+            magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        }
         
         final GestureDetector gestureDetector = new GestureDetector(nounoursGestureDetector);
         onTouchListener = new AndroidNounoursOnTouchListener(nounours,  gestureDetector);
@@ -131,10 +135,12 @@ public class NounoursActivity extends Activity {
     @Override
     protected void onResume() {
 
-        sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(sensorListener, orientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        if(!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_MAGNETIC_FIELD))
-        	Trace.debug(this, "Could not register for magnetic field sensor");
+        if(sensorManager != null) {
+            sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(sensorListener, orientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            if (!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_MAGNETIC_FIELD))
+                Trace.debug(this, "Could not register for magnetic field sensor");
+        }
 
         super.onResume();
         if (wasPaused) {
@@ -177,7 +183,9 @@ public class NounoursActivity extends Activity {
     private void stopActivity() {
         nounours.doPing(false);
         nounours.stopSound();
-        sensorManager.unregisterListener(sensorListener);
+        if(sensorManager != null) {
+            sensorManager.unregisterListener(sensorListener);
+        }
     }
 
     /**
