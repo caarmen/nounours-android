@@ -4,6 +4,7 @@
  */
 package ca.rmen.nounours;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -30,7 +31,6 @@ import java.util.Map;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.util.FileUtil;
-import ca.rmen.nounours.util.GoogleAnalyticsHelper;
 import ca.rmen.nounours.util.Trace;
 
 //import android.util.DisplayMetrics;
@@ -46,7 +46,7 @@ class AndroidNounours extends Nounours {
 
 	//private static final double MIN_SIZE_INCHES_FOR_HD = 5.0;
 	
-    NounoursActivity activity = null;
+    Activity activity = null;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
     private static final String PREF_THEME = "Theme";
@@ -54,7 +54,6 @@ class AndroidNounours extends Nounours {
     static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
     static final String PREF_RANDOM = "Random";
     static final String PREF_IDLE_TIMEOUT = "IdleTimeout";
-    private static final String ANALYTICS_TRACKER_ID = "UA-XXXXXX-1";
     private SharedPreferences sharedPreferences = null;
     private AndroidNounoursAnimationHandler animationHandler = null;
 
@@ -77,7 +76,6 @@ class AndroidNounours extends Nounours {
         String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        GoogleAnalyticsHelper.track(activity, sharedPreferences, false, ANALYTICS_TRACKER_ID, themeId, null);
         boolean enableSoundAndVibrate = sharedPreferences.getBoolean(PREF_SOUND_AND_VIBRATE, true);
         boolean enableRandomAnimations = sharedPreferences.getBoolean(PREF_RANDOM, true);
         long idleTimeout = sharedPreferences.getLong(PREF_IDLE_TIMEOUT, 30000);

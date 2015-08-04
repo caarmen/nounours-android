@@ -23,8 +23,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.nullwire.trace.ExceptionHandler;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.URI;
@@ -87,9 +85,6 @@ public class NounoursActivity extends Activity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // crash report
-        ExceptionHandler.register(this, URL_CRASH_REPORT);
 
         setContentView(R.layout.main);
 
