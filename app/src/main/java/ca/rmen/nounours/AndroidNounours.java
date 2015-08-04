@@ -44,8 +44,6 @@ import ca.rmen.nounours.util.Trace;
  */
 class AndroidNounours extends Nounours {
 
-	//private static final double MIN_SIZE_INCHES_FOR_HD = 5.0;
-	
     Activity activity = null;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
@@ -110,19 +108,6 @@ class AndroidNounours extends Nounours {
         } catch (final IOException e) {
             Log.d(getClass().getName(), "Error initializing nounours", e); //$NON-NLS-1$
         }
-        /*
-    	DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        
-        double x = dm.widthPixels/dm.xdpi;
-        double y = dm.heightPixels/dm.ydpi;
-        double screenInches = Math.sqrt(x*x+y*y);
-        useHd = screenInches >= MIN_SIZE_INCHES_FOR_HD;
-        Log.d("hello", "size inches: " + x + "x" + y + ":" + screenInches);
-        Log.d("hello", "dpi: " + dm.xdpi + "x" + dm.ydpi);
-        Log.d("hello", "size pixels: " + dm.widthPixels + "x" + dm.heightPixels);
-        */
-
     }
 
     /**
