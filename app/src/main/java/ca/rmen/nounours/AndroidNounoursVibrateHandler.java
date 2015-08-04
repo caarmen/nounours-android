@@ -12,7 +12,6 @@ import android.os.Vibrator;
  * Manages vibration for Nounours on the android device.
  *
  * @author Carmen Alvarez
- *
  */
 class AndroidNounoursVibrateHandler implements NounoursVibrateHandler {
 

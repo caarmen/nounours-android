@@ -6,9 +6,8 @@ package ca.rmen.nounours.data;
 
 /**
  * Represents an image to display if the device is set in the given orientation.
- * 
+ *
  * @author Carmen Alvarez
- * 
  */
 public class OrientationImage {
 
@@ -21,12 +20,11 @@ public class OrientationImage {
     private float maxRoll = Float.MAX_VALUE;
 
     /**
-     * @param imageId
-     *            The image to display if the device is tilted in the given
-     *            direction.
+     * @param imageId The image to display if the device is tilted in the given
+     *                direction.
      */
     public OrientationImage(String imageId, float minYaw, float maxYaw, float minPitch, float maxPitch, float minRoll,
-            float maxRoll) {
+                            float maxRoll) {
         this.imageId = imageId;
         this.minYaw = minYaw;
         this.maxYaw = maxYaw;

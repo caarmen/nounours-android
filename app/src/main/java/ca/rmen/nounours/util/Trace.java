@@ -10,7 +10,6 @@ import android.util.Log;
  * Utility class for logging.
  *
  * @author Carmen Alvarez
- *
  */
 public class Trace {
 

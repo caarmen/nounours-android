@@ -21,9 +21,8 @@ import ca.rmen.nounours.util.Trace;
 
 /**
  * Manages sound effects and music for Nounours on the Android device.
- * 
+ *
  * @author Carmen Alvarez
- * 
  */
 class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListener {
     private static final String APP_SD_DIR = "nounours";
@@ -45,7 +44,7 @@ class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListen
     /**
      * For some reason, sounds will only play if they are on the sdcard. The
      * first time we try to play a sound, copy it first to the sdcard.
-     * 
+     *
      * @param sound one of Nounours' sounds.
      * @return The file for the given sound
      * @throws IOException
@@ -130,7 +129,7 @@ class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListen
 
     /**
      * Stop playing a sound.
-     * 
+     *
      * @see ca.rmen.nounours.Nounours#stopSound()
      */
     public void stopSound() {
@@ -139,7 +138,7 @@ class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListen
 
     /**
      * Mute or unmute the media player.
-     * 
+     *
      * @see ca.rmen.nounours.Nounours#setEnableSound(boolean)
      */
     public void setEnableSound(final boolean enableSound) {
@@ -152,9 +151,9 @@ class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListen
 
     /**
      * Some error occurred using the media player
-     * 
+     *
      * @see android.media.MediaPlayer.OnErrorListener#onError(android.media.MediaPlayer,
-     *      int, int)
+     * int, int)
      */
     @Override
     public boolean onError(final MediaPlayer mp, final int what, final int extra) {

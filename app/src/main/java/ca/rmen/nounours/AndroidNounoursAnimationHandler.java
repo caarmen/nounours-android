@@ -20,9 +20,8 @@ import ca.rmen.nounours.util.Trace;
 
 /**
  * Manages the Nounours animations displayed to the Android device.
- * 
+ *
  * @author Carmen Alvarez
- * 
  */
 class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
@@ -109,7 +108,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
     /**
      * The user selected an animation from the menu. Display the animation.
-     * 
+     *
      * @see ca.rmen.nounours.Nounours#doAnimation(Animation, boolean)
      */
     public void doAnimation(final Animation animation, final boolean isDynamicAnimation) {
@@ -136,7 +135,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
     /**
      * Stop the currently running animation, if there is one.
-     * 
+     *
      * @see ca.rmen.nounours.Nounours#stopAnimation()
      */
     public void stopAnimation() {
@@ -148,7 +147,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
     /**
      * Create an Android animation given the nounours animation data.
-     * 
+     *
      * @param doCache if true, this image sequence will be stored in memory for future use.
      */
     private AnimationDrawable createAnimation(final Animation animation, boolean doCache) {

@@ -38,9 +38,8 @@ import ca.rmen.nounours.util.Trace;
 /**
  * Implementation of the abstract Nounours class, containing logic specific to
  * Android.
- * 
+ *
  * @author Carmen Alvarez
- * 
  */
 class AndroidNounours extends Nounours {
 
@@ -62,9 +61,8 @@ class AndroidNounours extends Nounours {
      * Open the CSV data files and call the superclass
      * {@link Nounours#init(NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, String)}
      * method.
-     * 
-     * @param activity
-     *            The android activity.
+     *
+     * @param activity The android activity.
      */
     public AndroidNounours(final NounoursActivity activity) {
 
@@ -140,10 +138,9 @@ class AndroidNounours extends Nounours {
      */
     @Override
     public boolean useTheme(final String id) {
-        if(!Nounours.DEFAULT_THEME_ID.equals(id))
-        {
+        if (!Nounours.DEFAULT_THEME_ID.equals(id)) {
             File themeDir = new File(getAppDir(), id);
-            if(!themeDir.exists())
+            if (!themeDir.exists())
                 themeDir.mkdirs();
         }
         int taskSize = 1;
@@ -248,7 +245,7 @@ class AndroidNounours extends Nounours {
 
     /**
      * Display a picture on the screen.
-     * 
+     *
      * @see ca.rmen.nounours.Nounours#displayImage(ca.rmen.nounours.data.Image)
      */
     @Override
@@ -290,7 +287,7 @@ class AndroidNounours extends Nounours {
     /**
      * Load an image from the disk into memory. Return the Drawable for the
      * image.
-     * 
+     *
      * @param retries number of attempts to scale down the image if we run out of memory.
      */
     private Bitmap loadImage(final Image image, int retries) {
@@ -357,9 +354,8 @@ class AndroidNounours extends Nounours {
     /**
      * Create a mutable copy of the given immutable bitmap, and store it in the
      * cache.
-     * 
-     * @param readOnlyBitmap
-     *            the immutable bitmap
+     *
+     * @param readOnlyBitmap the immutable bitmap
      * @param imageId
      * @return the mutable copy of the read-only bitmap.
      */
@@ -374,7 +370,6 @@ class AndroidNounours extends Nounours {
 
     /**
      * Trace.
-     * 
      */
     @Override
     protected void debug(final Object o) {
@@ -383,7 +378,7 @@ class AndroidNounours extends Nounours {
 
     /**
      * UI threads should be run with an Android thread call.
-     * 
+     *
      * @see ca.rmen.nounours.Nounours#runTask(java.lang.Runnable)
      */
     @Override
@@ -394,10 +389,9 @@ class AndroidNounours extends Nounours {
 
     /**
      * Run a task, showing the progress bar while the task runs.
-     * 
-     * @param ui
-     *            if true, use the android api to run the task. Otherwise use
-     *            the standard java thread api.
+     *
+     * @param ui if true, use the android api to run the task. Otherwise use
+     *           the standard java thread api.
      */
     void runTaskWithProgressBar(final Runnable task, boolean ui, String message, int max) {
         if (progressDialog != null)
@@ -526,10 +520,9 @@ class AndroidNounours extends Nounours {
         };
         runTask(showAlert);
     }
-    
+
     @Override
-    public File getAppDir()
-    {
+    public File getAppDir() {
         File sdcard = Environment.getExternalStorageDirectory();
         if (sdcard != null && sdcard.exists()) {
             String appDirName = getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR);
@@ -539,7 +532,7 @@ class AndroidNounours extends Nounours {
             return appDir;
         }
         return null;
-        
+
 
     }
 }

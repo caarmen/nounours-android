@@ -41,9 +41,8 @@ import ca.rmen.nounours.util.Trace;
 /**
  * Android activity class which delegates nounours-specific logic to the
  * {@link AndroidNounours} class.
- * 
+ *
  * @author Carmen Alvarez
- * 
  */
 public class NounoursActivity extends Activity {
 
@@ -56,7 +55,7 @@ public class NounoursActivity extends Activity {
     private Sensor accelerometerSensor = null;
     private Sensor orientationSensor = null;
     private Sensor magneticFieldSensor = null;
-    
+
     private boolean wasPaused = false;
     private boolean useSimulator = false;
 
@@ -79,7 +78,7 @@ public class NounoursActivity extends Activity {
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
      * touch events).
-     * 
+     *
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
@@ -93,17 +92,17 @@ public class NounoursActivity extends Activity {
 
         AndroidNounoursGestureDetector nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
         imageView.setOnTouchListener(onTouchListener);
-        if(!useSimulator) {
+        if (!useSimulator) {
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
-        if(sensorManager != null) {
+        if (sensorManager != null) {
             accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             orientationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
             magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         }
-        
+
         final GestureDetector gestureDetector = new GestureDetector(nounoursGestureDetector);
-        onTouchListener = new AndroidNounoursOnTouchListener(nounours,  gestureDetector);
+        onTouchListener = new AndroidNounoursOnTouchListener(nounours, gestureDetector);
         sensorListener = new AndroidNounoursSensorListener(nounours, this);
         imageView.setOnTouchListener(onTouchListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -124,13 +123,13 @@ public class NounoursActivity extends Activity {
      * Called when the application is started or becomes active. Register for
      * sensor events, enable pinging for idle activity, and call
      * nounours.onResume().
-     * 
+     *
      * @see android.app.Activity#onResume()
      */
     @Override
     protected void onResume() {
 
-        if(sensorManager != null) {
+        if (sensorManager != null) {
             sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
             sensorManager.registerListener(sensorListener, orientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
             if (!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_MAGNETIC_FIELD))
@@ -149,7 +148,7 @@ public class NounoursActivity extends Activity {
     /**
      * The application was stopped or exited. Stop listening for sensor events,
      * stop pinging for idleness, and stop any sound.
-     * 
+     *
      * @see android.app.Activity#onStop()
      */
     @Override
@@ -161,7 +160,7 @@ public class NounoursActivity extends Activity {
     /**
      * The application is paused. Stop listening for sensor events, stop pinging
      * for idleness, stop any sound.
-     * 
+     *
      * @see android.app.Activity#onPause()
      */
     @Override
@@ -178,14 +177,14 @@ public class NounoursActivity extends Activity {
     private void stopActivity() {
         nounours.doPing(false);
         nounours.stopSound();
-        if(sensorManager != null) {
+        if (sensorManager != null) {
             sensorManager.unregisterListener(sensorListener);
         }
     }
 
     /**
      * Create menu items for the different animations.
-     * 
+     *
      * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
      */
     @Override
@@ -274,7 +273,7 @@ public class NounoursActivity extends Activity {
 
     /**
      * Show a dialog box
-     * 
+     *
      * @see android.app.Activity#onCreateDialog(int)
      */
     @Override
@@ -391,7 +390,7 @@ public class NounoursActivity extends Activity {
 
     /**
      * Handle menu item selections.
-     * 
+     *
      * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
      */
     @Override

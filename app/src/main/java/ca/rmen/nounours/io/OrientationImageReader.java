@@ -17,7 +17,6 @@ import ca.rmen.nounours.data.OrientationImage;
  * orientation.
  *
  * @author Carmen Alvarez
- *
  */
 public class OrientationImageReader extends NounoursReader {
 
@@ -34,17 +33,17 @@ public class OrientationImageReader extends NounoursReader {
     /**
      * Immediately reads the CSV content and caches the image-orientation data.
      * Required columns are: <code>
-       - ImageId: String. The id of the image to display if the device is tilted
-         in the given direction.
-       - MinYaw: integer between 0 and 360. Minimum yaw (corresponds to compass direction
-                 with 0=North, 90=East).
-       - MaxYaw: integer between 0 and 360. Maximum yaw.
-       - MinPitch: integer between -180 and 180. Minimum pitch (0=phone laying flat,
-                 -90= phone upright).
-       - MaxPitch: integer between -180 and 180.
-       - MinRoll: integer between -180 and 180.  Minimum roll (0=phone laying flat, 90=phone
-                 tilted to the right)
-       - MaxRoll: integer between -180 and 180.  Maximum roll.
+     * - ImageId: String. The id of the image to display if the device is tilted
+     * in the given direction.
+     * - MinYaw: integer between 0 and 360. Minimum yaw (corresponds to compass direction
+     * with 0=North, 90=East).
+     * - MaxYaw: integer between 0 and 360. Maximum yaw.
+     * - MinPitch: integer between -180 and 180. Minimum pitch (0=phone laying flat,
+     * -90= phone upright).
+     * - MaxPitch: integer between -180 and 180.
+     * - MinRoll: integer between -180 and 180.  Minimum roll (0=phone laying flat, 90=phone
+     * tilted to the right)
+     * - MaxRoll: integer between -180 and 180.  Maximum roll.
      * </code>
      *
      * @throws IOException

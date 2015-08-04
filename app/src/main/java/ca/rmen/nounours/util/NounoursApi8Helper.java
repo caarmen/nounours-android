@@ -5,7 +5,7 @@ import android.view.Display;
 
 @TargetApi(8)
 public class NounoursApi8Helper {
-	public static int getRotation(Display display) {
-		return display.getRotation();
-	}
+    public static int getRotation(Display display) {
+        return display.getRotation();
+    }
 }

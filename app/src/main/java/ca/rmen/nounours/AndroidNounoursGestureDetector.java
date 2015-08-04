@@ -4,14 +4,13 @@
  */
 package ca.rmen.nounours;
 
-import android.view.MotionEvent;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.MotionEvent;
 
 /**
  * Manages fling event for Nounours on the Android devices.
  *
  * @author Carmen Alvarez
- *
  */
 class AndroidNounoursGestureDetector extends SimpleOnGestureListener {
 
