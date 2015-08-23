@@ -87,7 +87,7 @@ public class NounoursActivity extends Activity {
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-        nounours = new AndroidNounours(this);
+        nounours = new AndroidNounours(this, imageView);
 
         AndroidNounoursGestureDetector nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
         imageView.setOnTouchListener(onTouchListener);
@@ -121,7 +121,7 @@ public class NounoursActivity extends Activity {
 
     /**
      * Called when the application is started or becomes active. Register for
-     * sensor events, enable pinging for idle activity, and call
+     * sensor events, enable pinging for idle context, and call
      * nounours.onResume().
      *
      * @see android.app.Activity#onResume()

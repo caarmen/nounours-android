@@ -4,9 +4,9 @@
  */
 package ca.rmen.nounours;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
@@ -19,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -41,7 +42,7 @@ import ca.rmen.nounours.util.Trace;
  */
 class AndroidNounours extends Nounours {
 
-    Activity activity = null;
+    Context context = null;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
     private static final String PREF_THEME = "Theme";
@@ -51,6 +52,7 @@ class AndroidNounours extends Nounours {
     static final String PREF_IDLE_TIMEOUT = "IdleTimeout";
     private SharedPreferences sharedPreferences = null;
     private AndroidNounoursAnimationHandler animationHandler = null;
+    private ImageView imageView;
 
     private static final Map<String, Bitmap> imageCache = new HashMap<>();
 
@@ -59,33 +61,34 @@ class AndroidNounours extends Nounours {
      * {@link Nounours#init(NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, String)}
      * method.
      *
-     * @param activity The android activity.
+     * @param context The android context.
      */
-    public AndroidNounours(final NounoursActivity activity) {
+    public AndroidNounours(final Context context, ImageView imageView) {
 
-        this.activity = activity;
+        this.context = context;
+        this.imageView = imageView;
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
         boolean enableSoundAndVibrate = sharedPreferences.getBoolean(PREF_SOUND_AND_VIBRATE, true);
         boolean enableRandomAnimations = sharedPreferences.getBoolean(PREF_RANDOM, true);
         long idleTimeout = sharedPreferences.getLong(PREF_IDLE_TIMEOUT, 30000);
-        animationHandler = new AndroidNounoursAnimationHandler(AndroidNounours.this, activity);
-        AndroidNounoursSoundHandler soundHandler = new AndroidNounoursSoundHandler(AndroidNounours.this, activity);
-        AndroidNounoursVibrateHandler vibrateHandler = new AndroidNounoursVibrateHandler(activity);
-        final InputStream propertiesFile = activity.getResources().openRawResource(R.raw.nounours);
-        final InputStream themePropertiesFile = activity.getResources().openRawResource(R.raw.nounoursdeftheme);
+        animationHandler = new AndroidNounoursAnimationHandler(this, imageView);
+        AndroidNounoursSoundHandler soundHandler = new AndroidNounoursSoundHandler(this, context);
+        AndroidNounoursVibrateHandler vibrateHandler = new AndroidNounoursVibrateHandler(context);
+        final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
+        final InputStream themePropertiesFile = context.getResources().openRawResource(R.raw.nounoursdeftheme);
 
-        final InputStream imageFile = activity.getResources().openRawResource(R.raw.image);
-        final InputStream imageSetFile = activity.getResources().openRawResource(R.raw.imageset);
-        final InputStream featureFile = activity.getResources().openRawResource(R.raw.feature);
-        final InputStream imageFeatureFile = activity.getResources().openRawResource(R.raw.imagefeatureassoc);
-        final InputStream adjacentImageFile = activity.getResources().openRawResource(R.raw.adjacentimage);
-        final InputStream animationFile = activity.getResources().openRawResource(R.raw.animation);
-        final InputStream flingAnimationFile = activity.getResources().openRawResource(R.raw.flinganimation);
-        final InputStream soundFile = activity.getResources().openRawResource(R.raw.sound);
+        final InputStream imageFile = context.getResources().openRawResource(R.raw.image);
+        final InputStream imageSetFile = context.getResources().openRawResource(R.raw.imageset);
+        final InputStream featureFile = context.getResources().openRawResource(R.raw.feature);
+        final InputStream imageFeatureFile = context.getResources().openRawResource(R.raw.imagefeatureassoc);
+        final InputStream adjacentImageFile = context.getResources().openRawResource(R.raw.adjacentimage);
+        final InputStream animationFile = context.getResources().openRawResource(R.raw.animation);
+        final InputStream flingAnimationFile = context.getResources().openRawResource(R.raw.flinganimation);
+        final InputStream soundFile = context.getResources().openRawResource(R.raw.sound);
 
         try {
             init(animationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
@@ -118,7 +121,7 @@ class AndroidNounours extends Nounours {
                 }
             };
             runTask(runnable);
-            updateProgressBar(max + (i++), 2 * max, activity.getString(R.string.loading, themeName));
+            updateProgressBar(max + (i++), 2 * max, context.getString(R.string.loading, themeName));
         }
         // Cache animations.
         return animationHandler.cacheAnimations();
@@ -169,7 +172,7 @@ class AndroidNounours extends Nounours {
 
                         }
                     };
-                    CharSequence message = activity.getText(R.string.themeLoadError);
+                    CharSequence message = context.getText(R.string.themeLoadError);
 
                     showAlertDialog(message, revertToDefaultTheme);
                 }
@@ -182,7 +185,7 @@ class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(imageCacher, activity.getString(R.string.predownload, getThemeLabel(theme)),
+        runTaskWithProgressBar(imageCacher, context.getString(R.string.predownload, getThemeLabel(theme)),
                 taskSize);
         return true;
 
@@ -192,9 +195,9 @@ class AndroidNounours extends Nounours {
         Theme theme = getCurrentTheme();
         if (theme == null)
             return;
-        final ImageView imageView = (ImageView) activity.findViewById(R.id.ImageView01);
         ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-        Display display = activity.getWindowManager().getDefaultDisplay();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
 
         float widthRatio = (float) display.getWidth() / theme.getWidth();
         float heightRatio = (float) display.getHeight() / theme.getHeight();
@@ -214,27 +217,27 @@ class AndroidNounours extends Nounours {
     @Override
     protected void updateDownloadProgress(int progress, int max) {
         CharSequence themeLabel = getThemeLabel(getCurrentTheme());
-        updateProgressBar(progress, 2 * max, activity.getString(R.string.downloading, themeLabel));
+        updateProgressBar(progress, 2 * max, context.getString(R.string.downloading, themeLabel));
     }
 
     protected void updatePreloadProgress(int progress, int max) {
         CharSequence themeLabel = getThemeLabel(getCurrentTheme());
-        updateProgressBar(progress, 2 * max, activity.getString(R.string.predownload, themeLabel));
+        updateProgressBar(progress, 2 * max, context.getString(R.string.predownload, themeLabel));
     }
 
     CharSequence getCurrentThemeLabel() {
         Theme curTheme = getCurrentTheme();
         if (curTheme != null)
             return getThemeLabel(curTheme);
-        return activity.getResources().getText(R.string.defaultTheme);
+        return context.getResources().getText(R.string.defaultTheme);
     }
 
     CharSequence getThemeLabel(Theme theme) {
         String themeLabel = theme.getName();
-        int themeLabelId = activity.getResources().getIdentifier(theme.getName(), "string",
+        int themeLabelId = context.getResources().getIdentifier(theme.getName(), "string",
                 getClass().getPackage().getName());
         if (themeLabelId > 0)
-            return activity.getResources().getText(themeLabelId);
+            return context.getResources().getText(themeLabelId);
         return themeLabel;
     }
 
@@ -251,7 +254,6 @@ class AndroidNounours extends Nounours {
         final Bitmap bitmap = getDrawableImage(image);
         if (bitmap == null)
             return;
-        final ImageView imageView = (ImageView) activity.findViewById(R.id.ImageView01);
         imageView.setImageBitmap(bitmap);
     }
 
@@ -302,12 +304,12 @@ class AndroidNounours extends Nounours {
             }
             // This is one of the default images bundled in the apk.
             else {
-                final int imageResId = activity.getResources().getIdentifier(image.getFilename(), "drawable",
-                        activity.getClass().getPackage().getName());
+                final int imageResId = context.getResources().getIdentifier(image.getFilename(), "drawable",
+                        context.getClass().getPackage().getName());
                 // Load the image from the resource file.
                 debug("Load default image " + imageResId);
-                Bitmap readOnlyBitmap = BitmapFactory.decodeResource(activity.getResources(), imageResId);// ((BitmapDrawable)
-                // activity.getResources().getDrawable(imageResId)).getBitmap();
+                Bitmap readOnlyBitmap = BitmapFactory.decodeResource(context.getResources(), imageResId);// ((BitmapDrawable)
+                // context.getResources().getDrawable(imageResId)).getBitmap();
                 debug("default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
                         + readOnlyBitmap.isRecycled());
                 // Store the newly loaded drawable in cache for the first time.
@@ -377,7 +379,6 @@ class AndroidNounours extends Nounours {
      */
     @Override
     protected void runTask(final Runnable task) {
-        final ImageView imageView = (ImageView) activity.findViewById(R.id.ImageView01);
         imageView.post(task);
     }
 
@@ -425,7 +426,7 @@ class AndroidNounours extends Nounours {
      * Create a determinate progress dialog with the given size and text.
      */
     private void createProgressDialog(int max, String message) {
-        progressDialog = new ProgressDialog(activity);
+        progressDialog = new ProgressDialog(context);
         progressDialog.setTitle("");
         progressDialog.setMessage(message);
         progressDialog.setIndeterminate(max < 0);
@@ -453,13 +454,11 @@ class AndroidNounours extends Nounours {
 
     @Override
     protected int getDeviceHeight() {
-        final ImageView imageView = (ImageView) activity.findViewById(R.id.ImageView01);
         return imageView.getHeight();
     }
 
     @Override
     protected int getDeviceWidth() {
-        final ImageView imageView = (ImageView) activity.findViewById(R.id.ImageView01);
         return imageView.getWidth();
     }
 
@@ -489,10 +488,10 @@ class AndroidNounours extends Nounours {
         Runnable showAlert = new Runnable() {
             public void run() {
                 if (alertDialog == null) {
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
 
-                    alertBuilder.setMessage(activity.getText(R.string.themeLoadError));
-                    alertBuilder.setPositiveButton(activity.getText(android.R.string.ok), callback);
+                    alertBuilder.setMessage(context.getText(R.string.themeLoadError));
+                    alertBuilder.setPositiveButton(context.getText(android.R.string.ok), callback);
 
                     alertDialog = alertBuilder.create();
 

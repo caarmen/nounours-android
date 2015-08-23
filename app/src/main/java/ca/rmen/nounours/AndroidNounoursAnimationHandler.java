@@ -26,14 +26,14 @@ import ca.rmen.nounours.util.Trace;
 class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
     private AndroidNounours nounours = null;
-    private Activity activity = null;
+    private ImageView imageView;
     private static final Map<String, AnimationDrawable> animationCache = new HashMap<>();
 
     private static final Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<>();
 
-    public AndroidNounoursAnimationHandler(AndroidNounours nounours, Activity activity) {
+    public AndroidNounoursAnimationHandler(AndroidNounours nounours, ImageView imageView) {
         this.nounours = nounours;
-        this.activity = activity;
+        this.imageView = imageView;
     }
 
     public void reset() {
@@ -97,8 +97,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
      * @return the currently running android animation, if any.
      */
     private AnimationDrawable getCurrentAnimationDrawable() {
-        final ImageView view = (ImageView) activity.findViewById(R.id.ImageView01);
-        final Drawable currentDrawable = view.getDrawable();
+        final Drawable currentDrawable = imageView.getDrawable();
         // First see if an animation is visible on the screen.
         if (currentDrawable instanceof AnimationDrawable) {
             return (AnimationDrawable) currentDrawable;
@@ -122,8 +121,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
                 }
 
                 // Display the Android animation.
-                final ImageView view = (ImageView) activity.findViewById(R.id.ImageView01);
-                view.setImageDrawable(animationDrawable);
+                imageView.setImageDrawable(animationDrawable);
 
                 animationDrawable.start();
                 Trace.debug(this, "launched animation " + animation.getId());

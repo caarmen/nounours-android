@@ -4,7 +4,8 @@
  */
 package ca.rmen.nounours;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Environment;
@@ -30,16 +31,16 @@ class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListen
 
     private Nounours nounours = null;
 
-    public AndroidNounoursSoundHandler(Nounours nounours, Activity activity) {
+    public AndroidNounoursSoundHandler(Nounours nounours, Context context) {
         this.nounours = nounours;
-        this.activity = activity;
+        this.context = context;
         // Initialize the media player.
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setOnErrorListener(this);
 
     }
 
-    private Activity activity = null;
+    private Context context = null;
 
     /**
      * For some reason, sounds will only play if they are on the sdcard. The
@@ -72,13 +73,18 @@ class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListen
         }
         if (sdSoundFile.exists()) {
             // See if the file needs to be replaced
-            final String resourcePathStr = activity.getPackageResourcePath();
-            final File resourcePath = new File(resourcePathStr);
-            if (resourcePath.lastModified() < sdSoundFile.lastModified()) {
-                Trace.debug(this, sound + " on sdcard is already up to date");
-                return sdSoundFile;
+            final String resourcePathStr;
+            try {
+                resourcePathStr = context.getPackageManager().getApplicationInfo(BuildConfig.APPLICATION_ID, 0).sourceDir;
+                final File resourcePath = new File(resourcePathStr);
+                if (resourcePath.lastModified() < sdSoundFile.lastModified()) {
+                    Trace.debug(this, sound + " on sdcard is already up to date");
+                    return sdSoundFile;
+                }
+                Trace.debug(this, "Need to update " + sound + " on sdcard");
+            } catch (PackageManager.NameNotFoundException e) {
+                Trace.debug(this, e);
             }
-            Trace.debug(this, "Need to update " + sound + " on sdcard");
         } else {
             Trace.debug(this, "Need to create " + sound + " on sdcard");
         }
@@ -87,9 +93,9 @@ class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListen
         // raw resources.
         Trace.debug(this, "Looking for " + sdSoundFile);
         final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
-        final int soundResId = activity.getResources().getIdentifier(resourceSoundFileName, "raw",
-                activity.getClass().getPackage().getName());
-        final InputStream soundFileData = activity.getResources().openRawResource(soundResId);
+        final int soundResId = context.getResources().getIdentifier(resourceSoundFileName, "raw",
+                context.getClass().getPackage().getName());
+        final InputStream soundFileData = context.getResources().openRawResource(soundResId);
 
         // Write the file
         final FileOutputStream writer = new FileOutputStream(sdSoundFile);

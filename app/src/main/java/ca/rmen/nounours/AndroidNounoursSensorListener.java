@@ -205,7 +205,7 @@ class AndroidNounoursSensorListener implements SensorEventListener {
     }
 
     private float[] remapCoordinateSystem(float[] values) {
-        final WindowManager wm = (WindowManager) nounours.activity
+        final WindowManager wm = (WindowManager) nounours.context
                 .getApplicationContext().getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();

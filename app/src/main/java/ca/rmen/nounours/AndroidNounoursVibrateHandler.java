@@ -4,7 +4,6 @@
  */
 package ca.rmen.nounours;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Vibrator;
 
@@ -15,21 +14,21 @@ import android.os.Vibrator;
  */
 class AndroidNounoursVibrateHandler implements NounoursVibrateHandler {
 
-    private Activity activity = null;
+    private Context context = null;
 
-    public AndroidNounoursVibrateHandler(Activity activity) {
-        this.activity = activity;
+    public AndroidNounoursVibrateHandler(Context context) {
+        this.context = context;
     }
 
     @Override
     public void doVibrate(final long duration) {
-        final Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+        final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(duration);
     }
 
     @Override
     public void doVibrate(final long duration, final long interval) {
-        final Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+        final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         final long[] pattern = new long[(int) (duration / interval)];
         for (int i = 0; i < pattern.length; i++) {
             pattern[i] = interval;
