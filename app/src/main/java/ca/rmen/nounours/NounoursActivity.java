@@ -132,7 +132,7 @@ public class NounoursActivity extends Activity {
         if (sensorManager != null) {
             sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
             sensorManager.registerListener(sensorListener, orientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            if (!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_MAGNETIC_FIELD))
+            if (!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
                 Trace.debug(this, "Could not register for magnetic field sensor");
         }
 
