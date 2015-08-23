@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.data.Image;
+import ca.rmen.nounours.util.BitmapDrawableCompat;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -26,7 +27,7 @@ import ca.rmen.nounours.util.Trace;
 class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
     private AndroidNounours nounours = null;
-    private ImageView imageView;
+    final private ImageView imageView;
     private static final Map<String, AnimationDrawable> animationCache = new HashMap<>();
 
     private static final Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<>();
@@ -202,7 +203,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
         BitmapDrawable result = bitmapDrawables.get(bitmap);
         if (result != null)
             return result;
-        result = new BitmapDrawable(bitmap);
+        result = BitmapDrawableCompat.createBitmapDrawable(nounours.context, bitmap);
         bitmapDrawables.put(bitmap, result);
         return result;
     }

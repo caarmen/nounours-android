@@ -101,7 +101,7 @@ public class NounoursActivity extends Activity {
             magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         }
 
-        final GestureDetector gestureDetector = new GestureDetector(nounoursGestureDetector);
+        final GestureDetector gestureDetector = new GestureDetector(this, nounoursGestureDetector);
         onTouchListener = new AndroidNounoursOnTouchListener(nounours, gestureDetector);
         sensorListener = new AndroidNounoursSensorListener(nounours, this);
         imageView.setOnTouchListener(onTouchListener);

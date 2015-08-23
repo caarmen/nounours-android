@@ -17,9 +17,7 @@ import android.graphics.Canvas;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Display;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -31,6 +29,7 @@ import java.util.Map;
 
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
+import ca.rmen.nounours.util.DisplayCompat;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
 
@@ -52,7 +51,7 @@ class AndroidNounours extends Nounours {
     static final String PREF_IDLE_TIMEOUT = "IdleTimeout";
     private SharedPreferences sharedPreferences = null;
     private AndroidNounoursAnimationHandler animationHandler = null;
-    private ImageView imageView;
+    final private ImageView imageView;
 
     private static final Map<String, Bitmap> imageCache = new HashMap<>();
 
@@ -196,11 +195,9 @@ class AndroidNounours extends Nounours {
         if (theme == null)
             return;
         ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
 
-        float widthRatio = (float) display.getWidth() / theme.getWidth();
-        float heightRatio = (float) display.getHeight() / theme.getHeight();
+        float widthRatio = (float) DisplayCompat.getWidth(context) / theme.getWidth();
+        float heightRatio = (float) DisplayCompat.getHeight(context) / theme.getHeight();
         Trace.debug(this, widthRatio + ": " + heightRatio);
         float ratioToUse = widthRatio > heightRatio ? heightRatio : widthRatio;
 
