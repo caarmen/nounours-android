@@ -52,7 +52,7 @@ class AndroidNounours extends Nounours {
     private SharedPreferences sharedPreferences = null;
     private AndroidNounoursAnimationHandler animationHandler = null;
 
-    private static final Map<String, Bitmap> imageCache = new HashMap<String, Bitmap>();
+    private static final Map<String, Bitmap> imageCache = new HashMap<>();
 
     /**
      * Open the CSV data files and call the superclass
@@ -132,8 +132,11 @@ class AndroidNounours extends Nounours {
     public boolean useTheme(final String id) {
         if (!Nounours.DEFAULT_THEME_ID.equals(id)) {
             File themeDir = new File(getAppDir(), id);
-            if (!themeDir.exists())
-                themeDir.mkdirs();
+            if (!themeDir.exists()) {
+                if(themeDir.mkdirs()) {
+                    Trace.debug(this, "Could not create theme folder " + themeDir);
+                }
+            }
         }
         int taskSize = 1;
         Theme theme = getThemes().get(id);
@@ -179,7 +182,7 @@ class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(imageCacher, false, activity.getString(R.string.predownload, getThemeLabel(theme)),
+        runTaskWithProgressBar(imageCacher, activity.getString(R.string.predownload, getThemeLabel(theme)),
                 taskSize);
         return true;
 
@@ -348,7 +351,6 @@ class AndroidNounours extends Nounours {
      * cache.
      *
      * @param readOnlyBitmap the immutable bitmap
-     * @param imageId
      * @return the mutable copy of the read-only bitmap.
      */
     private Bitmap copyAndCacheImage(Bitmap readOnlyBitmap, String imageId) {
@@ -381,11 +383,8 @@ class AndroidNounours extends Nounours {
 
     /**
      * Run a task, showing the progress bar while the task runs.
-     *
-     * @param ui if true, use the android api to run the task. Otherwise use
-     *           the standard java thread api.
      */
-    void runTaskWithProgressBar(final Runnable task, boolean ui, String message, int max) {
+    void runTaskWithProgressBar(final Runnable task, String message, int max) {
         if (progressDialog != null)
             progressDialog.dismiss();
         createProgressDialog(max, message);
@@ -397,10 +396,7 @@ class AndroidNounours extends Nounours {
                 progressDialog.dismiss();
             }
         };
-        if (ui)
-            runTask(runnable);
-        else
-            new Thread(runnable).start();
+        new Thread(runnable).start();
     }
 
     /**
@@ -496,7 +492,7 @@ class AndroidNounours extends Nounours {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(activity);
 
                     alertBuilder.setMessage(activity.getText(R.string.themeLoadError));
-                    alertBuilder.setPositiveButton(activity.getText(R.string.ok), callback);
+                    alertBuilder.setPositiveButton(activity.getText(android.R.string.ok), callback);
 
                     alertDialog = alertBuilder.create();
 
@@ -514,8 +510,11 @@ class AndroidNounours extends Nounours {
         if (sdcard != null && sdcard.exists()) {
             String appDirName = getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR);
             File appDir = new File(sdcard, appDirName);
-            if (!appDir.exists())
-                appDir.mkdirs();
+            if (!appDir.exists()) {
+                if(!appDir.mkdirs()) {
+                    Trace.debug(this, "Could not create folder " + appDir);
+                }
+            }
             return appDir;
         }
         return null;

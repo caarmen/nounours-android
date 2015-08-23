@@ -28,7 +28,7 @@ public class OrientationImageReader extends NounoursReader {
     private static final String COL_MIN_ROLL = "MinRoll";
     private static final String COL_MAX_ROLL = "MaxRoll";
 
-    private final Set<OrientationImage> orientationImages = new HashSet<OrientationImage>();
+    private final Set<OrientationImage> orientationImages = new HashSet<>();
 
     /**
      * Immediately reads the CSV content and caches the image-orientation data.

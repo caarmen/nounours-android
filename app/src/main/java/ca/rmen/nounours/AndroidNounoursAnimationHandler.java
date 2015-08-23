@@ -27,9 +27,9 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
     private AndroidNounours nounours = null;
     private Activity activity = null;
-    private static final Map<String, AnimationDrawable> animationCache = new HashMap<String, AnimationDrawable>();
+    private static final Map<String, AnimationDrawable> animationCache = new HashMap<>();
 
-    private static final Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<Bitmap, BitmapDrawable>();
+    private static final Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<>();
 
     public AndroidNounoursAnimationHandler(AndroidNounours nounours, Activity activity) {
         this.nounours = nounours;

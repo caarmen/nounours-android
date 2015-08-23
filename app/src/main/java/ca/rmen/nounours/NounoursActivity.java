@@ -57,7 +57,6 @@ public class NounoursActivity extends Activity {
     private Sensor magneticFieldSensor = null;
 
     private boolean wasPaused = false;
-    private boolean useSimulator = false;
 
     private static final int MENU_ABOUT = 1000;
     private static final int MENU_ACTION = 1001;
@@ -73,8 +72,6 @@ public class NounoursActivity extends Activity {
     private static final int MENU_OPTIONS = 1011;
     private static final int MENU_IDLE_TIMEOUT = 1012;
 
-    private static final String URL_CRASH_REPORT = "http://r24591.ovh.net/crashreport/";
-
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
      * touch events).
@@ -85,6 +82,8 @@ public class NounoursActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        boolean useSimulator = false;
+
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
@@ -92,6 +91,7 @@ public class NounoursActivity extends Activity {
 
         AndroidNounoursGestureDetector nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
         imageView.setOnTouchListener(onTouchListener);
+        //noinspection ConstantConditions
         if (!useSimulator) {
             sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
@@ -220,7 +220,7 @@ public class NounoursActivity extends Activity {
                     .add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
             if (Nounours.DEFAULT_THEME_ID.equals(curThemeId))
                 themeMenuItem.setEnabled(false);
-            SortedSet<String> sortedThemeList = new TreeSet<String>();
+            SortedSet<String> sortedThemeList = new TreeSet<>();
             sortedThemeList.addAll(imageSets.keySet());
             for (String imageSetIdStr : sortedThemeList) {
                 int imageSetId = Integer.parseInt(imageSetIdStr);
@@ -284,7 +284,7 @@ public class NounoursActivity extends Activity {
             builder.setTitle(R.string.about);
             builder.setIcon(R.drawable.ic_dialog_info);
             builder.setView(View.inflate(this, R.layout.layout_about, null));
-            builder.setPositiveButton(R.string.ok, null);
+            builder.setPositiveButton(android.R.string.ok, null);
         } else if (id == MENU_IDLE_TIMEOUT) {
             long currentIdleTimeout = nounours.getIdleTimeout();
             int selectedItem = 0;
@@ -476,7 +476,7 @@ public class NounoursActivity extends Activity {
                 }
             };
             String message = getString(R.string.loadMoreThemesInProgress);
-            nounours.runTaskWithProgressBar(themeListUpdater, false, message, -1);
+            nounours.runTaskWithProgressBar(themeListUpdater, message, -1);
             return true;
 
         } else if (menuItem.getItemId() == MENU_UPDATE_THEME) {
@@ -508,7 +508,7 @@ public class NounoursActivity extends Activity {
                     }
                 }
             };
-            nounours.runTaskWithProgressBar(updateTheme, false, message, 100);
+            nounours.runTaskWithProgressBar(updateTheme, message, 100);
             return true;
         } else if (menuItem.getItemId() == MENU_IDLE_TIMEOUT) {
             showDialog(MENU_IDLE_TIMEOUT);

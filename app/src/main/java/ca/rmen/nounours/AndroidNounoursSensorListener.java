@@ -40,7 +40,7 @@ class AndroidNounoursSensorListener implements SensorEventListener {
     private float yAccel = Float.MAX_VALUE;
     private float zAccel = Float.MAX_VALUE;
     private boolean isTiltImage = false;
-    private final Set<OrientationImage> orientationImages = new HashSet<OrientationImage>();
+    private final Set<OrientationImage> orientationImages = new HashSet<>();
 
     private AndroidNounours nounours = null;
 
@@ -98,9 +98,7 @@ class AndroidNounoursSensorListener implements SensorEventListener {
                 return new FileInputStream(orientationImageFile);
             }
             return new FileInputStream(orientationImageFile);
-        } catch (IOException e) {
-            Trace.debug(this, e);
-        } catch (URISyntaxException e) {
+        } catch (IOException | URISyntaxException e) {
             Trace.debug(this, e);
         }
         return null;
