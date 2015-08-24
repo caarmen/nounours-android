@@ -119,86 +119,100 @@ class AndroidNounoursSensorListener implements SensorEventListener {
             return;
         }
         int sensorType = event.sensor.getType();
-        float[] values = event.values;
 
-        // Display a shake animation if the user shook the device.
         if (sensorType == Sensor.TYPE_ACCELEROMETER) {
-
-            if (xAccel != Float.MAX_VALUE) {
-                final float netAccelX = Math.abs(xAccel
-                        - values[SensorManager.DATA_X]);
-                final float netAccelY = Math.abs(yAccel
-                        - values[SensorManager.DATA_Y]);
-                final float netAccelZ = Math.abs(zAccel
-                        - values[SensorManager.DATA_Z]);
-
-                final float shakeFactor = nounours.getMinShakeSpeed();
-                if (netAccelX > shakeFactor || netAccelY > shakeFactor
-                        || netAccelZ > shakeFactor) {
-                    nounours.onShake();
-                }
-            }
-            // For some reason, the first reading when the app starts, will give
-            // some values of 0.0, which shouldn't be possible.
-            if (values[SensorManager.DATA_X] != 0.0
-                    && values[SensorManager.DATA_Y] != 0.0
-                    && values[SensorManager.DATA_Z] != 0.0) {
-                xAccel = values[SensorManager.DATA_X];
-                yAccel = values[SensorManager.DATA_Y];
-                zAccel = values[SensorManager.DATA_Z];
-            }
-            lastAcceleration = values.clone();
-        }
-        // Display a special image if the device is in a given orientation.
-        else if (sensorType == Sensor.TYPE_ORIENTATION) {
-            float[] inR = new float[16];
-            float[] I = new float[16];
-
-            // We need to have recorded acceleration and magnetic field at least once.
-            if (lastAcceleration == null
-                    || lastMagneticField == null
-                    || !SensorManager.getRotationMatrix(inR, I,
-                    lastAcceleration, lastMagneticField))
-                return;
-
-            float[] outR = remapCoordinateSystem(inR);
-            float[] orientationValues = new float[3];
-            orientationValues = SensorManager.getOrientation(outR,
-                    orientationValues);
-            float[] orientationValuesDeg = new float[3];
-            for (int i = 0; i < orientationValues.length; i++) {
-                orientationValuesDeg[i] = (float) (orientationValues[i] * 180.0f / Math.PI);
-            }
-
-            final float yaw = orientationValuesDeg[0];
-            final float pitch = orientationValuesDeg[1];
-            final float roll = orientationValuesDeg[2];
-            for (final OrientationImage orientationImage : orientationImages) {
-                if (yaw >= orientationImage.getMinYaw()
-                        && yaw <= orientationImage.getMaxYaw()
-                        && pitch >= orientationImage.getMinPitch()
-                        && pitch <= orientationImage.getMaxPitch()
-                        && roll >= orientationImage.getMinRoll()
-                        && roll <= orientationImage.getMaxRoll()) {
-                    final Image image = nounours.getImages().get(
-                            orientationImage.getImageId());
-                    nounours.stopAnimation();
-                    nounours.setImage(image);
-                    // Note that we are currently displaying a "tilt" image.
-                    isTiltImage = true;
-                    return;
-                }
-            }
-            // Couldn't find any tilt image for this orientation, reset to the
-            // default image if currently displaying a
-            // tilt image
-            if (isTiltImage) {
-                nounours.reset();
-                isTiltImage = false;
-            }
+            onAccelerationChanged(event);
         } else if (sensorType == Sensor.TYPE_MAGNETIC_FIELD) {
-            lastMagneticField = event.values.clone();
+            onMagneticFieldChanged(event);
         }
+        onOrientationChanged();
+    }
+
+    /**
+     * Display a shake animation if the user shook the device.
+     */
+    private void onAccelerationChanged(SensorEvent event) {
+
+        float[] values = event.values;
+        if (xAccel != Float.MAX_VALUE) {
+            final float netAccelX = Math.abs(xAccel
+                    - values[SensorManager.DATA_X]);
+            final float netAccelY = Math.abs(yAccel
+                    - values[SensorManager.DATA_Y]);
+            final float netAccelZ = Math.abs(zAccel
+                    - values[SensorManager.DATA_Z]);
+
+            final float shakeFactor = nounours.getMinShakeSpeed();
+            if (netAccelX > shakeFactor || netAccelY > shakeFactor
+                    || netAccelZ > shakeFactor) {
+                nounours.onShake();
+            }
+        }
+        // For some reason, the first reading when the app starts, will give
+        // some values of 0.0, which shouldn't be possible.
+        if (values[SensorManager.DATA_X] != 0.0
+                && values[SensorManager.DATA_Y] != 0.0
+                && values[SensorManager.DATA_Z] != 0.0) {
+            xAccel = values[SensorManager.DATA_X];
+            yAccel = values[SensorManager.DATA_Y];
+            zAccel = values[SensorManager.DATA_Z];
+        }
+        lastAcceleration = values.clone();
+    }
+
+    /**
+     * Display a special image if the device is in a given orientation.
+     */
+    private void onOrientationChanged() {
+        float[] inR = new float[16];
+        float[] I = new float[16];
+
+        // We need to have recorded acceleration and magnetic field at least once.
+        if (lastAcceleration == null
+                || lastMagneticField == null
+                || !SensorManager.getRotationMatrix(inR, I,
+                lastAcceleration, lastMagneticField))
+            return;
+
+        float[] outR = remapCoordinateSystem(inR);
+        float[] orientationValues = new float[3];
+        orientationValues = SensorManager.getOrientation(outR,
+                orientationValues);
+        float[] orientationValuesDeg = new float[3];
+        for (int i = 0; i < orientationValues.length; i++) {
+            orientationValuesDeg[i] = (float) (orientationValues[i] * 180.0f / Math.PI);
+        }
+
+        final float yaw = orientationValuesDeg[0];
+        final float pitch = orientationValuesDeg[1];
+        final float roll = orientationValuesDeg[2];
+        for (final OrientationImage orientationImage : orientationImages) {
+            if (yaw >= orientationImage.getMinYaw()
+                    && yaw <= orientationImage.getMaxYaw()
+                    && pitch >= orientationImage.getMinPitch()
+                    && pitch <= orientationImage.getMaxPitch()
+                    && roll >= orientationImage.getMinRoll()
+                    && roll <= orientationImage.getMaxRoll()) {
+                final Image image = nounours.getImages().get(
+                        orientationImage.getImageId());
+                nounours.stopAnimation();
+                nounours.setImage(image);
+                // Note that we are currently displaying a "tilt" image.
+                isTiltImage = true;
+                return;
+            }
+        }
+        // Couldn't find any tilt image for this orientation, reset to the
+        // default image if currently displaying a
+        // tilt image
+        if (isTiltImage) {
+            nounours.reset();
+            isTiltImage = false;
+        }
+    }
+
+    private void onMagneticFieldChanged(SensorEvent event) {
+        lastMagneticField = event.values.clone();
     }
 
     private float[] remapCoordinateSystem(float[] values) {

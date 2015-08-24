@@ -53,7 +53,6 @@ public class NounoursActivity extends Activity {
     private AndroidNounoursSensorListener sensorListener = null;
     private AndroidNounoursOnTouchListener onTouchListener = null;
     private Sensor accelerometerSensor = null;
-    private Sensor orientationSensor = null;
     private Sensor magneticFieldSensor = null;
 
     private boolean wasPaused = false;
@@ -97,7 +96,6 @@ public class NounoursActivity extends Activity {
         }
         if (sensorManager != null) {
             accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            orientationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
             magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         }
 
@@ -131,7 +129,6 @@ public class NounoursActivity extends Activity {
 
         if (sensorManager != null) {
             sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            sensorManager.registerListener(sensorListener, orientationSensor, SensorManager.SENSOR_DELAY_NORMAL);
             if (!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
                 Trace.debug(this, "Could not register for magnetic field sensor");
         }
