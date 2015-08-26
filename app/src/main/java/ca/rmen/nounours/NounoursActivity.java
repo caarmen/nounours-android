@@ -7,14 +7,11 @@ package ca.rmen.nounours;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +51,7 @@ public class NounoursActivity extends Activity {
     private AndroidNounoursOnTouchListener onTouchListener = null;
     private Sensor accelerometerSensor = null;
     private Sensor magneticFieldSensor = null;
+    private AndroidNounoursSettings settings = null;
 
     private boolean wasPaused = false;
 
@@ -61,15 +59,12 @@ public class NounoursActivity extends Activity {
     private static final int MENU_ACTION = 1001;
     private static final int MENU_RANDOM = 1002;
     private static final int MENU_HELP = 1003;
-    private static final int MENU_TOGGLE_SOUND = 1004;
     private static final int MENU_THEMES = 1005;
     private static final int MENU_DEFAULT_THEME = 1006;
     private static final int MENU_UPDATES = 1007;
     private static final int MENU_LOAD_MORE_THEMES = 1008;
     private static final int MENU_UPDATE_THEME = 1009;
-    private static final int MENU_TOGGLE_RANDOM_ANIMATIONS = 1010;
     private static final int MENU_OPTIONS = 1011;
-    private static final int MENU_IDLE_TIMEOUT = 1012;
 
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
@@ -133,6 +128,10 @@ public class NounoursActivity extends Activity {
                 Trace.debug(this, "Could not register for magnetic field sensor");
         }
 
+        nounours.setEnableSound(AndroidNounoursSettings.isSoundEnabled(this));
+        nounours.setEnableVibrate(AndroidNounoursSettings.isSoundEnabled(this));
+        nounours.setIdleTimeout(AndroidNounoursSettings.getIdleTimeout(this));
+        nounours.setEnableRandomAnimations(AndroidNounoursSettings.isRandomAnimationEnabled(this));
         super.onResume();
         if (wasPaused) {
             nounours.onResume();
@@ -195,14 +194,6 @@ public class NounoursActivity extends Activity {
 
         final SubMenu optionsMenu = menu.addSubMenu(Menu.NONE, MENU_OPTIONS, mainMenuIdx++, R.string.options);
         optionsMenu.setIcon(R.drawable.ic_menu_preferences);
-
-        // Set up the toggle sound menu
-        optionsMenu.add(Menu.NONE, MENU_TOGGLE_SOUND, mainMenuIdx++,
-                R.string.disablesound);
-
-        optionsMenu.add(Menu.NONE, MENU_TOGGLE_RANDOM_ANIMATIONS,
-                mainMenuIdx++, R.string.disableRandomAnimations);
-        optionsMenu.add(Menu.NONE, MENU_IDLE_TIMEOUT, mainMenuIdx++, R.string.idleTimeout);
 
         if (FileUtil.isSdPresent()) {
             final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
@@ -282,33 +273,6 @@ public class NounoursActivity extends Activity {
             builder.setIcon(R.drawable.ic_dialog_info);
             builder.setView(View.inflate(this, R.layout.layout_about, null));
             builder.setPositiveButton(android.R.string.ok, null);
-        } else if (id == MENU_IDLE_TIMEOUT) {
-            long currentIdleTimeout = nounours.getIdleTimeout();
-            int selectedItem = 0;
-            if (currentIdleTimeout == 30000)
-                selectedItem = 1;
-            else if (currentIdleTimeout == 60000)
-                selectedItem = 2;
-            else if (currentIdleTimeout == 120000)
-                selectedItem = 3;
-
-            builder.setTitle(R.string.idleTimeout);
-            builder.setNegativeButton(android.R.string.cancel, null);
-            builder.setSingleChoiceItems(R.array.idleTimeout, selectedItem, new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    int idleTimeout = 15;
-                    if (which == 1)
-                        idleTimeout = 30;
-                    else if (which == 2)
-                        idleTimeout = 60;
-                    else if (which == 3)
-                        idleTimeout = 120;
-                    nounours.setIdleTimeout(idleTimeout * 1000);
-                    dialog.dismiss();
-                }
-            });
         }
         return builder.create();
     }
@@ -366,22 +330,6 @@ public class NounoursActivity extends Activity {
                 animationMenu.setVisible(true);
             setupAnimationMenu(animationMenu.getSubMenu());
         }
-        MenuItem toggleSound = menu.findItem(MENU_TOGGLE_SOUND);
-        if (toggleSound != null) {
-            if (nounours.isSoundEnabled()) {
-                toggleSound.setTitle(R.string.disablesound);
-            } else {
-                toggleSound.setTitle(R.string.enablesound);
-            }
-        }
-        MenuItem toggleRandomAnimations = menu.findItem(MENU_TOGGLE_RANDOM_ANIMATIONS);
-        if (toggleRandomAnimations != null) {
-            if (nounours.isRandomAnimationsEnabled()) {
-                toggleRandomAnimations.setTitle(R.string.disableRandomAnimations);
-            } else {
-                toggleRandomAnimations.setTitle(R.string.enableRandomAnimations);
-            }
-        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -392,42 +340,19 @@ public class NounoursActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(final MenuItem menuItem) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         // Show the about dialog
         if (menuItem.getItemId() == MENU_ABOUT) {
             showDialog(MENU_ABOUT);
             return true;
 
+        } else if (menuItem.getItemId() == MENU_OPTIONS) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
         }
         // Show the help
         else if (menuItem.getItemId() == MENU_HELP) {
             nounours.onHelp();
-            return true;
-        }
-        // Enable or disable sound
-        else if (menuItem.getItemId() == MENU_TOGGLE_SOUND) {
-            nounours.setEnableSound(!nounours.isSoundEnabled());
-            nounours.setEnableVibrate(!nounours.isVibrateEnabled());
-            if (nounours.isSoundEnabled()) {
-                menuItem.setTitle(R.string.disablesound);
-            } else {
-                menuItem.setTitle(R.string.enablesound);
-            }
-            Editor editor = sharedPreferences.edit();
-            editor.putBoolean(AndroidNounours.PREF_SOUND_AND_VIBRATE, nounours.isSoundEnabled());
-            editor.commit();
-            return true;
-
-        } else if (menuItem.getItemId() == MENU_TOGGLE_RANDOM_ANIMATIONS) {
-            nounours.setEnableRandomAnimations(!nounours.isRandomAnimationsEnabled());
-            if (nounours.isRandomAnimationsEnabled()) {
-                menuItem.setTitle(R.string.disableRandomAnimations);
-            } else {
-                menuItem.setTitle(R.string.enableRandomAnimations);
-            }
-            Editor editor = sharedPreferences.edit();
-            editor.putBoolean(AndroidNounours.PREF_RANDOM, nounours.isRandomAnimationsEnabled());
-            editor.commit();
             return true;
         }
         // The user picked the random animation
@@ -506,9 +431,6 @@ public class NounoursActivity extends Activity {
                 }
             };
             nounours.runTaskWithProgressBar(updateTheme, message, 100);
-            return true;
-        } else if (menuItem.getItemId() == MENU_IDLE_TIMEOUT) {
-            showDialog(MENU_IDLE_TIMEOUT);
             return true;
         }
         // Show an animation or change the theme.

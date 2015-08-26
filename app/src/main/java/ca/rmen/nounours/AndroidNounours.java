@@ -71,9 +71,6 @@ class AndroidNounours extends Nounours {
         String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        boolean enableSoundAndVibrate = sharedPreferences.getBoolean(PREF_SOUND_AND_VIBRATE, true);
-        boolean enableRandomAnimations = sharedPreferences.getBoolean(PREF_RANDOM, true);
-        long idleTimeout = sharedPreferences.getLong(PREF_IDLE_TIMEOUT, 30000);
         animationHandler = new AndroidNounoursAnimationHandler(this, imageView);
         AndroidNounoursSoundHandler soundHandler = new AndroidNounoursSoundHandler(this, context);
         AndroidNounoursVibrateHandler vibrateHandler = new AndroidNounoursVibrateHandler(context);
@@ -93,10 +90,10 @@ class AndroidNounours extends Nounours {
             init(animationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
                     imageSetFile, featureFile, imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile,
                     soundFile, themeId);
-            setEnableVibrate(enableSoundAndVibrate);
-            setEnableSound(enableSoundAndVibrate);
-            setEnableRandomAnimations(enableRandomAnimations);
-            setIdleTimeout(idleTimeout);
+            setEnableVibrate(AndroidNounoursSettings.isSoundEnabled(context));
+            setEnableSound(AndroidNounoursSettings.isSoundEnabled(context));
+            setEnableRandomAnimations(AndroidNounoursSettings.isRandomAnimationEnabled(context));
+            setIdleTimeout(AndroidNounoursSettings.getIdleTimeout(context));
         } catch (final IOException e) {
             Log.d(getClass().getName(), "Error initializing nounours", e); //$NON-NLS-1$
         }
@@ -471,14 +468,6 @@ class AndroidNounours extends Nounours {
         editorTS.putLong(prefKey, new Date().getTime());
         editorTS.commit();
 
-    }
-
-    @Override
-    public void setIdleTimeout(long idleTimeout) {
-        super.setIdleTimeout(idleTimeout);
-        Editor editor = sharedPreferences.edit();
-        editor.putLong(PREF_IDLE_TIMEOUT, idleTimeout);
-        editor.commit();
     }
 
     void showAlertDialog(final CharSequence message, final OnClickListener callback) {

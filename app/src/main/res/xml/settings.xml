@@ -1,0 +1,22 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="SoundAndVibrate"
+        android:title="@string/enablesound"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="Random"
+        android:title="@string/enableRandomAnimations"
+        android:defaultValue="true" />
+
+    <ListPreference
+        android:key="IdleTimeout"
+        android:title="@string/idleTimeout"
+        android:defaultValue="30000"
+        android:entries="@array/idleTimeout"
+        android:entryValues="@array/idleTimeoutValues"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+</PreferenceScreen>

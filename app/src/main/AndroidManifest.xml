@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ca.rmen.nounours"
     android:versionCode="135"
-    android:versionName="1.3.5">
+    android:versionName="1.3.5" >
 
     <supports-screens
         android:anyDensity="false"
@@ -18,20 +18,24 @@
 
     <application
         android:icon="@drawable/icon"
-        android:label="@string/app_name">
+        android:label="@string/app_name" >
         <activity
             android:name=".NounoursActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar">
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/options" >
+        </activity>
     </application>
-
 
 </manifest>
