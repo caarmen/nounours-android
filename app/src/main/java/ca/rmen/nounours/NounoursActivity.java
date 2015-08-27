@@ -5,8 +5,6 @@
 package ca.rmen.nounours;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -16,7 +14,6 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -55,7 +52,6 @@ public class NounoursActivity extends Activity {
 
     private boolean wasPaused = false;
 
-    private static final int MENU_ABOUT = 1000;
     private static final int MENU_ACTION = 1001;
     private static final int MENU_RANDOM = 1002;
     private static final int MENU_HELP = 1003;
@@ -231,9 +227,6 @@ public class NounoursActivity extends Activity {
         final MenuItem helpMenu = menu.add(Menu.NONE, MENU_HELP, mainMenuIdx++, R.string.help);
         helpMenu.setIcon(R.drawable.ic_menu_help);
 
-        // Set up the about menu
-        final MenuItem aboutMenu = menu.add(Menu.NONE, MENU_ABOUT, mainMenuIdx, R.string.about);
-        aboutMenu.setIcon(R.drawable.ic_menu_info_details);
         return true;
     }
 
@@ -257,24 +250,6 @@ public class NounoursActivity extends Activity {
 
         }
 
-    }
-
-    /**
-     * Show a dialog box
-     *
-     * @see android.app.Activity#onCreateDialog(int)
-     */
-    @Override
-    protected Dialog onCreateDialog(final int id) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // The user clicked on the about menu item.
-        if (id == MENU_ABOUT) {
-            builder.setTitle(R.string.about);
-            builder.setIcon(R.drawable.ic_dialog_info);
-            builder.setView(View.inflate(this, R.layout.layout_about, null));
-            builder.setPositiveButton(android.R.string.ok, null);
-        }
-        return builder.create();
     }
 
     /**
@@ -340,12 +315,7 @@ public class NounoursActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(final MenuItem menuItem) {
-        // Show the about dialog
-        if (menuItem.getItemId() == MENU_ABOUT) {
-            showDialog(MENU_ABOUT);
-            return true;
-
-        } else if (menuItem.getItemId() == MENU_OPTIONS) {
+        if (menuItem.getItemId() == MENU_OPTIONS) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;

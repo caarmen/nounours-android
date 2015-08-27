@@ -36,6 +36,14 @@
             android:name=".SettingsActivity"
             android:label="@string/options" >
         </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/about">
+            <intent-filter>
+                <action android:name="ca.rmen.nounours.AboutActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

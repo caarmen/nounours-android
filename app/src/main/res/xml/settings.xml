@@ -18,5 +18,10 @@
         android:entryValues="@array/idleTimeoutValues"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
+    <Preference
+        android:icon="@drawable/ic_menu_info_details"
+        android:title="@string/about">
+        <intent android:action="ca.rmen.nounours.AboutActivity" />
+    </Preference>
 
 </PreferenceScreen>
