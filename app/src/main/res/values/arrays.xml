@@ -5,7 +5,7 @@
 		<item>1 minute</item>
 		<item>2 minutes</item>
 	</string-array>
-	<string-array name="idleTimeoutValues">
+	<string-array name="idleTimeoutValues" translatable="false">
 		<item>15000</item>
 		<item>30000</item>
 		<item>60000</item>
