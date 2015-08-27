@@ -134,13 +134,13 @@ class AndroidNounoursSensorListener implements SensorEventListener {
     private void onAccelerationChanged(SensorEvent event) {
 
         float[] values = event.values;
+        float eventAccelX = values[0];
+        float eventAccelY = values[1];
+        float eventAccelZ = values[2];
         if (xAccel != Float.MAX_VALUE) {
-            final float netAccelX = Math.abs(xAccel
-                    - values[SensorManager.DATA_X]);
-            final float netAccelY = Math.abs(yAccel
-                    - values[SensorManager.DATA_Y]);
-            final float netAccelZ = Math.abs(zAccel
-                    - values[SensorManager.DATA_Z]);
+            final float netAccelX = Math.abs(xAccel - eventAccelX);
+            final float netAccelY = Math.abs(yAccel - eventAccelY);
+            final float netAccelZ = Math.abs(zAccel - eventAccelZ);
 
             final float shakeFactor = nounours.getMinShakeSpeed();
             if (netAccelX > shakeFactor || netAccelY > shakeFactor
@@ -150,12 +150,12 @@ class AndroidNounoursSensorListener implements SensorEventListener {
         }
         // For some reason, the first reading when the app starts, will give
         // some values of 0.0, which shouldn't be possible.
-        if (values[SensorManager.DATA_X] != 0.0
-                && values[SensorManager.DATA_Y] != 0.0
-                && values[SensorManager.DATA_Z] != 0.0) {
-            xAccel = values[SensorManager.DATA_X];
-            yAccel = values[SensorManager.DATA_Y];
-            zAccel = values[SensorManager.DATA_Z];
+        if (eventAccelX != 0.0
+                && eventAccelY != 0.0
+                && eventAccelZ != 0.0) {
+            xAccel = eventAccelX;
+            yAccel = eventAccelY;
+            zAccel = eventAccelZ;
         }
         lastAcceleration = values.clone();
     }
