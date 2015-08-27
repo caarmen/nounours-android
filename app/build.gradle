@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "ca.rmen.nounours"
         minSdkVersion 3
-        targetSdkVersion 3
+        targetSdkVersion 10
     }
 
     buildTypes {
