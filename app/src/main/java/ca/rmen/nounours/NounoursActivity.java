@@ -48,7 +48,6 @@ public class NounoursActivity extends Activity {
     private AndroidNounoursOnTouchListener onTouchListener = null;
     private Sensor accelerometerSensor = null;
     private Sensor magneticFieldSensor = null;
-    private AndroidNounoursSettings settings = null;
 
     private boolean wasPaused = false;
 
@@ -224,7 +223,7 @@ public class NounoursActivity extends Activity {
         }
 
         // Set up the help menu
-        final MenuItem helpMenu = menu.add(Menu.NONE, MENU_HELP, mainMenuIdx++, R.string.help);
+        final MenuItem helpMenu = menu.add(Menu.NONE, MENU_HELP, mainMenuIdx, R.string.help);
         helpMenu.setIcon(R.drawable.ic_menu_help);
 
         return true;

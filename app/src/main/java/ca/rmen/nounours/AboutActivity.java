@@ -1,11 +1,12 @@
+/*
+ * Copyright (c) 2015 Carmen Alvarez. All Rights Reserved.
+ *
+ */
 package ca.rmen.nounours;
 
 import android.app.Activity;
 import android.os.Bundle;
 
-/**
- * Created by calvarez on 27/08/15.
- */
 public class AboutActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
