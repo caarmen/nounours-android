@@ -14,8 +14,11 @@ $Id: FileUtil.java 625 2009-04-26 22:45:17Z bod $
  */
 package ca.rmen.nounours.util;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,5 +37,24 @@ public class FileUtil {
             out.write(buffer, 0, read);
             out.flush();
         }
+    }
+
+    public static File getSdFolder(Context context, String folderName) {
+        if(!isSdPresent()) {
+            return null;
+        }
+        File result;
+        if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
+            result = NounoursApi8Helper.getSdFolder(context, folderName);
+        } else {
+            File sdcard = Environment.getExternalStorageDirectory();
+            result = new File(sdcard, folderName);
+        }
+        if (!result.exists()) {
+            if(!result.mkdirs()) {
+                Trace.debug("FileUtil", "Could not create folder " + result);
+            }
+        }
+        return result;
     }
 }

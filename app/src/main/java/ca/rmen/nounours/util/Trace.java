@@ -13,10 +13,11 @@ import android.util.Log;
  */
 public class Trace {
 
+    private static final String TAG = "Nounours/";
     public static void debug(Object context, Object o) {
-        Log.d(context.getClass().getName(), "" + o);
+        Log.d(TAG + context.getClass().getName(), "" + o);
         if (o instanceof Throwable) {
-            Log.d(context.getClass().getName(), ((Throwable) o).getMessage(), (Throwable) o);
+            Log.d(TAG + context.getClass().getName(), ((Throwable) o).getMessage(), (Throwable) o);
         }
     }
 }

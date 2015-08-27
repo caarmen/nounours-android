@@ -14,7 +14,6 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -491,19 +490,7 @@ class AndroidNounours extends Nounours {
 
     @Override
     public File getAppDir() {
-        File sdcard = Environment.getExternalStorageDirectory();
-        if (sdcard != null && sdcard.exists()) {
-            String appDirName = getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR);
-            File appDir = new File(sdcard, appDirName);
-            if (!appDir.exists()) {
-                if(!appDir.mkdirs()) {
-                    Trace.debug(this, "Could not create folder " + appDir);
-                }
-            }
-            return appDir;
-        }
-        return null;
-
-
+        String appDirName = getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR);
+        return FileUtil.getSdFolder(context, appDirName);
     }
 }
