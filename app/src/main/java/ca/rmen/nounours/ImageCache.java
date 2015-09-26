@@ -2,7 +2,6 @@ package ca.rmen.nounours;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
 import java.util.Collection;
@@ -10,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ca.rmen.nounours.data.Image;
+import ca.rmen.nounours.util.BitmapUtil;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
 
@@ -38,7 +38,7 @@ public class ImageCache {
         int i = 0;
         int max = images.size();
         for (final Image image : images) {
-            Bitmap bitmap = loadImage(image, 10);
+            Bitmap bitmap = loadImage(image);
             if (bitmap == null)
                 return false;
             listener.onImageLoaded(image, i++, max);
@@ -49,8 +49,7 @@ public class ImageCache {
     void clearImageCache() {
 
         for (Bitmap bitmap : imageCache.values()) {
-            if (!bitmap.isRecycled())
-                bitmap.recycle();
+            if (!bitmap.isRecycled()) bitmap.recycle();
         }
         imageCache.clear();
         System.gc();
@@ -64,7 +63,7 @@ public class ImageCache {
         Bitmap res = imageCache.get(image.getId());
         if (res == null) {
             Trace.debug(this, "Loading drawable image " + image);
-            res = loadImage(image, 10);
+            res = loadImage(image);
         }
         return res;
     }
@@ -72,67 +71,28 @@ public class ImageCache {
     /**
      * Load an image from the disk into memory. Return the Drawable for the
      * image.
-     *
-     * @param retries number of attempts to scale down the image if we run out of memory.
      */
-    private Bitmap loadImage(final Image image, int retries) {
+    private Bitmap loadImage(final Image image) {
         Trace.debug(this, "Loading " + image + " into memory");
-        Bitmap cachedBitmap = imageCache.get(image.getId());
-        Bitmap newBitmap;
-        try {
-            // This is one of the downloaded images, in the sdcard.
-            if (image.getFilename().contains(FileUtil.getSdFolder(context).getAbsolutePath())) {
-                // Load the new image
-                Trace.debug(this, "Load themed image.");
-                newBitmap = BitmapFactory.decodeFile(image.getFilename());
-                // If the image is corrupt or missing, use the default image.
-                if (newBitmap == null) {
-                    return null;
-                }
-            }
-            // This is one of the default images bundled in the apk.
-            else {
-                final int imageResId = context.getResources().getIdentifier(image.getFilename(), "drawable",
-                        context.getClass().getPackage().getName());
-                // Load the image from the resource file.
-                Trace.debug(this, "Load default image " + imageResId);
-                Bitmap readOnlyBitmap = BitmapFactory.decodeResource(context.getResources(), imageResId);// ((BitmapDrawable)
-                // context.getResources().getDrawable(imageResId)).getBitmap();
-                Trace.debug(this, "default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
-                        + readOnlyBitmap.isRecycled());
-                // Store the newly loaded drawable in cache for the first time.
-                if (cachedBitmap == null) {
-                    // Make a mutable copy of the drawable.
-                    cachedBitmap = copyAndCacheImage(readOnlyBitmap, image.getId());
-                    return cachedBitmap;
-                }
-                newBitmap = readOnlyBitmap;
-            }
-            if (cachedBitmap == null) {
-                Trace.debug(this, "Image not in cache");
-            } else if (cachedBitmap.isRecycled()) {
-                Trace.debug(this, "Cached image was recycled!");
-            } else
-                cachedBitmap.recycle();
-
-            // No cached bitmap, using a theme. This will happen if the user
-            // loads
-            // the app up with a non-default theme.
-            cachedBitmap = copyAndCacheImage(newBitmap, image.getId());
-            return cachedBitmap;
-        } catch (OutOfMemoryError error) {
-            Trace.debug(this, "Memory error loading " + image + ". " + retries + " retries left");
-            if (retries > 0) {
-                System.gc();
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return loadImage(image, retries - 1);
-            }
-            return null;
+        // This is one of the downloaded images, in the sdcard.
+        if (image.getFilename().contains(FileUtil.getSdFolder(context).getAbsolutePath())) {
+            // Load the new image
+            Trace.debug(this, "Load themed image.");
+            Bitmap newBitmap = BitmapUtil.loadBitmap(context, image.getFilename());
+            return copyAndCacheImage(newBitmap, image.getId());
+        }
+        // This is one of the default images bundled in the apk.
+        else {
+            final int imageResId = context.getResources().getIdentifier(image.getFilename(), "drawable",
+                    context.getClass().getPackage().getName());
+            // Load the image from the resource file.
+            Trace.debug(this, "Load default image " + imageResId);
+            Bitmap readOnlyBitmap = BitmapUtil.loadBitmap(context, imageResId);
+            Trace.debug(this, "default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
+                    + readOnlyBitmap.isRecycled());
+            // Store the newly loaded drawable in cache for the first time.
+            // Make a mutable copy of the drawable.
+            return copyAndCacheImage(readOnlyBitmap, image.getId());
         }
     }
 

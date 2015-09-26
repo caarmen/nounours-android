@@ -15,9 +15,10 @@ public class Trace {
 
     private static final String TAG = "Nounours/";
     public static void debug(Object context, Object o) {
-        Log.d(TAG + context.getClass().getName(), "" + o);
+        String className = context instanceof Class? ((Class)context).getSimpleName() : context.getClass().getSimpleName();
+        Log.d(TAG + className, "" + o);
         if (o instanceof Throwable) {
-            Log.d(TAG + context.getClass().getName(), ((Throwable) o).getMessage(), (Throwable) o);
+            Log.d(TAG + className, ((Throwable) o).getMessage(), (Throwable) o);
         }
     }
 }

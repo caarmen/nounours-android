@@ -7,6 +7,7 @@ package ca.rmen.nounours.util;
 import android.annotation.TargetApi;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 
 @TargetApi(4)
@@ -17,5 +18,10 @@ class NounoursApi4Helper {
 
     static BitmapDrawable createBitmapDrawable(Resources resources, Bitmap bitmap) {
         return new BitmapDrawable(resources, bitmap);
+    }
+
+    public static void setBitmapFactoryOptions(BitmapFactory.Options options) {
+        options.inPurgeable = true;
+        options.inInputShareable = true;
     }
 }

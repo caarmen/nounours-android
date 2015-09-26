@@ -161,7 +161,7 @@ class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(imageCacher, context.getString(R.string.predownload, getThemeLabel(theme)),
+        runTaskWithProgressBar(imageCacher, context.getString(R.string.predownload, getThemeLabel(context, theme)),
                 taskSize);
         return true;
 
@@ -190,19 +190,19 @@ class AndroidNounours extends Nounours {
      */
     @Override
     protected void updateDownloadProgress(int progress, int max) {
-        CharSequence themeLabel = getThemeLabel(getCurrentTheme());
+        CharSequence themeLabel = getThemeLabel(context, getCurrentTheme());
         updateProgressBar(progress, 2 * max, context.getString(R.string.downloading, themeLabel));
     }
 
     protected void updatePreloadProgress(int progress, int max) {
-        CharSequence themeLabel = getThemeLabel(getCurrentTheme());
+        CharSequence themeLabel = getThemeLabel(context, getCurrentTheme());
         updateProgressBar(progress, 2 * max, context.getString(R.string.predownload, themeLabel));
     }
 
-    CharSequence getThemeLabel(Theme theme) {
+    static CharSequence getThemeLabel(Context context, Theme theme) {
         String themeLabel = theme.getName();
         int themeLabelId = context.getResources().getIdentifier(theme.getName(), "string",
-                getClass().getPackage().getName());
+                R.class.getPackage().getName());
         if (themeLabelId > 0)
             return context.getResources().getText(themeLabelId);
         return themeLabel;

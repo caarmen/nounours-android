@@ -62,7 +62,7 @@ public class NounoursActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean useSimulator = false;
+        boolean useSimulator = true;
 
         setContentView(R.layout.main);
 
@@ -199,7 +199,7 @@ public class NounoursActivity extends Activity {
             for (String imageSetIdStr : sortedThemeList) {
                 int imageSetId = Integer.parseInt(imageSetIdStr);
                 Theme imageSet = imageSets.get(imageSetIdStr);
-                CharSequence themeLabel = nounours.getThemeLabel(imageSet);
+                CharSequence themeLabel = nounours.getThemeLabel(this, imageSet);
                 themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, themeLabel);
                 if (imageSet.getId().equals(curThemeId))
                     themeMenuItem.setEnabled(false);
