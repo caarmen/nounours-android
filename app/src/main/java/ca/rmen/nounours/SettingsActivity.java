@@ -28,7 +28,12 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings);
 
         //noinspection deprecation
+        ListPreference themePreference = (ListPreference) findPreference(AndroidNounours.PREF_THEME);
+
+        //noinspection deprecation
         bindPreferenceSummaryToValue(findPreference(AndroidNounours.PREF_IDLE_TIMEOUT));
+        bindPreferenceSummaryToValue(themePreference);
+        NounoursThemePreference.load(this, themePreference);
     }
 
     /**

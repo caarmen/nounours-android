@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -20,7 +19,6 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
@@ -39,12 +37,10 @@ class AndroidNounours extends Nounours {
     Context context = null;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
-    private static final String PREF_THEME = "Theme";
-    private static final String PREF_THEME_UPDATE = "ThemeUpdate";
+    static final String PREF_THEME = "Theme";
     static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
     static final String PREF_RANDOM = "Random";
     static final String PREF_IDLE_TIMEOUT = "IdleTimeout";
-    private SharedPreferences sharedPreferences = null;
     private AndroidNounoursAnimationHandler animationHandler = null;
     final private ImageView imageView;
 
@@ -64,7 +60,7 @@ class AndroidNounours extends Nounours {
         this.imageView = imageView;
         imageCache = new ImageCache(context, imageCacheListener);
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
@@ -125,9 +121,6 @@ class AndroidNounours extends Nounours {
         if (theme != null && theme.getImages() != null && theme.getImages().size() > 0 && theme.getSounds().size() > 0)
             taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
-        Editor editor = sharedPreferences.edit();
-        editor.putString(PREF_THEME, id);
-        editor.commit();
         // MEMORY
         imageCache.clearImageCache();
         animationHandler.reset();
@@ -331,11 +324,6 @@ class AndroidNounours extends Nounours {
 
     @Override
     protected void setIsThemeUpToDate(Theme theme) {
-        Editor editorTS = sharedPreferences.edit();
-        String prefKey = PREF_THEME_UPDATE + theme.getId();
-        editorTS.putLong(prefKey, new Date().getTime());
-        editorTS.commit();
-
     }
 
     private void showAlertDialog(final CharSequence message, final OnClickListener callback) {

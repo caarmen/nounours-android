@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,12 +19,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
-import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -48,8 +46,6 @@ public class NounoursActivity extends Activity {
     private static final int MENU_ACTION = 1001;
     private static final int MENU_RANDOM = 1002;
     private static final int MENU_HELP = 1003;
-    private static final int MENU_THEMES = 1005;
-    private static final int MENU_DEFAULT_THEME = 1006;
     private static final int MENU_OPTIONS = 1011;
 
     /**
@@ -124,6 +120,7 @@ public class NounoursActivity extends Activity {
         }
         nounours.doPing(true);
         wasPaused = false;
+        reloadThemeFromPreference();
 
     }
 
@@ -181,32 +178,6 @@ public class NounoursActivity extends Activity {
         final SubMenu optionsMenu = menu.addSubMenu(Menu.NONE, MENU_OPTIONS, mainMenuIdx++, R.string.options);
         optionsMenu.setIcon(R.drawable.ic_menu_preferences);
 
-        if (FileUtil.isSdPresent()) {
-            final SubMenu themesMenu = menu.addSubMenu(Menu.NONE, MENU_THEMES, mainMenuIdx++, R.string.themes);
-            themesMenu.setIcon(R.drawable.ic_menu_gallery);
-
-            final Map<String, Theme> imageSets = nounours.getThemes();
-            int imageSetIdx = 0;
-            Theme curTheme = nounours.getCurrentTheme();
-            String curThemeId = (curTheme == null) ? null : curTheme.getId();
-
-            MenuItem themeMenuItem = themesMenu
-                    .add(Menu.NONE, MENU_DEFAULT_THEME, imageSetIdx++, R.string.defaultTheme);
-            if (Nounours.DEFAULT_THEME_ID.equals(curThemeId))
-                themeMenuItem.setEnabled(false);
-            SortedSet<String> sortedThemeList = new TreeSet<>();
-            sortedThemeList.addAll(imageSets.keySet());
-            for (String imageSetIdStr : sortedThemeList) {
-                int imageSetId = Integer.parseInt(imageSetIdStr);
-                Theme imageSet = imageSets.get(imageSetIdStr);
-                CharSequence themeLabel = nounours.getThemeLabel(this, imageSet);
-                themeMenuItem = themesMenu.add(Menu.NONE, imageSetId, imageSetIdx++, themeLabel);
-                if (imageSet.getId().equals(curThemeId))
-                    themeMenuItem.setEnabled(false);
-            }
-
-        }
-
         // Set up the help menu
         final MenuItem helpMenu = menu.add(Menu.NONE, MENU_HELP, mainMenuIdx, R.string.help);
         helpMenu.setIcon(R.drawable.ic_menu_help);
@@ -242,34 +213,7 @@ public class NounoursActivity extends Activity {
     public boolean onPrepareOptionsMenu(final Menu menu) {
         // Prevent changing the theme in the middle of the animation.
         Theme theme = nounours.getCurrentTheme();
-        MenuItem themesMenu = menu.findItem(MENU_THEMES);
         boolean nounoursIsBusy = nounours.isAnimationRunning() || nounours.isLoading();
-        boolean hasSDCard = FileUtil.isSdPresent();
-
-        if (themesMenu != null) {
-            themesMenu.setEnabled(hasSDCard && !nounoursIsBusy);
-            if (hasSDCard && !nounoursIsBusy) {
-                String curThemeId = theme == null ? null : theme.getId();
-                SubMenu subMenu = themesMenu.getSubMenu();
-                MenuItem item = subMenu.findItem(MENU_DEFAULT_THEME);
-                if (item != null) {
-                    if (Nounours.DEFAULT_THEME_ID.equals(curThemeId))
-                        item.setEnabled(false);
-                    else
-                        item.setEnabled(true);
-                }
-                for (String themeId : nounours.getThemes().keySet()) {
-                    item = subMenu.findItem(Integer.parseInt(themeId));
-                    if (!themeId.equals(curThemeId))
-                        item.setEnabled(true);
-                    else
-                        item.setEnabled(false);
-                    nounours.debug("enable menu item " + themeId + ": " + item.isEnabled() + ": "
-                            + (themeId.equals(curThemeId)));
-
-                }
-            }
-        }
         MenuItem animationMenu = menu.findItem(MENU_ACTION);
         if (animationMenu != null) {
             animationMenu.setEnabled(!nounoursIsBusy);
@@ -304,27 +248,12 @@ public class NounoursActivity extends Activity {
             nounours.doRandomAnimation();
             return true;
         }
-        // The user picked the default image theme
-        else if (menuItem.getItemId() == MENU_DEFAULT_THEME) {
-
-            nounours.useTheme(Nounours.DEFAULT_THEME_ID);
-            Theme theme = nounours.getDefaultTheme();
-            sensorListener.rereadOrientationFile(theme, this);
-            return true;
-        }
         // Show an animation or change the theme.
         else {
             final Map<String, Animation> animations = nounours.getAnimations();
-            final Map<String, Theme> imageSets = nounours.getThemes();
             final Animation animation = animations.get("" + menuItem.getItemId());
             if (animation != null) {
                 nounours.doAnimation(animation);
-                return true;
-            }
-            final Theme imageSet = imageSets.get("" + menuItem.getItemId());
-            if (imageSet != null) {
-                nounours.useTheme(imageSet.getId());
-                sensorListener.rereadOrientationFile(imageSet, this);
                 return true;
             }
             return super.onOptionsItemSelected(menuItem);
@@ -342,4 +271,28 @@ public class NounoursActivity extends Activity {
         nounours.onDestroy();
         System.exit(0);
     }
+
+    private void reloadThemeFromPreference() {
+        boolean nounoursIsBusy = nounours.isAnimationRunning() || nounours.isLoading();
+        Trace.debug(this, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
+        String themeId = PreferenceManager.getDefaultSharedPreferences(this).getString(AndroidNounours.PREF_THEME, AndroidNounours.DEFAULT_THEME_ID);
+        if(nounours.getCurrentTheme() != null
+                && nounours.getCurrentTheme().getId().equals(themeId)) {
+            return;
+        }
+        final Theme theme;
+        if(AndroidNounours.DEFAULT_THEME_ID.equals(themeId)) {
+            theme = nounours.getDefaultTheme();
+        } else {
+            final Map<String, Theme> themes = nounours.getThemes();
+            theme = themes.get(themeId);
+        }
+        if (theme != null) {
+            nounours.stopAnimation();
+            nounours.useTheme(theme.getId());
+            sensorListener.rereadOrientationFile(theme, NounoursActivity.this);
+        }
+
+    }
+
 }
