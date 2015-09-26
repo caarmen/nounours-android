@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
-import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -46,7 +45,6 @@ import ca.rmen.nounours.util.FileUtil;
 class SoundHandler implements NounoursSoundHandler, OnErrorListener {
     private static final String TAG = SoundHandler.class.getSimpleName();
 
-    private static final String APP_SD_DIR = "mNounours";
     private final MediaPlayer mMediaPlayer;
 
     private final Nounours mNounours;
@@ -72,14 +70,10 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      */
     private File getSoundFile(final Sound sound) throws IOException {
 
-        // Get the mNounours directory on the sdcard
-        if (!FileUtil.isSdPresent())
-            return null;
-        final File externalStorageDirectory = Environment.getExternalStorageDirectory();
-        final File appRootDirectory = new File(externalStorageDirectory, APP_SD_DIR);
-        if (!appRootDirectory.exists() && !appRootDirectory.mkdir()) {
-            return null;
-        }
+        // Get the nounours directory on the sdcard
+        if (!FileUtil.isSdPresent()) return null;
+        final File appRootDirectory = mNounours.getAppDir();
+        if (!appRootDirectory.isDirectory()) return null;
 
         // Check if the sound file exists already.
         Theme theme = mNounours.getCurrentTheme();
@@ -133,6 +127,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      * Play a sound.
      */
     public void playSound(final String soundId) {
+        Log.v(TAG, "playSound " +  soundId);
         final Sound sound = mNounours.getSound(soundId);
 
         try {
