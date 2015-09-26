@@ -56,7 +56,7 @@ public class NounoursActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean useSimulator = true;
+        boolean useSimulator = false;
 
         setContentView(R.layout.main);
 
