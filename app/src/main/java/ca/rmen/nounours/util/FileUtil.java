@@ -39,11 +39,12 @@ public class FileUtil {
         }
     }
 
-    public static File getSdFolder(Context context, String folderName) {
+    public static File getSdFolder(Context context) {
         if(!isSdPresent()) {
             return null;
         }
         File result;
+        String folderName = "nounours";
         if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
             result = NounoursApi8Helper.getSdFolder(context, folderName);
         } else {
@@ -57,4 +58,5 @@ public class FileUtil {
         }
         return result;
     }
+
 }

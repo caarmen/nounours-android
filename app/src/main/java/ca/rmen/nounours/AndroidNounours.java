@@ -12,8 +12,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -23,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
@@ -52,7 +48,8 @@ class AndroidNounours extends Nounours {
     private AndroidNounoursAnimationHandler animationHandler = null;
     final private ImageView imageView;
 
-    private static final Map<String, Bitmap> imageCache = new HashMap<>();
+    private final ImageCache imageCache;
+
 
     /**
      * Open the CSV data files and call the superclass
@@ -65,6 +62,7 @@ class AndroidNounours extends Nounours {
 
         this.context = context;
         this.imageView = imageView;
+        imageCache = new ImageCache(context, imageCacheListener);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
@@ -98,29 +96,11 @@ class AndroidNounours extends Nounours {
         }
     }
 
-    /**
-     * Load the images into memory.
-     */
+    @Override
     protected boolean cacheImages() {
-
-        CharSequence themeName = getThemeLabel(getCurrentTheme());
-        int i = 0;
-        int max = getImages().size();
-        for (final Image image : getImages().values()) {
-            Bitmap bitmap = loadImage(image, 10);
-            if (bitmap == null)
-                return false;
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    setImage(image);
-                }
-            };
-            runTask(runnable);
-            updateProgressBar(max + (i++), 2 * max, context.getString(R.string.loading, themeName));
-        }
+        if(!imageCache.cacheImages(getImages().values())) return false;
         // Cache animations.
         return animationHandler.cacheAnimations();
-
     }
 
     /**
@@ -149,7 +129,8 @@ class AndroidNounours extends Nounours {
         editor.putString(PREF_THEME, id);
         editor.commit();
         // MEMORY
-        clearImageCache();
+        imageCache.clearImageCache();
+        animationHandler.reset();
         Runnable imageCacher = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -237,117 +218,17 @@ class AndroidNounours extends Nounours {
         if (image == null) {
             return;
         }
-        final Bitmap bitmap = getDrawableImage(image);
+        final Bitmap bitmap = imageCache.getDrawableImage(image);
         if (bitmap == null)
             return;
         imageView.setImageBitmap(bitmap);
-    }
-
-    private void clearImageCache() {
-
-        for (Bitmap bitmap : imageCache.values()) {
-            if (!bitmap.isRecycled())
-                bitmap.recycle();
-        }
-        imageCache.clear();
-        animationHandler.reset();
-        System.gc();
-
     }
 
     /**
      * Find the Android image for the given nounours image.
      */
     Bitmap getDrawableImage(final Image image) {
-        Bitmap res = imageCache.get(image.getId());
-        if (res == null) {
-            debug("Loading drawable image " + image);
-            res = loadImage(image, 10);
-        }
-        return res;
-    }
-
-    /**
-     * Load an image from the disk into memory. Return the Drawable for the
-     * image.
-     *
-     * @param retries number of attempts to scale down the image if we run out of memory.
-     */
-    private Bitmap loadImage(final Image image, int retries) {
-        debug("Loading " + image + " into memory");
-        Bitmap cachedBitmap = imageCache.get(image.getId());
-        Bitmap newBitmap;
-        try {
-            // This is one of the downloaded images, in the sdcard.
-            if (image.getFilename().contains(getAppDir().getAbsolutePath())) {
-                // Load the new image
-                debug("Load themed image.");
-                newBitmap = BitmapFactory.decodeFile(image.getFilename());
-                // If the image is corrupt or missing, use the default image.
-                if (newBitmap == null) {
-                    return null;
-                }
-            }
-            // This is one of the default images bundled in the apk.
-            else {
-                final int imageResId = context.getResources().getIdentifier(image.getFilename(), "drawable",
-                        context.getClass().getPackage().getName());
-                // Load the image from the resource file.
-                debug("Load default image " + imageResId);
-                Bitmap readOnlyBitmap = BitmapFactory.decodeResource(context.getResources(), imageResId);// ((BitmapDrawable)
-                // context.getResources().getDrawable(imageResId)).getBitmap();
-                debug("default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
-                        + readOnlyBitmap.isRecycled());
-                // Store the newly loaded drawable in cache for the first time.
-                if (cachedBitmap == null) {
-                    // Make a mutable copy of the drawable.
-                    cachedBitmap = copyAndCacheImage(readOnlyBitmap, image.getId());
-                    return cachedBitmap;
-                }
-                newBitmap = readOnlyBitmap;
-            }
-            if (cachedBitmap == null) {
-                debug("Image not in cache");
-            } else if (cachedBitmap.isRecycled()) {
-                debug("Cached image was recycled!");
-            } else
-                cachedBitmap.recycle();
-
-            // No cached bitmap, using a theme. This will happen if the user
-            // loads
-            // the app up with a non-default theme.
-            cachedBitmap = copyAndCacheImage(newBitmap, image.getId());
-            return cachedBitmap;
-        } catch (OutOfMemoryError error) {
-            debug("Memory error loading " + image + ". " + retries + " retries left");
-            if (retries > 0) {
-                System.gc();
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return loadImage(image, retries - 1);
-            }
-            return null;
-        }
-    }
-
-    /**
-     * Create a mutable copy of the given immutable bitmap, and store it in the
-     * cache.
-     *
-     * @param readOnlyBitmap the immutable bitmap
-     * @return the mutable copy of the read-only bitmap.
-     */
-    private Bitmap copyAndCacheImage(Bitmap readOnlyBitmap, String imageId) {
-        Bitmap mutableBitmap = readOnlyBitmap.copy(readOnlyBitmap.getConfig(), true);
-        Canvas canvas = new Canvas(mutableBitmap);
-        canvas.drawBitmap(readOnlyBitmap, 0, 0, null);
-        readOnlyBitmap.recycle();
-        imageCache.put(imageId, mutableBitmap);
-        return mutableBitmap;
+        return imageCache.getDrawableImage(image);
     }
 
     /**
@@ -429,12 +310,7 @@ class AndroidNounours extends Nounours {
      */
     public void onDestroy() {
         debug("destroy");
-        for (String imageId : imageCache.keySet()) {
-            Bitmap bitmap = imageCache.get(imageId);
-            if (!bitmap.isRecycled())
-                bitmap.recycle();
-        }
-        imageCache.clear();
+        imageCache.clearImageCache();
         animationHandler.onDestroy();
     }
 
@@ -483,7 +359,21 @@ class AndroidNounours extends Nounours {
 
     @Override
     public File getAppDir() {
-        String appDirName = getProperty(Nounours.PROP_DOWNLOADED_IMAGES_DIR);
-        return FileUtil.getSdFolder(context, appDirName);
+        return FileUtil.getSdFolder(context);
     }
+
+    private final ImageCache.ImageCacheListener imageCacheListener = new ImageCache.ImageCacheListener() {
+        @Override
+        public void onImageLoaded(final Image image, int progress, int total) {
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    setImage(image);
+                }
+            };
+            runTask(runnable);
+            CharSequence themeName = getThemeLabel(context, getCurrentTheme());
+            updateProgressBar(total + (progress), 2 * total, context.getString(R.string.loading, themeName));
+
+        }
+    };
 }

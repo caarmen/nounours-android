@@ -150,6 +150,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
      * @param doCache if true, this image sequence will be stored in memory for future use.
      */
     private AnimationDrawable createAnimation(final Animation animation, boolean doCache) {
+        Trace.debug(this, "createAnimation " + animation + " doCache = " + doCache);
         // First see if we have this stored in memory.
         AnimationDrawable animationDrawable = animationCache.get(animation.getId());
         if (animationDrawable != null) {
@@ -212,6 +213,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
      * Store all animations in memory for performance.
      */
     boolean cacheAnimations() {
+        Trace.debug(this, "cacheAnimations");
         final Map<String, Animation> animations = nounours.getAnimations();
         for (final String animationId : animations.keySet()) {
             final Animation animation = animations.get(animationId);
