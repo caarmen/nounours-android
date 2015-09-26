@@ -31,16 +31,6 @@
 	<string name="startle">Startle</string>
 	<string name="toast_remindMenuButton">Press the MENU button for more options\u2026</string>
 	<string name="themeLoadError">Oops, I couldn\'t load my theme. Try again! Check your network connection</string>
-	<string name="loadMoreThemes">Look for new themes&#8230;</string>
-	<string name="loadMoreThemesInProgress">Downloading theme list&#8230;</string>
-    <string name="newThemesAvailable">New themes available! Restart to use them.</string>
-    <string name="noNewThemes">Sorry, no new themes are available at this time!</string>
-    <string name="errorLoadingThemeList">Oops! There was a problem downloading the theme list.  Check your internet connection.</string>
-    <string name="upateCurrentTheme">Update this theme</string>
-	<string name="updatingCurrentTheme">Downloading files for the %s theme&#8230;</string>
-	<string name="updateCurrentThemeComplete">Files for the %s theme were downloaded!</string>
-	<string name="updateCurrentThemeError">Some files could not be downloaded.  Please check your network connection.</string>
-	<string name="updates">Updates</string>
 	<string name="enableRandomAnimations">Enable random animations</string>
 	<string name="disableRandomAnimations">Disable random animations</string>
 	<string name="options">Options</string>

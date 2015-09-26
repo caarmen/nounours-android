@@ -218,13 +218,6 @@ class AndroidNounours extends Nounours {
         updateProgressBar(progress, 2 * max, context.getString(R.string.predownload, themeLabel));
     }
 
-    CharSequence getCurrentThemeLabel() {
-        Theme curTheme = getCurrentTheme();
-        if (curTheme != null)
-            return getThemeLabel(curTheme);
-        return context.getResources().getText(R.string.defaultTheme);
-    }
-
     CharSequence getThemeLabel(Theme theme) {
         String themeLabel = theme.getName();
         int themeLabelId = context.getResources().getIdentifier(theme.getName(), "string",
@@ -378,7 +371,7 @@ class AndroidNounours extends Nounours {
     /**
      * Run a task, showing the progress bar while the task runs.
      */
-    void runTaskWithProgressBar(final Runnable task, String message, int max) {
+    private void runTaskWithProgressBar(final Runnable task, String message, int max) {
         if (progressDialog != null)
             progressDialog.dismiss();
         createProgressDialog(max, message);
@@ -396,7 +389,7 @@ class AndroidNounours extends Nounours {
     /**
      * Update the currently showing progress bar.
      */
-    void updateProgressBar(final int progress, final int max, final String message) {
+    private void updateProgressBar(final int progress, final int max, final String message) {
         Runnable runnable = new Runnable() {
 
             @Override
@@ -469,7 +462,7 @@ class AndroidNounours extends Nounours {
 
     }
 
-    void showAlertDialog(final CharSequence message, final OnClickListener callback) {
+    private void showAlertDialog(final CharSequence message, final OnClickListener callback) {
         Runnable showAlert = new Runnable() {
             public void run() {
                 if (alertDialog == null) {
