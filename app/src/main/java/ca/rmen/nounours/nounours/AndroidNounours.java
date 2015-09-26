@@ -64,6 +64,7 @@ public class AndroidNounours extends Nounours {
     private final AnimationHandler mAnimationHandler;
     private final ImageView mImageView;
     private final ImageCache mImageCache;
+    private final AnimationCache mAnimationCache;
 
     private ProgressDialog mProgressDialog;
     private AlertDialog mAlertDialog;
@@ -82,11 +83,12 @@ public class AndroidNounours extends Nounours {
         mHandler = handler;
         mImageView = imageView;
         mImageCache = new ImageCache(context, mImageCacheListener);
+        mAnimationCache = new AnimationCache(context, this, mImageCache);
 
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        mAnimationHandler = new AnimationHandler(context, this, imageView, mImageCache);
+        mAnimationHandler = new AnimationHandler(this, imageView, mAnimationCache);
         SoundHandler soundHandler = new SoundHandler(this, context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         Resources resources = context.getResources();
@@ -118,7 +120,7 @@ public class AndroidNounours extends Nounours {
     protected boolean cacheImages() {
         if(!mImageCache.cacheImages(getImages().values())) return false;
         // Cache animations.
-        return mAnimationHandler.cacheAnimations();
+        return mAnimationCache.cacheAnimations();
     }
 
     /**
@@ -164,7 +166,7 @@ public class AndroidNounours extends Nounours {
 
         // MEMORY
         mImageCache.clearImageCache();
-        mAnimationHandler.reset();
+        mAnimationCache.clearAnimationCache();
         Runnable imageCacher = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -326,7 +328,7 @@ public class AndroidNounours extends Nounours {
     public void onDestroy() {
         debug("destroy");
         mImageCache.clearImageCache();
-        mAnimationHandler.onDestroy();
+        mAnimationCache.clearAnimationCache();
     }
 
     @Override
