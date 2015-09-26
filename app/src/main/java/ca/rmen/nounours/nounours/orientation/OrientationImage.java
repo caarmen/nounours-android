@@ -24,15 +24,15 @@ package ca.rmen.nounours.nounours.orientation;
  *
  * @author Carmen Alvarez
  */
-public class OrientationImage {
+public final class OrientationImage {
 
-    private String mImageId = null;
-    private float mMinYaw = Float.MAX_VALUE;
-    private float mMaxYaw = Float.MAX_VALUE;
-    private float mMinPitch = Float.MAX_VALUE;
-    private float mMaxPitch = Float.MAX_VALUE;
-    private float mMinRoll = Float.MAX_VALUE;
-    private float mMaxRoll = Float.MAX_VALUE;
+    public final String imageId;
+    public final float minYaw;
+    public final float maxYaw;
+    public final float minPitch;
+    public final float maxPitch;
+    public final float minRoll;
+    public final float maxRoll;
 
     /**
      * @param imageId The image to display if the device is tilted in the given
@@ -40,45 +40,17 @@ public class OrientationImage {
      */
     public OrientationImage(String imageId, float minYaw, float maxYaw, float minPitch, float maxPitch, float minRoll,
                             float maxRoll) {
-        mImageId = imageId;
-        mMinYaw = minYaw;
-        mMaxYaw = maxYaw;
-        mMinPitch = minPitch;
-        mMaxPitch = maxPitch;
-        mMinRoll = minRoll;
-        mMaxRoll = maxRoll;
-    }
-
-    public String getImageId() {
-        return mImageId;
-    }
-
-    public float getMinYaw() {
-        return mMinYaw;
-    }
-
-    public float getMaxYaw() {
-        return mMaxYaw;
-    }
-
-    public float getMinPitch() {
-        return mMinPitch;
-    }
-
-    public float getMaxPitch() {
-        return mMaxPitch;
-    }
-
-    public float getMinRoll() {
-        return mMinRoll;
-    }
-
-    public float getMaxRoll() {
-        return mMaxRoll;
+        this.imageId = imageId;
+        this.minYaw = minYaw;
+        this.maxYaw = maxYaw;
+        this.minPitch = minPitch;
+        this.maxPitch = maxPitch;
+        this.minRoll = minRoll;
+        this.maxRoll = maxRoll;
     }
 
     public String toString() {
-        return "Orientation: " + mImageId + ", Yaw between " + mMinYaw + " and " + mMaxYaw + ", pitch between " + mMinPitch
-                + " and " + mMaxPitch + ", roll between " + mMinRoll + " and " + mMaxRoll;
+        return "Orientation: " + imageId + ", Yaw between " + minYaw + " and " + maxYaw + ", pitch between " + minPitch
+                + " and " + maxPitch + ", roll between " + minRoll + " and " + maxRoll;
     }
 }

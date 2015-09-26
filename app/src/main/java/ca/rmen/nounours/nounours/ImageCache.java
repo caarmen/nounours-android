@@ -40,7 +40,7 @@ class ImageCache {
 
     private static final String TAG = Constants.TAG + ImageCache.class.getSimpleName();
 
-    private static final Map<String, Bitmap> mImageCache = new ConcurrentHashMap<>();
+    private final Map<String, Bitmap> mImageCache = new ConcurrentHashMap<>();
     private final Context mContext;
     private final ImageCacheListener mListener;
 

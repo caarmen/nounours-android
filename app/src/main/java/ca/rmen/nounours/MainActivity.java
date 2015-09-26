@@ -24,7 +24,9 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -35,6 +37,7 @@ import android.widget.Toast;
 
 import java.util.Map;
 
+import ca.rmen.nounours.compat.ApiHelper;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.nounours.AndroidNounours;
@@ -71,12 +74,12 @@ public class MainActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean useSimulator = false;
+        boolean useSimulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
 
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-        mNounours = new AndroidNounours(this, imageView);
+        mNounours = new AndroidNounours(this, new Handler(), imageView);
 
         FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
         imageView.setOnTouchListener(mTouchListener);

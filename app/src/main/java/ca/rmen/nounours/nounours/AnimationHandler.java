@@ -52,14 +52,16 @@ class AnimationHandler implements NounoursAnimationHandler {
     private final AndroidNounours mNounours;
     private final Context mContext;
     private final ImageView mImageView;
-    private static final Map<String, AnimationDrawable> mAnimationCache = new HashMap<>();
+    private final ImageCache mImageCache;
 
-    private static final Map<Bitmap, BitmapDrawable> mBitmapDrawables = new HashMap<>();
+    private final Map<String, AnimationDrawable> mAnimationCache = new HashMap<>();
+    private final Map<Bitmap, BitmapDrawable> mBitmapDrawables = new HashMap<>();
 
-    public AnimationHandler(Context context, AndroidNounours nounours, ImageView imageView) {
+    public AnimationHandler(Context context, AndroidNounours nounours, ImageView imageView, ImageCache imageCache) {
         mContext = context;
         mNounours = nounours;
         mImageView = imageView;
+        mImageCache = imageCache;
     }
 
     public void reset() {
@@ -200,7 +202,7 @@ class AnimationHandler implements NounoursAnimationHandler {
                     return null;
                 }
                 // Get the android image and add it to the android animation.
-                final Bitmap bitmap = mNounours.getDrawableImage(image);
+                final Bitmap bitmap = mImageCache.getDrawableImage(image);
                 if (bitmap == null)
                     return null;
 
@@ -212,7 +214,7 @@ class AnimationHandler implements NounoursAnimationHandler {
             }
         }
         // Add the default image at the end.
-        final Bitmap bitmap = mNounours.getDrawableImage(mNounours.getDefaultImage());
+        final Bitmap bitmap = mImageCache.getDrawableImage(mNounours.getDefaultImage());
         if (bitmap == null)
             return null;
         BitmapDrawable drawable = getDrawable(bitmap);

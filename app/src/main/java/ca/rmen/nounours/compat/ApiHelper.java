@@ -28,7 +28,7 @@ public class ApiHelper {
 
     /**
      * On API Level 3, we need to read the SDK field, not the SDK_INT field.
-     * This is isolated here to prevent many code insepction warnings about
+     * This is isolated here to prevent many code inspection warnings about
      * "code maturity".
      */
     public static int getAPILevel() {

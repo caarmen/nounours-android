@@ -216,14 +216,14 @@ public class SensorListener implements SensorEventListener {
         final float pitch = orientationValuesDeg[1];
         final float roll = orientationValuesDeg[2];
         for (final OrientationImage orientationImage : mOrientationImages) {
-            if (yaw >= orientationImage.getMinYaw()
-                    && yaw <= orientationImage.getMaxYaw()
-                    && pitch >= orientationImage.getMinPitch()
-                    && pitch <= orientationImage.getMaxPitch()
-                    && roll >= orientationImage.getMinRoll()
-                    && roll <= orientationImage.getMaxRoll()) {
+            if (yaw >= orientationImage.minYaw
+                    && yaw <= orientationImage.maxYaw
+                    && pitch >= orientationImage.minPitch
+                    && pitch <= orientationImage.maxPitch
+                    && roll >= orientationImage.minRoll
+                    && roll <= orientationImage.maxRoll) {
                 final Image image = mNounours.getImages().get(
-                        orientationImage.getImageId());
+                        orientationImage.imageId);
                 mNounours.stopAnimation();
                 mNounours.setImage(image);
                 // Note that we are currently displaying a "tilt" image.
