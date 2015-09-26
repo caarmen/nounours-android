@@ -45,6 +45,8 @@ import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
+import ca.rmen.nounours.nounours.cache.AnimationCache;
+import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.ThemeUtil;
@@ -60,14 +62,12 @@ public class AndroidNounours extends Nounours {
     private static final String TAG = Constants.TAG + AndroidNounours.class.getSimpleName();
 
     private final Context mContext;
-    private final Handler mHandler;
-    private final AnimationHandler mAnimationHandler;
+    private final Handler mUIHandler;
     private final ImageView mImageView;
     private final ImageCache mImageCache;
     private final AnimationCache mAnimationCache;
 
     private ProgressDialog mProgressDialog;
-    private AlertDialog mAlertDialog;
 
 
     /**
@@ -77,18 +77,18 @@ public class AndroidNounours extends Nounours {
      *
      * @param context The android mContext.
      */
-    public AndroidNounours(final Context context, Handler handler, ImageView imageView) {
+    public AndroidNounours(final Context context, Handler uiHandler, ImageView imageView) {
 
         mContext = context;
-        mHandler = handler;
+        mUIHandler = uiHandler;
         mImageView = imageView;
-        mImageCache = new ImageCache(context, mImageCacheListener);
+        mImageCache = new ImageCache(context, mUIHandler, mImageCacheListener);
         mAnimationCache = new AnimationCache(context, this, mImageCache);
 
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        mAnimationHandler = new AnimationHandler(this, imageView, mAnimationCache);
+        AnimationHandler animationHandler = new AnimationHandler(this, imageView, mAnimationCache);
         SoundHandler soundHandler = new SoundHandler(this, context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         Resources resources = context.getResources();
@@ -104,7 +104,7 @@ public class AndroidNounours extends Nounours {
         final InputStream soundFile = resources.openRawResource(R.raw.sound);
 
         try {
-            init(mAnimationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
+            init(animationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
                     imageSetFile, featureFile, imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile,
                     soundFile, themeId);
             setEnableVibrate(NounoursSettings.isSoundEnabled(context));
@@ -112,33 +112,14 @@ public class AndroidNounours extends Nounours {
             setEnableRandomAnimations(NounoursSettings.isRandomAnimationEnabled(context));
             setIdleTimeout(NounoursSettings.getIdleTimeout(context));
         } catch (final IOException e) {
-            Log.d(getClass().getName(), "Error initializing nounours", e); //$NON-NLS-1$
+            Log.e(TAG, "Error initializing nounours", e);
         }
     }
 
     @Override
     protected boolean cacheImages() {
-        if(!mImageCache.cacheImages(getImages().values())) return false;
-        // Cache animations.
-        return mAnimationCache.cacheAnimations();
-    }
-
-    /**
-     * Something went wrong when trying to load a theme.  Reset to the default one.
-     */
-    private void resetToDefaultTheme() {
-        Log.v(TAG, "resetToDefaultTheme");
-        OnClickListener revertToDefaultTheme = new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                NounoursSettings.setThemeId(mContext, DEFAULT_THEME_ID);
-                useTheme(Nounours.DEFAULT_THEME_ID);
-            }
-        };
-        CharSequence message = mContext.getText(R.string.themeLoadError);
-
-        showAlertDialog(message, revertToDefaultTheme);
+        return mImageCache.cacheImages(getImages().values())
+            && mAnimationCache.cacheAnimations(getAnimations().values());
     }
 
     /**
@@ -157,17 +138,15 @@ public class AndroidNounours extends Nounours {
                 }
             }
         }
-        int taskSize = 1;
         Theme theme = getThemes().get(id);
         if (!ThemeUtil.isValid(theme)) theme = getCurrentTheme();
         if (!ThemeUtil.isValid(theme)) theme = getDefaultTheme();
-        if (!theme.getSounds().isEmpty())
-            taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
+        int taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
         // MEMORY
         mImageCache.clearImageCache();
         mAnimationCache.clearAnimationCache();
-        Runnable imageCacher = new Runnable() {
+        Runnable themeLoader = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
             public void run() {
@@ -188,7 +167,7 @@ public class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(imageCacher, mContext.getString(R.string.predownload, ThemeUtil.getThemeLabel(mContext, theme)),
+        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.predownload, ThemeUtil.getThemeLabel(mContext, theme)),
                 taskSize);
         return true;
 
@@ -263,7 +242,7 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void runTask(final Runnable task) {
-        mHandler.post(task);
+        mUIHandler.post(task);
     }
 
     /**
@@ -350,43 +329,45 @@ public class AndroidNounours extends Nounours {
     protected void setIsThemeUpToDate(Theme theme) {
     }
 
-    private void showAlertDialog(final CharSequence message, final OnClickListener callback) {
-        Runnable showAlert = new Runnable() {
-            public void run() {
-                if (mAlertDialog == null) {
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
-
-                    alertBuilder.setMessage(mContext.getText(R.string.themeLoadError));
-                    alertBuilder.setPositiveButton(mContext.getText(android.R.string.ok), callback);
-
-                    mAlertDialog = alertBuilder.create();
-
-                }
-                mAlertDialog.setMessage(message);
-                mAlertDialog.show();
-            }
-        };
-        runTask(showAlert);
-    }
 
     @Override
     public File getAppDir() {
         return EnvironmentCompat.getExternalFilesDir(mContext);
     }
 
+    /**
+     * Something went wrong when trying to load a theme.  Reset to the default one.
+     */
+    private void resetToDefaultTheme() {
+        Log.v(TAG, "resetToDefaultTheme");
+        final OnClickListener revertToDefaultTheme = new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                NounoursSettings.setThemeId(mContext, DEFAULT_THEME_ID);
+                useTheme(Nounours.DEFAULT_THEME_ID);
+            }
+        };
+
+        Runnable showAlert = new Runnable() {
+            public void run() {
+                    new AlertDialog.Builder(mContext)
+                        .setMessage(mContext.getText(R.string.themeLoadError))
+                        .setPositiveButton(mContext.getText(android.R.string.ok), revertToDefaultTheme)
+                        .create()
+                        .show();
+            }
+        };
+        runTask(showAlert);
+    }
+
     @SuppressWarnings("FieldCanBeLocal")
     private final ImageCache.ImageCacheListener mImageCacheListener = new ImageCache.ImageCacheListener() {
         @Override
         public void onImageLoaded(final Image image, int progress, int total) {
-            Runnable runnable = new Runnable() {
-                public void run() {
-                    setImage(image);
-                }
-            };
-            runTask(runnable);
+            setImage(image);
             CharSequence themeName = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
             updateProgressBar(total + (progress), 2 * total, mContext.getString(R.string.loading, themeName));
-
         }
     };
 }

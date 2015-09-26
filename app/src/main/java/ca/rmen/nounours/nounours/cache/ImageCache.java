@@ -16,11 +16,12 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.rmen.nounours.nounours;
+package ca.rmen.nounours.nounours.cache;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.Handler;
 import android.util.Log;
 
 import java.util.Collection;
@@ -32,9 +33,9 @@ import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.util.BitmapUtil;
 
-class ImageCache {
+public class ImageCache {
 
-    interface ImageCacheListener {
+    public interface ImageCacheListener {
         void onImageLoaded(Image image, int progress, int total);
     }
 
@@ -43,28 +44,38 @@ class ImageCache {
     private final Map<String, Bitmap> mImageCache = new ConcurrentHashMap<>();
     private final Context mContext;
     private final ImageCacheListener mListener;
+    private final Handler mUIHandler;
 
-    ImageCache(Context context, ImageCacheListener listener) {
+    public ImageCache(Context context, Handler uiHandler, ImageCacheListener listener) {
         mContext = context;
+        mUIHandler = uiHandler;
         mListener = listener;
     }
 
     /**
      * Load the images into memory.
      */
-    boolean cacheImages(Collection<Image> images) {
+    public boolean cacheImages(Collection<Image> images) {
+        Log.v(TAG, "cacheImages");
         int i = 0;
-        int max = images.size();
+        final int max = images.size();
         for (final Image image : images) {
             Bitmap bitmap = loadImage(image);
             if (bitmap == null)
                 return false;
-            mListener.onImageLoaded(image, i++, max);
+            final int progress = i;
+            i++;
+            mUIHandler.post(new Runnable(){
+                @Override
+                public void run() {
+                    mListener.onImageLoaded(image, progress, max);
+                }
+            });
         }
         return true;
     }
 
-    void clearImageCache() {
+    public void clearImageCache() {
 
         for (Bitmap bitmap : mImageCache.values()) {
             if (!bitmap.isRecycled()) bitmap.recycle();
@@ -77,7 +88,7 @@ class ImageCache {
     /**
      * Find the Android image for the given nounours image.
      */
-    Bitmap getDrawableImage(final Image image) {
+    public Bitmap getDrawableImage(final Image image) {
         Bitmap res = mImageCache.get(image.getId());
         if (res == null) {
             Log.v(TAG, "Loading drawable image " + image);

@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean useSimulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
+        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
 
         setContentView(R.layout.main);
 
@@ -83,8 +83,7 @@ public class MainActivity extends Activity {
 
         FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
         imageView.setOnTouchListener(mTouchListener);
-        //noinspection ConstantConditions
-        if (!useSimulator) {
+        if (!isOldEmulator) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
         if (mSensorManager != null) {
@@ -98,7 +97,7 @@ public class MainActivity extends Activity {
         imageView.setOnTouchListener(mTouchListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         /*
-         * if (useSimulator) { Hardware.mContentResolver = getContentResolver();
+         * if (isOldEmulator) { Hardware.mContentResolver = getContentResolver();
          * mSensorManager = new SensorManagerSimulator(mSensorManager);
          * SensorManagerSimulator.connectSimulator(); }
          */
@@ -211,10 +210,7 @@ public class MainActivity extends Activity {
         MenuItem animationMenu = menu.findItem(R.id.menu_animation);
         if (animationMenu != null) {
             animationMenu.setEnabled(!nounoursIsBusy);
-            if (theme == null || theme.getAnimations().size() == 0)
-                animationMenu.setVisible(false);
-            else
-                animationMenu.setVisible(true);
+            animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
             setupAnimationMenu(animationMenu.getSubMenu());
         }
         return super.onPrepareOptionsMenu(menu);
@@ -261,9 +257,8 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         mNounours.onDestroy();
-        System.exit(0);
+        super.onDestroy();
     }
 
     private boolean reloadThemeFromPreference() {

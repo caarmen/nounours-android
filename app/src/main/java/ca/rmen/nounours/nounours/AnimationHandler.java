@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.data.Animation;
+import ca.rmen.nounours.nounours.cache.AnimationCache;
 
 /**
  * Manages the Nounours animations displayed to the Android device.
