@@ -41,11 +41,6 @@ public class NounoursActivity extends Activity {
     private Sensor accelerometerSensor = null;
     private Sensor magneticFieldSensor = null;
 
-    private static final int MENU_ACTION = 1001;
-    private static final int MENU_RANDOM = 1002;
-    private static final int MENU_HELP = 1003;
-    private static final int MENU_OPTIONS = 1011;
-
     /**
      * Initialize nounours (read the CSV data files, register as a listener for
      * touch events).
@@ -162,27 +157,14 @@ public class NounoursActivity extends Activity {
      */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
-        int mainMenuIdx = 0;
-
-        // Set up the actions menu
-        final SubMenu actionMenu = menu.addSubMenu(Menu.NONE, MENU_ACTION, mainMenuIdx++, R.string.actions);
-        actionMenu.setIcon(R.drawable.menu_action);
-        setupAnimationMenu(actionMenu);
-
-        final SubMenu optionsMenu = menu.addSubMenu(Menu.NONE, MENU_OPTIONS, mainMenuIdx++, R.string.options);
-        optionsMenu.setIcon(R.drawable.ic_menu_preferences);
-
-        // Set up the help menu
-        final MenuItem helpMenu = menu.add(Menu.NONE, MENU_HELP, mainMenuIdx, R.string.help);
-        helpMenu.setIcon(R.drawable.ic_menu_help);
-
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
     private void setupAnimationMenu(SubMenu actionMenu) {
-        int actionMenuIdx = 0;
         actionMenu.clear();
-        actionMenu.add(Menu.NONE, MENU_RANDOM, actionMenuIdx++, R.string.random);
+        getMenuInflater().inflate(R.menu.animation_menu, actionMenu);
+        int actionMenuIdx = 1;
         // All the animations
         final Map<String, Animation> animations = nounours.getAnimations();
         for (final Animation animation : animations.values()) {
@@ -196,9 +178,7 @@ public class NounoursActivity extends Activity {
                 else
                     actionMenu.add(Menu.NONE, animationId, actionMenuIdx++, animationLabel);
             }
-
         }
-
     }
 
     /**
@@ -208,7 +188,7 @@ public class NounoursActivity extends Activity {
         // Prevent changing the theme in the middle of the animation.
         Theme theme = nounours.getCurrentTheme();
         boolean nounoursIsBusy = nounours.isAnimationRunning() || nounours.isLoading();
-        MenuItem animationMenu = menu.findItem(MENU_ACTION);
+        MenuItem animationMenu = menu.findItem(R.id.menu_animation);
         if (animationMenu != null) {
             animationMenu.setEnabled(!nounoursIsBusy);
             if (theme == null || theme.getAnimations().size() == 0)
@@ -227,18 +207,18 @@ public class NounoursActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(final MenuItem menuItem) {
-        if (menuItem.getItemId() == MENU_OPTIONS) {
+        if (menuItem.getItemId() == R.id.menu_options) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
         }
         // Show the help
-        else if (menuItem.getItemId() == MENU_HELP) {
+        else if (menuItem.getItemId() == R.id.menu_help) {
             nounours.onHelp();
             return true;
         }
         // The user picked the random animation
-        else if (menuItem.getItemId() == MENU_RANDOM) {
+        else if (menuItem.getItemId() == R.id.menu_random_animation) {
             nounours.doRandomAnimation();
             return true;
         }
