@@ -26,13 +26,13 @@ package ca.rmen.nounours.nounours.orientation;
  */
 public class OrientationImage {
 
-    private String imageId = null;
-    private float minYaw = Float.MAX_VALUE;
-    private float maxYaw = Float.MAX_VALUE;
-    private float minPitch = Float.MAX_VALUE;
-    private float maxPitch = Float.MAX_VALUE;
-    private float minRoll = Float.MAX_VALUE;
-    private float maxRoll = Float.MAX_VALUE;
+    private String mImageId = null;
+    private float mMinYaw = Float.MAX_VALUE;
+    private float mMaxYaw = Float.MAX_VALUE;
+    private float mMinPitch = Float.MAX_VALUE;
+    private float mMaxPitch = Float.MAX_VALUE;
+    private float mMinRoll = Float.MAX_VALUE;
+    private float mMaxRoll = Float.MAX_VALUE;
 
     /**
      * @param imageId The image to display if the device is tilted in the given
@@ -40,45 +40,45 @@ public class OrientationImage {
      */
     public OrientationImage(String imageId, float minYaw, float maxYaw, float minPitch, float maxPitch, float minRoll,
                             float maxRoll) {
-        this.imageId = imageId;
-        this.minYaw = minYaw;
-        this.maxYaw = maxYaw;
-        this.minPitch = minPitch;
-        this.maxPitch = maxPitch;
-        this.minRoll = minRoll;
-        this.maxRoll = maxRoll;
+        mImageId = imageId;
+        mMinYaw = minYaw;
+        mMaxYaw = maxYaw;
+        mMinPitch = minPitch;
+        mMaxPitch = maxPitch;
+        mMinRoll = minRoll;
+        mMaxRoll = maxRoll;
     }
 
     public String getImageId() {
-        return imageId;
+        return mImageId;
     }
 
     public float getMinYaw() {
-        return minYaw;
+        return mMinYaw;
     }
 
     public float getMaxYaw() {
-        return maxYaw;
+        return mMaxYaw;
     }
 
     public float getMinPitch() {
-        return minPitch;
+        return mMinPitch;
     }
 
     public float getMaxPitch() {
-        return maxPitch;
+        return mMaxPitch;
     }
 
     public float getMinRoll() {
-        return minRoll;
+        return mMinRoll;
     }
 
     public float getMaxRoll() {
-        return maxRoll;
+        return mMaxRoll;
     }
 
     public String toString() {
-        return "Orientation: " + imageId + ", Yaw between " + minYaw + " and " + maxYaw + ", pitch between " + minPitch
-                + " and " + maxPitch + ", roll between " + minRoll + " and " + maxRoll;
+        return "Orientation: " + mImageId + ", Yaw between " + mMinYaw + " and " + mMaxYaw + ", pitch between " + mMinPitch
+                + " and " + mMaxPitch + ", roll between " + mMinRoll + " and " + mMaxRoll;
     }
 }

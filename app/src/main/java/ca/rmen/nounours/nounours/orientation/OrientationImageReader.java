@@ -44,7 +44,7 @@ public class OrientationImageReader extends NounoursReader {
     private static final String COL_MIN_ROLL = "MinRoll";
     private static final String COL_MAX_ROLL = "MaxRoll";
 
-    private final Set<OrientationImage> orientationImages = new HashSet<>();
+    private final Set<OrientationImage> mOrientationImages = new HashSet<>();
 
     /**
      * Immediately reads the CSV content and caches the image-orientation data.
@@ -84,14 +84,14 @@ public class OrientationImageReader extends NounoursReader {
         float maxRoll = Float.parseFloat(reader.getValue(COL_MAX_ROLL));
         OrientationImage orientationImage = new OrientationImage(imageId, minYaw, maxYaw, minPitch, maxPitch, minRoll,
                 maxRoll);
-        orientationImages.add(orientationImage);
+        mOrientationImages.add(orientationImage);
     }
 
     /**
      * @return the set of OrientationImage objects read from the CSV file.
      */
     public Set<OrientationImage> getOrientationImages() {
-        return Collections.unmodifiableSet(orientationImages);
+        return Collections.unmodifiableSet(mOrientationImages);
     }
 
 }

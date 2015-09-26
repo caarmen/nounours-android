@@ -31,21 +31,21 @@ import ca.rmen.nounours.NounoursVibrateHandler;
  */
 class VibrateHandler implements NounoursVibrateHandler {
 
-    private Context context = null;
+    private final Context mContext;
 
     public VibrateHandler(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     @Override
     public void doVibrate(final long duration) {
-        final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        final Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(duration);
     }
 
     @Override
     public void doVibrate(final long duration, final long interval) {
-        final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        final Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
         final long[] pattern = new long[(int) (duration / interval)];
         for (int i = 0; i < pattern.length; i++) {
             pattern[i] = interval;

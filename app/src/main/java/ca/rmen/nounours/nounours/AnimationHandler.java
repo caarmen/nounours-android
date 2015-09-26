@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
@@ -48,27 +49,29 @@ import ca.rmen.nounours.data.Image;
 class AnimationHandler implements NounoursAnimationHandler {
     private static final String TAG = Constants.TAG + AnimationHandler.class.getSimpleName();
 
-    private AndroidNounours nounours = null;
-    final private ImageView imageView;
-    private static final Map<String, AnimationDrawable> animationCache = new HashMap<>();
+    private final AndroidNounours mNounours;
+    private final Context mContext;
+    private final ImageView mImageView;
+    private static final Map<String, AnimationDrawable> mAnimationCache = new HashMap<>();
 
-    private static final Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<>();
+    private static final Map<Bitmap, BitmapDrawable> mBitmapDrawables = new HashMap<>();
 
-    public AnimationHandler(AndroidNounours nounours, ImageView imageView) {
-        this.nounours = nounours;
-        this.imageView = imageView;
+    public AnimationHandler(Context context, AndroidNounours nounours, ImageView imageView) {
+        mContext = context;
+        mNounours = nounours;
+        mImageView = imageView;
     }
 
     public void reset() {
-        for (AnimationDrawable animationDrawable : animationCache.values()) {
+        for (AnimationDrawable animationDrawable : mAnimationCache.values()) {
             purgeAnimationDrawable(animationDrawable);
         }
-        animationCache.clear();
-        for (Bitmap bitmap : bitmapDrawables.keySet()) {
+        mAnimationCache.clear();
+        for (Bitmap bitmap : mBitmapDrawables.keySet()) {
             if (bitmap != null && !bitmap.isRecycled())
                 bitmap.recycle();
         }
-        bitmapDrawables.clear();
+        mBitmapDrawables.clear();
     }
 
     private void purgeAnimationDrawable(AnimationDrawable animationDrawable) {
@@ -120,7 +123,7 @@ class AnimationHandler implements NounoursAnimationHandler {
      * @return the currently running android animation, if any.
      */
     private AnimationDrawable getCurrentAnimationDrawable() {
-        final Drawable currentDrawable = imageView.getDrawable();
+        final Drawable currentDrawable = mImageView.getDrawable();
         // First see if an animation is visible on the screen.
         if (currentDrawable instanceof AnimationDrawable) {
             return (AnimationDrawable) currentDrawable;
@@ -145,14 +148,14 @@ class AnimationHandler implements NounoursAnimationHandler {
                 }
 
                 // Display the Android animation.
-                imageView.setImageDrawable(animationDrawable);
+                mImageView.setImageDrawable(animationDrawable);
 
                 animationDrawable.start();
                 animationDrawable.setOneShot(true);
                 Log.v(TAG, "launched animation " + animation.getId());
             }
         };
-        nounours.runTask(runnable);
+        mNounours.runTask(runnable);
 
     }
 
@@ -176,7 +179,7 @@ class AnimationHandler implements NounoursAnimationHandler {
     private AnimationDrawable createAnimation(final Animation animation, boolean doCache) {
         Log.v(TAG, "createAnimation " + animation + " doCache = " + doCache);
         // First see if we have this stored in memory.
-        AnimationDrawable animationDrawable = animationCache.get(animation.getId());
+        AnimationDrawable animationDrawable = mAnimationCache.get(animation.getId());
         if (animationDrawable != null) {
             return animationDrawable;
         }
@@ -184,20 +187,20 @@ class AnimationHandler implements NounoursAnimationHandler {
         // Create the android animation.
         animationDrawable = new AnimationDrawable();
         if (doCache)
-            animationCache.put(animation.getId(), animationDrawable);
+            mAnimationCache.put(animation.getId(), animationDrawable);
 
         // Go through the list of images in the nounours animation, "repeat"
         // times.
         for (int i = 0; i < animation.getRepeat(); i++) {
             for (final AnimationImage animationImage : animation.getImages()) {
                 // Make sure the image exists.
-                final Image image = nounours.getImages().get(animationImage.getImageId());
+                final Image image = mNounours.getImages().get(animationImage.getImageId());
                 if (image == null) {
                     Log.v(TAG, "No image " + animationImage);
                     return null;
                 }
                 // Get the android image and add it to the android animation.
-                final Bitmap bitmap = nounours.getDrawableImage(image);
+                final Bitmap bitmap = mNounours.getDrawableImage(image);
                 if (bitmap == null)
                     return null;
 
@@ -209,7 +212,7 @@ class AnimationHandler implements NounoursAnimationHandler {
             }
         }
         // Add the default image at the end.
-        final Bitmap bitmap = nounours.getDrawableImage(nounours.getDefaultImage());
+        final Bitmap bitmap = mNounours.getDrawableImage(mNounours.getDefaultImage());
         if (bitmap == null)
             return null;
         BitmapDrawable drawable = getDrawable(bitmap);
@@ -225,11 +228,11 @@ class AnimationHandler implements NounoursAnimationHandler {
      * Store bitmap drawables for bitmaps in cache.
      */
     private BitmapDrawable getDrawable(Bitmap bitmap) {
-        BitmapDrawable result = bitmapDrawables.get(bitmap);
+        BitmapDrawable result = mBitmapDrawables.get(bitmap);
         if (result != null)
             return result;
-        result = BitmapCompat.createBitmapDrawable(nounours.context, bitmap);
-        bitmapDrawables.put(bitmap, result);
+        result = BitmapCompat.createBitmapDrawable(mContext, bitmap);
+        mBitmapDrawables.put(bitmap, result);
         return result;
     }
 
@@ -238,7 +241,7 @@ class AnimationHandler implements NounoursAnimationHandler {
      */
     boolean cacheAnimations() {
         Log.v(TAG, "cacheAnimations");
-        final Map<String, Animation> animations = nounours.getAnimations();
+        final Map<String, Animation> animations = mNounours.getAnimations();
         for (final String animationId : animations.keySet()) {
             final Animation animation = animations.get(animationId);
             AnimationDrawable animationDrawable = createAnimation(animation, true);
@@ -258,7 +261,7 @@ class AnimationHandler implements NounoursAnimationHandler {
     }
 
     public void onDestroy() {
-        animationCache.clear();
-        bitmapDrawables.clear();
+        mAnimationCache.clear();
+        mBitmapDrawables.clear();
     }
 }

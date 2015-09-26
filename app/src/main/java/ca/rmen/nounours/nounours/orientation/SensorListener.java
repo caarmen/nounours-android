@@ -53,29 +53,29 @@ import ca.rmen.nounours.nounours.AndroidNounours;
 public class SensorListener implements SensorEventListener {
     private static final String TAG = SensorListener.class.getSimpleName();
 
-    private float xAccel = Float.MAX_VALUE;
-    private float yAccel = Float.MAX_VALUE;
-    private float zAccel = Float.MAX_VALUE;
-    private boolean isTiltImage = false;
-    private final Set<OrientationImage> orientationImages = new HashSet<>();
+    private float mXAccel = Float.MAX_VALUE;
+    private float mYAccel = Float.MAX_VALUE;
+    private float mZAccel = Float.MAX_VALUE;
+    private boolean mIsTiltImage = false;
+    private final Set<OrientationImage> mOrientationImages = new HashSet<>();
 
-    private AndroidNounours nounours = null;
-    private final Context context;
+    private AndroidNounours mNounours = null;
+    private final Context mContext;
 
-    private float[] lastAcceleration = null;
-    private float[] lastMagneticField = null;
+    private float[] mLastAcceleration = null;
+    private float[] mLastMagneticField = null;
 
     public SensorListener(AndroidNounours nounours,
                           Context context) {
-        this.nounours = nounours;
-        this.context = context;
+        mNounours = nounours;
+        mContext = context;
         rereadOrientationFile(nounours.getCurrentTheme(), context);
-        lastMagneticField = new float[]{0, 0, -1};
+        mLastMagneticField = new float[]{0, 0, -1};
     }
 
     public void rereadOrientationFile(final Theme theme, final Context context) {
         Log.v(TAG, "rereadOrientationFile");
-        orientationImages.clear();
+        mOrientationImages.clear();
         new AsyncTask<Void,Void,Void>() {
 
             @Override
@@ -86,7 +86,7 @@ public class SensorListener implements SensorEventListener {
                     try {
                         orientationImageReader = new OrientationImageReader(
                                 orientationImageFile);
-                        orientationImages.addAll(orientationImageReader
+                        mOrientationImages.addAll(orientationImageReader
                                 .getOrientationImages());
                     } catch (IOException e) {
                         Log.v(TAG, e.getMessage(), e);
@@ -110,7 +110,7 @@ public class SensorListener implements SensorEventListener {
             return context.getResources()
                     .openRawResource(R.raw.orientationimage);
         }
-        String themesDir = nounours.getAppDir().getAbsolutePath();
+        String themesDir = mNounours.getAppDir().getAbsolutePath();
         try {
             File orientationImageFile = new File(themesDir + File.separator
                     + theme.getId() + File.separator + "orientationimage2.csv");
@@ -141,10 +141,10 @@ public class SensorListener implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
 
         // Don't do anything if we're shaking.
-        if (nounours.isShaking() || nounours.isLoading()) {
-            xAccel = Float.MAX_VALUE;
-            yAccel = Float.MAX_VALUE;
-            zAccel = Float.MAX_VALUE;
+        if (mNounours.isShaking() || mNounours.isLoading()) {
+            mXAccel = Float.MAX_VALUE;
+            mYAccel = Float.MAX_VALUE;
+            mZAccel = Float.MAX_VALUE;
             return;
         }
         int sensorType = event.sensor.getType();
@@ -166,15 +166,15 @@ public class SensorListener implements SensorEventListener {
         float eventAccelX = values[0];
         float eventAccelY = values[1];
         float eventAccelZ = values[2];
-        if (xAccel != Float.MAX_VALUE) {
-            final float netAccelX = Math.abs(xAccel - eventAccelX);
-            final float netAccelY = Math.abs(yAccel - eventAccelY);
-            final float netAccelZ = Math.abs(zAccel - eventAccelZ);
+        if (mXAccel != Float.MAX_VALUE) {
+            final float netAccelX = Math.abs(mXAccel - eventAccelX);
+            final float netAccelY = Math.abs(mYAccel - eventAccelY);
+            final float netAccelZ = Math.abs(mZAccel - eventAccelZ);
 
-            final float shakeFactor = nounours.getMinShakeSpeed();
+            final float shakeFactor = mNounours.getMinShakeSpeed();
             if (netAccelX > shakeFactor || netAccelY > shakeFactor
                     || netAccelZ > shakeFactor) {
-                nounours.onShake();
+                mNounours.onShake();
             }
         }
         // For some reason, the first reading when the app starts, will give
@@ -182,11 +182,11 @@ public class SensorListener implements SensorEventListener {
         if (eventAccelX != 0.0
                 && eventAccelY != 0.0
                 && eventAccelZ != 0.0) {
-            xAccel = eventAccelX;
-            yAccel = eventAccelY;
-            zAccel = eventAccelZ;
+            mXAccel = eventAccelX;
+            mYAccel = eventAccelY;
+            mZAccel = eventAccelZ;
         }
-        lastAcceleration = values.clone();
+        mLastAcceleration = values.clone();
     }
 
     /**
@@ -197,10 +197,10 @@ public class SensorListener implements SensorEventListener {
         float[] I = new float[16];
 
         // We need to have recorded acceleration and magnetic field at least once.
-        if (lastAcceleration == null
-                || lastMagneticField == null
+        if (mLastAcceleration == null
+                || mLastMagneticField == null
                 || !SensorManager.getRotationMatrix(inR, I,
-                lastAcceleration, lastMagneticField))
+                mLastAcceleration, mLastMagneticField))
             return;
 
         float[] outR = remapCoordinateSystem(inR);
@@ -215,40 +215,40 @@ public class SensorListener implements SensorEventListener {
         final float yaw = orientationValuesDeg[0];
         final float pitch = orientationValuesDeg[1];
         final float roll = orientationValuesDeg[2];
-        for (final OrientationImage orientationImage : orientationImages) {
+        for (final OrientationImage orientationImage : mOrientationImages) {
             if (yaw >= orientationImage.getMinYaw()
                     && yaw <= orientationImage.getMaxYaw()
                     && pitch >= orientationImage.getMinPitch()
                     && pitch <= orientationImage.getMaxPitch()
                     && roll >= orientationImage.getMinRoll()
                     && roll <= orientationImage.getMaxRoll()) {
-                final Image image = nounours.getImages().get(
+                final Image image = mNounours.getImages().get(
                         orientationImage.getImageId());
-                nounours.stopAnimation();
-                nounours.setImage(image);
+                mNounours.stopAnimation();
+                mNounours.setImage(image);
                 // Note that we are currently displaying a "tilt" image.
-                isTiltImage = true;
+                mIsTiltImage = true;
                 return;
             }
         }
         // Couldn't find any tilt image for this orientation, reset to the
         // default image if currently displaying a
         // tilt image
-        if (isTiltImage) {
-            nounours.reset();
-            isTiltImage = false;
+        if (mIsTiltImage) {
+            mNounours.reset();
+            mIsTiltImage = false;
         }
     }
 
     private void onMagneticFieldChanged(SensorEvent event) {
-        lastMagneticField = event.values.clone();
+        mLastMagneticField = event.values.clone();
     }
 
     private float[] remapCoordinateSystem(float[] values) {
         int x = SensorManager.AXIS_X;
         int y = SensorManager.AXIS_Y;
 
-        int rotation = DisplayCompat.getRotation(context);
+        int rotation = DisplayCompat.getRotation(mContext);
         switch (rotation) {
             case Surface.ROTATION_90:
                 //noinspection SuspiciousNameCombination

@@ -33,13 +33,13 @@ import ca.rmen.nounours.Nounours;
  */
 public class TouchListener implements OnTouchListener {
 
-    private GestureDetector gestureDetector = null;
-    private Nounours nounours = null;
+    private final GestureDetector mGestureDetector;
+    private final Nounours mNounours;
 
     public TouchListener(Nounours nounours,
                          GestureDetector gestureDetector) {
-        this.nounours = nounours;
-        this.gestureDetector = gestureDetector;
+        mNounours = nounours;
+        mGestureDetector = gestureDetector;
     }
 
     /**
@@ -51,15 +51,15 @@ public class TouchListener implements OnTouchListener {
     @Override
     public boolean onTouch(final View v, final MotionEvent event) {
 
-        if (gestureDetector != null) {
-            gestureDetector.onTouchEvent(event);
+        if (mGestureDetector != null) {
+            mGestureDetector.onTouchEvent(event);
         }
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            nounours.onPress((int) event.getX(), (int) event.getY());
+            mNounours.onPress((int) event.getX(), (int) event.getY());
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            nounours.onRelease();
+            mNounours.onRelease();
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            nounours.onMove((int) event.getX(), (int) event.getY());
+            mNounours.onMove((int) event.getX(), (int) event.getY());
         }
         return true;
     }

@@ -40,8 +40,8 @@ import ca.rmen.nounours.util.ThemeUtil;
 
 public final class ThemePreferenceLoader {
     private static final class ThemePreferenceData {
-        private final CharSequence[] entries;
-        private final CharSequence[] entryValues;
+        final CharSequence[] entries;
+        final CharSequence[] entryValues;
 
         private ThemePreferenceData(CharSequence[] entries, CharSequence[] entryValues) {
             this.entries = entries;

@@ -45,7 +45,7 @@ import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
 
 /**
- * Android activity class which delegates nounours-specific logic to the
+ * Android activity class which delegates mNounours-specific logic to the
  * {@link AndroidNounours} class.
  *
  * @author Carmen Alvarez
@@ -54,17 +54,15 @@ public class MainActivity extends Activity {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
 
-    private Toast toast = null;
-
-    private AndroidNounours nounours = null;
-    private SensorManager sensorManager = null;
-    private SensorListener sensorListener = null;
-    private TouchListener onTouchListener = null;
-    private Sensor accelerometerSensor = null;
-    private Sensor magneticFieldSensor = null;
+    private AndroidNounours mNounours;
+    private SensorManager mSensorManager;
+    private SensorListener mSensorListener;
+    private TouchListener mTouchListener;
+    private Sensor mAccelerometerSensor;
+    private Sensor mMagneticFieldSensor;
 
     /**
-     * Initialize nounours (read the CSV data files, register as a listener for
+     * Initialize mNounours (read the CSV data files, register as a listener for
      * touch events).
      *
      * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -73,46 +71,43 @@ public class MainActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean useSimulator = true;
+        boolean useSimulator = false;
 
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-        nounours = new AndroidNounours(this, imageView);
+        mNounours = new AndroidNounours(this, imageView);
 
-        FlingDetector nounoursFlingDetector = new FlingDetector(nounours);
-        imageView.setOnTouchListener(onTouchListener);
+        FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
+        imageView.setOnTouchListener(mTouchListener);
         //noinspection ConstantConditions
         if (!useSimulator) {
-            sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+            mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
-        if (sensorManager != null) {
-            accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        if (mSensorManager != null) {
+            mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         }
 
         final GestureDetector gestureDetector = new GestureDetector(this, nounoursFlingDetector);
-        onTouchListener = new TouchListener(nounours, gestureDetector);
-        sensorListener = new SensorListener(nounours, this);
-        imageView.setOnTouchListener(onTouchListener);
+        mTouchListener = new TouchListener(mNounours, gestureDetector);
+        mSensorListener = new SensorListener(mNounours, this);
+        imageView.setOnTouchListener(mTouchListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         /*
          * if (useSimulator) { Hardware.mContentResolver = getContentResolver();
-         * sensorManager = new SensorManagerSimulator(sensorManager);
+         * mSensorManager = new SensorManagerSimulator(mSensorManager);
          * SensorManagerSimulator.connectSimulator(); }
          */
-        if (toast != null) {
-            toast.cancel();
-        }
-        toast = Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG);
-        toast.show();
+
+        Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG).show();
 
     }
 
     /**
      * Called when the application is started or becomes active. Register for
      * sensor events, enable pinging for idle context, and call
-     * nounours.onResume().
+     * mNounours.onResume().
      *
      * @see android.app.Activity#onResume()
      */
@@ -120,19 +115,19 @@ public class MainActivity extends Activity {
     protected void onResume() {
 
         super.onResume();
-        if (sensorManager != null) {
-            sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            if (!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
+        if (mSensorManager != null) {
+            mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            if (!mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
                 Log.v(TAG, "Could not register for magnetic field sensor");
         }
 
-        nounours.setEnableSound(NounoursSettings.isSoundEnabled(this));
-        nounours.setEnableVibrate(NounoursSettings.isSoundEnabled(this));
-        nounours.setIdleTimeout(NounoursSettings.getIdleTimeout(this));
-        nounours.setEnableRandomAnimations(NounoursSettings.isRandomAnimationEnabled(this));
+        mNounours.setEnableSound(NounoursSettings.isSoundEnabled(this));
+        mNounours.setEnableVibrate(NounoursSettings.isSoundEnabled(this));
+        mNounours.setIdleTimeout(NounoursSettings.getIdleTimeout(this));
+        mNounours.setEnableRandomAnimations(NounoursSettings.isRandomAnimationEnabled(this));
         boolean themeChanged = reloadThemeFromPreference();
-        if(!themeChanged) nounours.onResume();
-        nounours.doPing(true);
+        if(!themeChanged) mNounours.onResume();
+        mNounours.doPing(true);
 
     }
 
@@ -165,10 +160,10 @@ public class MainActivity extends Activity {
      * sound.
      */
     private void stopActivity() {
-        nounours.doPing(false);
-        nounours.stopSound();
-        if (sensorManager != null) {
-            sensorManager.unregisterListener(sensorListener);
+        mNounours.doPing(false);
+        mNounours.stopSound();
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(mSensorListener);
         }
     }
 
@@ -188,7 +183,7 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.animation_menu, actionMenu);
         int actionMenuIdx = 1;
         // All the animations
-        final Map<String, Animation> animations = nounours.getAnimations();
+        final Map<String, Animation> animations = mNounours.getAnimations();
         for (final Animation animation : animations.values()) {
             if (animation.isVisible()) {
                 final int animationId = Integer.parseInt(animation.getId());
@@ -208,8 +203,8 @@ public class MainActivity extends Activity {
      */
     public boolean onPrepareOptionsMenu(final Menu menu) {
         // Prevent changing the theme in the middle of the animation.
-        Theme theme = nounours.getCurrentTheme();
-        boolean nounoursIsBusy = nounours.isAnimationRunning() || nounours.isLoading();
+        Theme theme = mNounours.getCurrentTheme();
+        boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
         MenuItem animationMenu = menu.findItem(R.id.menu_animation);
         if (animationMenu != null) {
             animationMenu.setEnabled(!nounoursIsBusy);
@@ -236,20 +231,20 @@ public class MainActivity extends Activity {
         }
         // Show the help
         else if (menuItem.getItemId() == R.id.menu_help) {
-            nounours.onHelp();
+            mNounours.onHelp();
             return true;
         }
         // The user picked the random animation
         else if (menuItem.getItemId() == R.id.menu_random_animation) {
-            nounours.doRandomAnimation();
+            mNounours.doRandomAnimation();
             return true;
         }
         // Show an animation or change the theme.
         else {
-            final Map<String, Animation> animations = nounours.getAnimations();
+            final Map<String, Animation> animations = mNounours.getAnimations();
             final Animation animation = animations.get("" + menuItem.getItemId());
             if (animation != null) {
-                nounours.doAnimation(animation);
+                mNounours.doAnimation(animation);
                 return true;
             }
             return super.onOptionsItemSelected(menuItem);
@@ -264,31 +259,31 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        nounours.onDestroy();
+        mNounours.onDestroy();
         System.exit(0);
     }
 
     private boolean reloadThemeFromPreference() {
-        boolean nounoursIsBusy = nounours.isLoading();
+        boolean nounoursIsBusy = mNounours.isLoading();
         Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
         String themeId = NounoursSettings.getThemeId(this);
-        if(nounours.getCurrentTheme() != null
-                && nounours.getCurrentTheme().getId().equals(themeId)) {
+        if(mNounours.getCurrentTheme() != null
+                && mNounours.getCurrentTheme().getId().equals(themeId)) {
             return false;
         }
         final Theme theme;
         if(AndroidNounours.DEFAULT_THEME_ID.equals(themeId)) {
-            theme = nounours.getDefaultTheme();
+            theme = mNounours.getDefaultTheme();
         } else {
-            final Map<String, Theme> themes = nounours.getThemes();
+            final Map<String, Theme> themes = mNounours.getThemes();
             theme = themes.get(themeId);
         }
         if (theme != null) {
-            nounours.stopAnimation();
+            mNounours.stopAnimation();
             final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
             imageView.setImageBitmap(null);
-            nounours.useTheme(theme.getId());
-            sensorListener.rereadOrientationFile(theme, MainActivity.this);
+            mNounours.useTheme(theme.getId());
+            mSensorListener.rereadOrientationFile(theme, MainActivity.this);
         }
         return true;
     }

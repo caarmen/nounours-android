@@ -57,13 +57,13 @@ public class AndroidNounours extends Nounours {
 
     private static final String TAG = Constants.TAG + AndroidNounours.class.getSimpleName();
 
-    Context context = null;
-    private ProgressDialog progressDialog;
-    private AlertDialog alertDialog;
-    private AnimationHandler animationHandler = null;
-    final private ImageView imageView;
+    private final Context mContext;
+    private final AnimationHandler mAnimationHandler;
+    private final ImageView mImageView;
+    private final ImageCache mImageCache;
 
-    private final ImageCache imageCache;
+    private ProgressDialog mProgressDialog;
+    private AlertDialog mAlertDialog;
 
 
     /**
@@ -71,18 +71,18 @@ public class AndroidNounours extends Nounours {
      * {@link Nounours#init(NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, String)}
      * method.
      *
-     * @param context The android context.
+     * @param context The android mContext.
      */
     public AndroidNounours(final Context context, ImageView imageView) {
 
-        this.context = context;
-        this.imageView = imageView;
-        imageCache = new ImageCache(context, imageCacheListener);
+        mContext = context;
+        mImageView = imageView;
+        mImageCache = new ImageCache(context, imageCacheListener);
 
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        animationHandler = new AnimationHandler(this, imageView);
+        mAnimationHandler = new AnimationHandler(context, this, imageView);
         SoundHandler soundHandler = new SoundHandler(this, context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
@@ -98,7 +98,7 @@ public class AndroidNounours extends Nounours {
         final InputStream soundFile = context.getResources().openRawResource(R.raw.sound);
 
         try {
-            init(animationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
+            init(mAnimationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
                     imageSetFile, featureFile, imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile,
                     soundFile, themeId);
             setEnableVibrate(NounoursSettings.isSoundEnabled(context));
@@ -112,9 +112,9 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected boolean cacheImages() {
-        if(!imageCache.cacheImages(getImages().values())) return false;
+        if(!mImageCache.cacheImages(getImages().values())) return false;
         // Cache animations.
-        return animationHandler.cacheAnimations();
+        return mAnimationHandler.cacheAnimations();
     }
 
     /**
@@ -126,11 +126,11 @@ public class AndroidNounours extends Nounours {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                NounoursSettings.setThemeId(context, DEFAULT_THEME_ID);
+                NounoursSettings.setThemeId(mContext, DEFAULT_THEME_ID);
                 useTheme(Nounours.DEFAULT_THEME_ID);
             }
         };
-        CharSequence message = context.getText(R.string.themeLoadError);
+        CharSequence message = mContext.getText(R.string.themeLoadError);
 
         showAlertDialog(message, revertToDefaultTheme);
     }
@@ -161,8 +161,8 @@ public class AndroidNounours extends Nounours {
             taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
         // MEMORY
-        imageCache.clearImageCache();
-        animationHandler.reset();
+        mImageCache.clearImageCache();
+        mAnimationHandler.reset();
         Runnable imageCacher = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -184,7 +184,7 @@ public class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(imageCacher, context.getString(R.string.predownload, ThemeUtil.getThemeLabel(context, theme)),
+        runTaskWithProgressBar(imageCacher, mContext.getString(R.string.predownload, ThemeUtil.getThemeLabel(mContext, theme)),
                 taskSize);
         return true;
 
@@ -194,17 +194,17 @@ public class AndroidNounours extends Nounours {
         Theme theme = getCurrentTheme();
         if (theme == null)
             return;
-        ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+        ViewGroup.LayoutParams layoutParams = mImageView.getLayoutParams();
 
-        float widthRatio = (float) DisplayCompat.getWidth(context) / theme.getWidth();
-        float heightRatio = (float) DisplayCompat.getHeight(context) / theme.getHeight();
+        float widthRatio = (float) DisplayCompat.getWidth(mContext) / theme.getWidth();
+        float heightRatio = (float) DisplayCompat.getHeight(mContext) / theme.getHeight();
         Log.v(TAG, widthRatio + ": " + heightRatio);
         float ratioToUse = widthRatio > heightRatio ? heightRatio : widthRatio;
 
         layoutParams.height = (int) (ratioToUse * theme.getHeight());
         layoutParams.width = (int) (ratioToUse * theme.getWidth());
         Log.v(TAG, "Scaling view to " + layoutParams.width + "x" + layoutParams.height);
-        imageView.setLayoutParams(layoutParams);
+        mImageView.setLayoutParams(layoutParams);
 
     }
 
@@ -213,13 +213,13 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void updateDownloadProgress(int progress, int max) {
-        CharSequence themeLabel = ThemeUtil.getThemeLabel(context, getCurrentTheme());
-        updateProgressBar(progress, 2 * max, context.getString(R.string.downloading, themeLabel));
+        CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
+        updateProgressBar(progress, 2 * max, mContext.getString(R.string.downloading, themeLabel));
     }
 
     protected void updatePreloadProgress(int progress, int max) {
-        CharSequence themeLabel = ThemeUtil.getThemeLabel(context, getCurrentTheme());
-        updateProgressBar(progress, 2 * max, context.getString(R.string.predownload, themeLabel));
+        CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
+        updateProgressBar(progress, 2 * max, mContext.getString(R.string.predownload, themeLabel));
     }
 
     /**
@@ -232,17 +232,17 @@ public class AndroidNounours extends Nounours {
         if (image == null) {
             return;
         }
-        final Bitmap bitmap = imageCache.getDrawableImage(image);
+        final Bitmap bitmap = mImageCache.getDrawableImage(image);
         if (bitmap == null)
             return;
-        imageView.setImageBitmap(bitmap);
+        mImageView.setImageBitmap(bitmap);
     }
 
     /**
      * Find the Android image for the given nounours image.
      */
     Bitmap getDrawableImage(final Image image) {
-        return imageCache.getDrawableImage(image);
+        return mImageCache.getDrawableImage(image);
     }
 
     /**
@@ -265,22 +265,22 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void runTask(final Runnable task) {
-        imageView.post(task);
+        mImageView.post(task);
     }
 
     /**
      * Run a task, showing the progress bar while the task runs.
      */
     private void runTaskWithProgressBar(final Runnable task, String message, int max) {
-        if (progressDialog != null)
-            progressDialog.dismiss();
+        if (mProgressDialog != null)
+            mProgressDialog.dismiss();
         createProgressDialog(max, message);
         Runnable runnable = new Runnable() {
 
             @Override
             public void run() {
                 task.run();
-                progressDialog.dismiss();
+                mProgressDialog.dismiss();
             }
         };
         new Thread(runnable).start();
@@ -295,12 +295,12 @@ public class AndroidNounours extends Nounours {
             @Override
             public void run() {
                 // show the progress bar if it is not already showing.
-                if (progressDialog == null || !progressDialog.isShowing())
+                if (mProgressDialog == null || !mProgressDialog.isShowing())
                     createProgressDialog(max, message);
                 // Update the progress
-                progressDialog.setProgress(progress);
-                progressDialog.setMax(max);
-                progressDialog.setMessage(message);
+                mProgressDialog.setProgress(progress);
+                mProgressDialog.setMax(max);
+                mProgressDialog.setMessage(message);
                 debug("updateProgressBar " + progress + "/" + max + ": " + message);
 
             }
@@ -312,15 +312,15 @@ public class AndroidNounours extends Nounours {
      * Create a determinate progress dialog with the given size and text.
      */
     private void createProgressDialog(int max, String message) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setTitle("");
-        progressDialog.setMessage(message);
-        progressDialog.setIndeterminate(max < 0);
-        progressDialog.setMax(max);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setProgress(0);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        mProgressDialog = new ProgressDialog(mContext);
+        mProgressDialog.setTitle("");
+        mProgressDialog.setMessage(message);
+        mProgressDialog.setIndeterminate(max < 0);
+        mProgressDialog.setMax(max);
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgressDialog.setProgress(0);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
         debug("createProgressDialog " + max + ": " + message);
     }
 
@@ -329,18 +329,18 @@ public class AndroidNounours extends Nounours {
      */
     public void onDestroy() {
         debug("destroy");
-        imageCache.clearImageCache();
-        animationHandler.onDestroy();
+        mImageCache.clearImageCache();
+        mAnimationHandler.onDestroy();
     }
 
     @Override
     protected int getDeviceHeight() {
-        return imageView.getHeight();
+        return mImageView.getHeight();
     }
 
     @Override
     protected int getDeviceWidth() {
-        return imageView.getWidth();
+        return mImageView.getWidth();
     }
 
     @Override
@@ -355,17 +355,17 @@ public class AndroidNounours extends Nounours {
     private void showAlertDialog(final CharSequence message, final OnClickListener callback) {
         Runnable showAlert = new Runnable() {
             public void run() {
-                if (alertDialog == null) {
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+                if (mAlertDialog == null) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
 
-                    alertBuilder.setMessage(context.getText(R.string.themeLoadError));
-                    alertBuilder.setPositiveButton(context.getText(android.R.string.ok), callback);
+                    alertBuilder.setMessage(mContext.getText(R.string.themeLoadError));
+                    alertBuilder.setPositiveButton(mContext.getText(android.R.string.ok), callback);
 
-                    alertDialog = alertBuilder.create();
+                    mAlertDialog = alertBuilder.create();
 
                 }
-                alertDialog.setMessage(message);
-                alertDialog.show();
+                mAlertDialog.setMessage(message);
+                mAlertDialog.show();
             }
         };
         runTask(showAlert);
@@ -373,7 +373,7 @@ public class AndroidNounours extends Nounours {
 
     @Override
     public File getAppDir() {
-        return EnvironmentCompat.getExternalFilesDir(context);
+        return EnvironmentCompat.getExternalFilesDir(mContext);
     }
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -386,8 +386,8 @@ public class AndroidNounours extends Nounours {
                 }
             };
             runTask(runnable);
-            CharSequence themeName = ThemeUtil.getThemeLabel(context, getCurrentTheme());
-            updateProgressBar(total + (progress), 2 * total, context.getString(R.string.loading, themeName));
+            CharSequence themeName = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
+            updateProgressBar(total + (progress), 2 * total, mContext.getString(R.string.loading, themeName));
 
         }
     };

@@ -40,13 +40,13 @@ class ImageCache {
 
     private static final String TAG = Constants.TAG + ImageCache.class.getSimpleName();
 
-    private static final Map<String, Bitmap> imageCache = new ConcurrentHashMap<>();
-    private final Context context;
-    private final ImageCacheListener listener;
+    private static final Map<String, Bitmap> mImageCache = new ConcurrentHashMap<>();
+    private final Context mContext;
+    private final ImageCacheListener mListener;
 
     ImageCache(Context context, ImageCacheListener listener) {
-        this.context = context;
-        this.listener = listener;
+        mContext = context;
+        mListener = listener;
     }
 
     /**
@@ -59,17 +59,17 @@ class ImageCache {
             Bitmap bitmap = loadImage(image);
             if (bitmap == null)
                 return false;
-            listener.onImageLoaded(image, i++, max);
+            mListener.onImageLoaded(image, i++, max);
         }
         return true;
     }
 
     void clearImageCache() {
 
-        for (Bitmap bitmap : imageCache.values()) {
+        for (Bitmap bitmap : mImageCache.values()) {
             if (!bitmap.isRecycled()) bitmap.recycle();
         }
-        imageCache.clear();
+        mImageCache.clear();
         System.gc();
 
     }
@@ -78,7 +78,7 @@ class ImageCache {
      * Find the Android image for the given nounours image.
      */
     Bitmap getDrawableImage(final Image image) {
-        Bitmap res = imageCache.get(image.getId());
+        Bitmap res = mImageCache.get(image.getId());
         if (res == null) {
             Log.v(TAG, "Loading drawable image " + image);
             res = loadImage(image);
@@ -93,19 +93,19 @@ class ImageCache {
     private Bitmap loadImage(final Image image) {
         Log.v(TAG, "Loading " + image + " into memory");
         // This is one of the downloaded images, in the sdcard.
-        if (image.getFilename().contains(EnvironmentCompat.getExternalFilesDir(context).getAbsolutePath())) {
+        if (image.getFilename().contains(EnvironmentCompat.getExternalFilesDir(mContext).getAbsolutePath())) {
             // Load the new image
             Log.v(TAG, "Load themed image.");
-            Bitmap newBitmap = BitmapUtil.loadBitmap(context, image.getFilename());
+            Bitmap newBitmap = BitmapUtil.loadBitmap(mContext, image.getFilename());
             return copyAndCacheImage(newBitmap, image.getId());
         }
         // This is one of the default images bundled in the apk.
         else {
-            final int imageResId = context.getResources().getIdentifier(image.getFilename(), "drawable",
-                    context.getClass().getPackage().getName());
+            final int imageResId = mContext.getResources().getIdentifier(image.getFilename(), "drawable",
+                    mContext.getClass().getPackage().getName());
             // Load the image from the resource file.
             Log.v(TAG, "Load default image " + imageResId);
-            Bitmap readOnlyBitmap = BitmapUtil.loadBitmap(context, imageResId);
+            Bitmap readOnlyBitmap = BitmapUtil.loadBitmap(mContext, imageResId);
             Log.v(TAG, "default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
                     + readOnlyBitmap.isRecycled());
             // Store the newly loaded drawable in cache for the first time.
@@ -126,8 +126,8 @@ class ImageCache {
         Canvas canvas = new Canvas(mutableBitmap);
         canvas.drawBitmap(readOnlyBitmap, 0, 0, null);
         readOnlyBitmap.recycle();
-        synchronized (imageCache) {
-            imageCache.put(imageId, mutableBitmap);
+        synchronized (mImageCache) {
+            mImageCache.put(imageId, mutableBitmap);
         }
         return mutableBitmap;
     }

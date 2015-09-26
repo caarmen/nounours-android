@@ -46,21 +46,21 @@ import ca.rmen.nounours.util.FileUtil;
 class SoundHandler implements NounoursSoundHandler, OnErrorListener {
     private static final String TAG = SoundHandler.class.getSimpleName();
 
-    private static final String APP_SD_DIR = "nounours";
-    private MediaPlayer mediaPlayer = null;
+    private static final String APP_SD_DIR = "mNounours";
+    private final MediaPlayer mMediaPlayer;
 
-    private Nounours nounours = null;
+    private final Nounours mNounours;
+    private final Context mContext;
+
 
     public SoundHandler(Nounours nounours, Context context) {
-        this.nounours = nounours;
-        this.context = context;
+        mNounours = nounours;
+        mContext = context;
         // Initialize the media player.
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnErrorListener(this);
-
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setOnErrorListener(this);
     }
 
-    private Context context = null;
 
     /**
      * For some reason, sounds will only play if they are on the sdcard. The
@@ -72,7 +72,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      */
     private File getSoundFile(final Sound sound) throws IOException {
 
-        // Get the nounours directory on the sdcard
+        // Get the mNounours directory on the sdcard
         if (!FileUtil.isSdPresent())
             return null;
         final File externalStorageDirectory = Environment.getExternalStorageDirectory();
@@ -82,7 +82,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
         }
 
         // Check if the sound file exists already.
-        Theme theme = nounours.getCurrentTheme();
+        Theme theme = mNounours.getCurrentTheme();
         File sdSoundFile;
         if (theme.getId().equals(Nounours.DEFAULT_THEME_ID))
             sdSoundFile = new File(appRootDirectory, sound.getFilename());
@@ -95,7 +95,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
             // See if the file needs to be replaced
             final String resourcePathStr;
             try {
-                resourcePathStr = context.getPackageManager().getApplicationInfo(BuildConfig.APPLICATION_ID, 0).sourceDir;
+                resourcePathStr = mContext.getPackageManager().getApplicationInfo(BuildConfig.APPLICATION_ID, 0).sourceDir;
                 final File resourcePath = new File(resourcePathStr);
                 if (resourcePath.lastModified() < sdSoundFile.lastModified()) {
                     Log.v(TAG, sound + " on sdcard is already up to date");
@@ -113,9 +113,9 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
         // raw resources.
         Log.v(TAG, "Looking for " + sdSoundFile);
         final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
-        final int soundResId = context.getResources().getIdentifier(resourceSoundFileName, "raw",
-                context.getClass().getPackage().getName());
-        final InputStream soundFileData = context.getResources().openRawResource(soundResId);
+        final int soundResId = mContext.getResources().getIdentifier(resourceSoundFileName, "raw",
+                mContext.getClass().getPackage().getName());
+        final InputStream soundFileData = mContext.getResources().openRawResource(soundResId);
 
         // Write the file
         final FileOutputStream writer = new FileOutputStream(sdSoundFile);
@@ -133,20 +133,20 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      * Play a sound.
      */
     public void playSound(final String soundId) {
-        final Sound sound = nounours.getSound(soundId);
+        final Sound sound = mNounours.getSound(soundId);
 
         try {
             // Get the sound file from the sdcard.
             final File soundFile = getSoundFile(sound);
             // Prepare the media player
-            mediaPlayer.reset();
+            mMediaPlayer.reset();
             if (soundFile != null && soundFile.exists()) {
-                mediaPlayer.setDataSource(soundFile.getAbsolutePath());
-                mediaPlayer.prepare();
+                mMediaPlayer.setDataSource(soundFile.getAbsolutePath());
+                mMediaPlayer.prepare();
             }
 
             // Play the sound.
-            mediaPlayer.start();
+            mMediaPlayer.start();
         } catch (final Exception e) {
             Log.v(TAG, "Error loading sound " + sound, e);
         }
@@ -158,7 +158,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      * @see ca.rmen.nounours.Nounours#stopSound()
      */
     public void stopSound() {
-        mediaPlayer.stop();
+        mMediaPlayer.stop();
     }
 
     /**
@@ -168,9 +168,9 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      */
     public void setEnableSound(final boolean enableSound) {
         if (enableSound) {
-            mediaPlayer.setVolume(1f, 1f);
+            mMediaPlayer.setVolume(1f, 1f);
         } else {
-            mediaPlayer.setVolume(0f, 0f);
+            mMediaPlayer.setVolume(0f, 0f);
         }
     }
 

@@ -31,15 +31,15 @@ import ca.rmen.nounours.Nounours;
  */
 public class FlingDetector extends SimpleOnGestureListener {
 
-    private Nounours nounours = null;
+    private final Nounours mNounours;
 
     public FlingDetector(Nounours nounours) {
-        this.nounours = nounours;
+        mNounours = nounours;
     }
 
     @Override
     public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX, final float velocityY) {
-        nounours.onFling((int) e1.getX(), (int) e1.getY(), velocityX, velocityY);
+        mNounours.onFling((int) e1.getX(), (int) e1.getY(), velocityX, velocityY);
         return true;
     }
 
