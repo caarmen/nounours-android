@@ -2,7 +2,7 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.nounours.orientation;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -21,11 +21,13 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
+import ca.rmen.nounours.Nounours;
+import ca.rmen.nounours.R;
+import ca.rmen.nounours.Util;
+import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.data.OrientationImage;
 import ca.rmen.nounours.data.Theme;
-import ca.rmen.nounours.io.OrientationImageReader;
-import ca.rmen.nounours.util.DisplayCompat;
+import ca.rmen.nounours.nounours.AndroidNounours;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -33,7 +35,7 @@ import ca.rmen.nounours.util.Trace;
  *
  * @author Carmen Alvarez
  */
-class AndroidNounoursSensorListener implements SensorEventListener {
+public class SensorListener implements SensorEventListener {
     private float xAccel = Float.MAX_VALUE;
     private float yAccel = Float.MAX_VALUE;
     private float zAccel = Float.MAX_VALUE;
@@ -41,13 +43,15 @@ class AndroidNounoursSensorListener implements SensorEventListener {
     private final Set<OrientationImage> orientationImages = new HashSet<>();
 
     private AndroidNounours nounours = null;
+    private final Context context;
 
     private float[] lastAcceleration = null;
     private float[] lastMagneticField = null;
 
-    public AndroidNounoursSensorListener(AndroidNounours nounours,
-                                         Context context) {
+    public SensorListener(AndroidNounours nounours,
+                          Context context) {
         this.nounours = nounours;
+        this.context = context;
         rereadOrientationFile(nounours.getCurrentTheme(), context);
         lastMagneticField = new float[]{0, 0, -1};
     }
@@ -227,7 +231,7 @@ class AndroidNounoursSensorListener implements SensorEventListener {
         int x = SensorManager.AXIS_X;
         int y = SensorManager.AXIS_Y;
 
-        int rotation = DisplayCompat.getRotation(nounours.context);
+        int rotation = DisplayCompat.getRotation(context);
         switch (rotation) {
             case Surface.ROTATION_90:
                 //noinspection SuspiciousNameCombination

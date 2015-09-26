@@ -1,10 +1,12 @@
-package ca.rmen.nounours;
+package ca.rmen.nounours.settings;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+
+import ca.rmen.nounours.R;
 
 
 /**
@@ -28,12 +30,12 @@ public class SettingsActivity extends PreferenceActivity {
         addPreferencesFromResource(R.xml.settings);
 
         //noinspection deprecation
-        ListPreference themePreference = (ListPreference) findPreference(AndroidNounours.PREF_THEME);
+        ListPreference themePreference = (ListPreference) findPreference(NounoursSettings.PREF_THEME);
 
         //noinspection deprecation
-        bindPreferenceSummaryToValue(findPreference(AndroidNounours.PREF_IDLE_TIMEOUT));
+        bindPreferenceSummaryToValue(findPreference(NounoursSettings.PREF_IDLE_TIMEOUT));
         bindPreferenceSummaryToValue(themePreference);
-        NounoursThemePreference.load(this, themePreference);
+        ThemePreferenceLoader.load(this, themePreference);
     }
 
     /**

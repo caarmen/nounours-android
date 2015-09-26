@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours.util;
+package ca.rmen.nounours.compat;
 
 import android.content.Context;
 import android.view.Display;
@@ -15,8 +15,8 @@ public class DisplayCompat {
                 .getApplicationContext().getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
-        if (NounoursApiHelper.getAPILevel() >= 13) {
-            return NounoursApi13Helper.getWidth(display);
+        if (ApiHelper.getAPILevel() >= 13) {
+            return Api13Helper.getWidth(display);
         }
         //noinspection deprecation
         return display.getWidth();
@@ -28,8 +28,8 @@ public class DisplayCompat {
                 .getApplicationContext().getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
-        if (NounoursApiHelper.getAPILevel() >= 13) {
-            return NounoursApi13Helper.getHeight(display);
+        if (ApiHelper.getAPILevel() >= 13) {
+            return Api13Helper.getHeight(display);
         }
         //noinspection deprecation
         return display.getHeight();
@@ -41,8 +41,8 @@ public class DisplayCompat {
                 .getApplicationContext().getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
-        if (NounoursApiHelper.getAPILevel() >= 8) {
-            return NounoursApi8Helper.getRotation(display);
+        if (ApiHelper.getAPILevel() >= 8) {
+            return Api8Helper.getRotation(display);
         }
         //noinspection deprecation
         return display.getOrientation();

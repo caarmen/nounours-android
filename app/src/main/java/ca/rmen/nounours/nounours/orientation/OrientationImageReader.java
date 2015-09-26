@@ -2,7 +2,7 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours.io;
+package ca.rmen.nounours.nounours.orientation;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +10,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import ca.rmen.nounours.data.OrientationImage;
+import ca.rmen.nounours.io.CSVReader;
+import ca.rmen.nounours.io.NounoursReader;
 
 /**
  * Reads a CSV file about which images to display when the device is in a given

@@ -2,21 +2,23 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.nounours;
 
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
+
+import ca.rmen.nounours.Nounours;
 
 /**
  * Manages fling event for Nounours on the Android devices.
  *
  * @author Carmen Alvarez
  */
-class AndroidNounoursGestureDetector extends SimpleOnGestureListener {
+public class FlingDetector extends SimpleOnGestureListener {
 
     private Nounours nounours = null;
 
-    public AndroidNounoursGestureDetector(Nounours nounours) {
+    public FlingDetector(Nounours nounours) {
         this.nounours = nounours;
     }
 

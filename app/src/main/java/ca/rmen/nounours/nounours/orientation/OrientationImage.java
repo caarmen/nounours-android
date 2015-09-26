@@ -2,7 +2,7 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours.data;
+package ca.rmen.nounours.nounours.orientation;
 
 /**
  * Represents an image to display if the device is set in the given orientation.

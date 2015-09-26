@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.nounours;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.util.BitmapUtil;
-import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
 
 class ImageCache {
@@ -76,7 +76,7 @@ class ImageCache {
     private Bitmap loadImage(final Image image) {
         Trace.debug(this, "Loading " + image + " into memory");
         // This is one of the downloaded images, in the sdcard.
-        if (image.getFilename().contains(FileUtil.getSdFolder(context).getAbsolutePath())) {
+        if (image.getFilename().contains(EnvironmentCompat.getExternalFilesDir(context).getAbsolutePath())) {
             // Load the new image
             Trace.debug(this, "Load themed image.");
             Bitmap newBitmap = BitmapUtil.loadBitmap(context, image.getFilename());

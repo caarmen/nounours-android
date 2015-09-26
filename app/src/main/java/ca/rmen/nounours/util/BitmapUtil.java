@@ -20,6 +20,8 @@ import android.graphics.BitmapFactory;
 
 import java.io.File;
 
+import ca.rmen.nounours.compat.BitmapCompat;
+
 public class BitmapUtil {
     private static final int BITMAP_LOAD_RETRIES = 3;
     private static final int BITMAP_INITIAL_SUB_SAMPLE = 0;
@@ -34,7 +36,7 @@ public class BitmapUtil {
 
     private static Bitmap loadBitmap(Context context, File file, int resourceId, int initialSubSample, int retries) {
         int inSampleSize = BITMAP_LOAD_RETRIES - retries + initialSubSample;
-        BitmapFactory.Options options = BitmapDrawableCompat.createBitmapFactoryOptions(inSampleSize);
+        BitmapFactory.Options options = BitmapCompat.createBitmapFactoryOptions(inSampleSize);
         try {
             Trace.debug(BitmapUtil.class, "Load image " + (file == null ? "" + resourceId : file.getAbsolutePath()) + ".  "
                     + retries + " left.  Sample size = " + options.inSampleSize);

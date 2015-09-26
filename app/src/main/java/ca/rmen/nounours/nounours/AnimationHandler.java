@@ -2,7 +2,7 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.nounours;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,10 +13,15 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.util.BitmapDrawableCompat;
+import ca.rmen.nounours.compat.BitmapCompat;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -24,7 +29,7 @@ import ca.rmen.nounours.util.Trace;
  *
  * @author Carmen Alvarez
  */
-class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
+class AnimationHandler implements NounoursAnimationHandler {
 
     private AndroidNounours nounours = null;
     final private ImageView imageView;
@@ -32,7 +37,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
 
     private static final Map<Bitmap, BitmapDrawable> bitmapDrawables = new HashMap<>();
 
-    public AndroidNounoursAnimationHandler(AndroidNounours nounours, ImageView imageView) {
+    public AnimationHandler(AndroidNounours nounours, ImageView imageView) {
         this.nounours = nounours;
         this.imageView = imageView;
     }
@@ -204,7 +209,7 @@ class AndroidNounoursAnimationHandler implements NounoursAnimationHandler {
         BitmapDrawable result = bitmapDrawables.get(bitmap);
         if (result != null)
             return result;
-        result = BitmapDrawableCompat.createBitmapDrawable(nounours.context, bitmap);
+        result = BitmapCompat.createBitmapDrawable(nounours.context, bitmap);
         bitmapDrawables.put(bitmap, result);
         return result;
     }

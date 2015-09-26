@@ -2,7 +2,7 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.nounours;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -15,6 +15,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.rmen.nounours.BuildConfig;
+import ca.rmen.nounours.Nounours;
+import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.data.Sound;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.util.FileUtil;
@@ -25,13 +28,13 @@ import ca.rmen.nounours.util.Trace;
  *
  * @author Carmen Alvarez
  */
-class AndroidNounoursSoundHandler implements NounoursSoundHandler, OnErrorListener {
+class SoundHandler implements NounoursSoundHandler, OnErrorListener {
     private static final String APP_SD_DIR = "nounours";
     private MediaPlayer mediaPlayer = null;
 
     private Nounours nounours = null;
 
-    public AndroidNounoursSoundHandler(Nounours nounours, Context context) {
+    public SoundHandler(Nounours nounours, Context context) {
         this.nounours = nounours;
         this.context = context;
         // Initialize the media player.

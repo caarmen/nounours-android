@@ -2,7 +2,7 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.nounours;
 
 //import java.util.HashMap;
 
@@ -11,18 +11,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import ca.rmen.nounours.Nounours;
+
 /**
  * Manages touch events for Nounours on the Android device.
  *
  * @author Carmen Alvarez
  */
-class AndroidNounoursOnTouchListener implements OnTouchListener {
+public class TouchListener implements OnTouchListener {
 
     private GestureDetector gestureDetector = null;
     private Nounours nounours = null;
 
-    public AndroidNounoursOnTouchListener(Nounours nounours,
-                                          GestureDetector gestureDetector) {
+    public TouchListener(Nounours nounours,
+                         GestureDetector gestureDetector) {
         this.nounours = nounours;
         this.gestureDetector = gestureDetector;
     }

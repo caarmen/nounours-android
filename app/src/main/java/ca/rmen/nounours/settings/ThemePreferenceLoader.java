@@ -2,7 +2,7 @@
  * Copyright (c) 2015 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.settings;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -14,12 +14,15 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import ca.rmen.nounours.Nounours;
+import ca.rmen.nounours.R;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.ThemeReader;
 import ca.rmen.nounours.util.FileUtil;
+import ca.rmen.nounours.util.ThemeUtil;
 import ca.rmen.nounours.util.Trace;
 
-public final class NounoursThemePreference {
+public final class ThemePreferenceLoader {
     private static final class ThemePreferenceData {
         private final CharSequence[] entries;
         private final CharSequence[] entryValues;
@@ -51,7 +54,7 @@ public final class NounoursThemePreference {
                     int index = 1;
                     for (String themeId : sortedThemeList) {
                         Theme theme = themes.get(themeId);
-                        entries[index] = AndroidNounours.getThemeLabel(context, theme);
+                        entries[index] = ThemeUtil.getThemeLabel(context, theme);
                         entryValues[index++] = themeId;
                     }
                     return new ThemePreferenceData(entries, entryValues);

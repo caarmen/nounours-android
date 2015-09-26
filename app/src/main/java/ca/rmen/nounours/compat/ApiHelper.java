@@ -2,12 +2,12 @@
  * Copyright (c) 2015 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours.util;
+package ca.rmen.nounours.compat;
 
 import android.os.Build;
 
-class NounoursApiHelper {
-    private NounoursApiHelper() {
+public class ApiHelper {
+    private ApiHelper() {
         // prevent instantiation
     }
 
@@ -16,7 +16,7 @@ class NounoursApiHelper {
      * This is isolated here to prevent many code insepction warnings about
      * "code maturity".
      */
-    static int getAPILevel() {
+    public static int getAPILevel() {
         //noinspection deprecation
         return Integer.parseInt(Build.VERSION.SDK);
     }

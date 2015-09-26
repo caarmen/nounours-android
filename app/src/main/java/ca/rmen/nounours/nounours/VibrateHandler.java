@@ -2,21 +2,23 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.nounours;
 
 import android.content.Context;
 import android.os.Vibrator;
+
+import ca.rmen.nounours.NounoursVibrateHandler;
 
 /**
  * Manages vibration for Nounours on the android device.
  *
  * @author Carmen Alvarez
  */
-class AndroidNounoursVibrateHandler implements NounoursVibrateHandler {
+class VibrateHandler implements NounoursVibrateHandler {
 
     private Context context = null;
 
-    public AndroidNounoursVibrateHandler(Context context) {
+    public VibrateHandler(Context context) {
         this.context = context;
     }
 

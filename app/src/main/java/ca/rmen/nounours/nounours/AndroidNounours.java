@@ -2,16 +2,14 @@
  * Copyright (c) 2009 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours;
+package ca.rmen.nounours.nounours;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -20,10 +18,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.rmen.nounours.Nounours;
+import ca.rmen.nounours.NounoursAnimationHandler;
+import ca.rmen.nounours.NounoursSoundHandler;
+import ca.rmen.nounours.NounoursVibrateHandler;
+import ca.rmen.nounours.R;
+import ca.rmen.nounours.compat.DisplayCompat;
+import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
-import ca.rmen.nounours.util.DisplayCompat;
+import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.util.FileUtil;
+import ca.rmen.nounours.util.ThemeUtil;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -32,16 +38,12 @@ import ca.rmen.nounours.util.Trace;
  *
  * @author Carmen Alvarez
  */
-class AndroidNounours extends Nounours {
+public class AndroidNounours extends Nounours {
 
     Context context = null;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
-    static final String PREF_THEME = "Theme";
-    static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
-    static final String PREF_RANDOM = "Random";
-    static final String PREF_IDLE_TIMEOUT = "IdleTimeout";
-    private AndroidNounoursAnimationHandler animationHandler = null;
+    private AnimationHandler animationHandler = null;
     final private ImageView imageView;
 
     private final ImageCache imageCache;
@@ -60,13 +62,12 @@ class AndroidNounours extends Nounours {
         this.imageView = imageView;
         imageCache = new ImageCache(context, imageCacheListener);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String themeId = sharedPreferences.getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
+        String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        animationHandler = new AndroidNounoursAnimationHandler(this, imageView);
-        AndroidNounoursSoundHandler soundHandler = new AndroidNounoursSoundHandler(this, context);
-        AndroidNounoursVibrateHandler vibrateHandler = new AndroidNounoursVibrateHandler(context);
+        animationHandler = new AnimationHandler(this, imageView);
+        SoundHandler soundHandler = new SoundHandler(this, context);
+        VibrateHandler vibrateHandler = new VibrateHandler(context);
         final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
         final InputStream themePropertiesFile = context.getResources().openRawResource(R.raw.nounoursdeftheme);
 
@@ -83,10 +84,10 @@ class AndroidNounours extends Nounours {
             init(animationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
                     imageSetFile, featureFile, imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile,
                     soundFile, themeId);
-            setEnableVibrate(AndroidNounoursSettings.isSoundEnabled(context));
-            setEnableSound(AndroidNounoursSettings.isSoundEnabled(context));
-            setEnableRandomAnimations(AndroidNounoursSettings.isRandomAnimationEnabled(context));
-            setIdleTimeout(AndroidNounoursSettings.getIdleTimeout(context));
+            setEnableVibrate(NounoursSettings.isSoundEnabled(context));
+            setEnableSound(NounoursSettings.isSoundEnabled(context));
+            setEnableRandomAnimations(NounoursSettings.isRandomAnimationEnabled(context));
+            setIdleTimeout(NounoursSettings.getIdleTimeout(context));
         } catch (final IOException e) {
             Log.d(getClass().getName(), "Error initializing nounours", e); //$NON-NLS-1$
         }
@@ -108,7 +109,7 @@ class AndroidNounours extends Nounours {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_THEME, DEFAULT_THEME_ID).commit();
+                NounoursSettings.setThemeId(context, DEFAULT_THEME_ID);
                 useTheme(Nounours.DEFAULT_THEME_ID);
             }
         };
@@ -166,7 +167,7 @@ class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(imageCacher, context.getString(R.string.predownload, getThemeLabel(context, theme)),
+        runTaskWithProgressBar(imageCacher, context.getString(R.string.predownload, ThemeUtil.getThemeLabel(context, theme)),
                 taskSize);
         return true;
 
@@ -195,22 +196,13 @@ class AndroidNounours extends Nounours {
      */
     @Override
     protected void updateDownloadProgress(int progress, int max) {
-        CharSequence themeLabel = getThemeLabel(context, getCurrentTheme());
+        CharSequence themeLabel = ThemeUtil.getThemeLabel(context, getCurrentTheme());
         updateProgressBar(progress, 2 * max, context.getString(R.string.downloading, themeLabel));
     }
 
     protected void updatePreloadProgress(int progress, int max) {
-        CharSequence themeLabel = getThemeLabel(context, getCurrentTheme());
+        CharSequence themeLabel = ThemeUtil.getThemeLabel(context, getCurrentTheme());
         updateProgressBar(progress, 2 * max, context.getString(R.string.predownload, themeLabel));
-    }
-
-    static CharSequence getThemeLabel(Context context, Theme theme) {
-        String themeLabel = theme.getName();
-        int themeLabelId = context.getResources().getIdentifier(theme.getName(), "string",
-                R.class.getPackage().getName());
-        if (themeLabelId > 0)
-            return context.getResources().getText(themeLabelId);
-        return themeLabel;
     }
 
     /**
@@ -359,7 +351,7 @@ class AndroidNounours extends Nounours {
 
     @Override
     public File getAppDir() {
-        return FileUtil.getSdFolder(context);
+        return EnvironmentCompat.getExternalFilesDir(context);
     }
 
     @SuppressWarnings("FieldCanBeLocal")
@@ -372,7 +364,7 @@ class AndroidNounours extends Nounours {
                 }
             };
             runTask(runnable);
-            CharSequence themeName = getThemeLabel(context, getCurrentTheme());
+            CharSequence themeName = ThemeUtil.getThemeLabel(context, getCurrentTheme());
             updateProgressBar(total + (progress), 2 * total, context.getString(R.string.loading, themeName));
 
         }

@@ -10,7 +10,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +21,12 @@ import java.util.Map;
 
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
+import ca.rmen.nounours.nounours.AndroidNounours;
+import ca.rmen.nounours.nounours.FlingDetector;
+import ca.rmen.nounours.nounours.orientation.SensorListener;
+import ca.rmen.nounours.nounours.TouchListener;
+import ca.rmen.nounours.settings.NounoursSettings;
+import ca.rmen.nounours.settings.SettingsActivity;
 import ca.rmen.nounours.util.Trace;
 
 /**
@@ -30,14 +35,14 @@ import ca.rmen.nounours.util.Trace;
  *
  * @author Carmen Alvarez
  */
-public class NounoursActivity extends Activity {
+public class MainActivity extends Activity {
 
     private Toast toast = null;
 
     private AndroidNounours nounours = null;
     private SensorManager sensorManager = null;
-    private AndroidNounoursSensorListener sensorListener = null;
-    private AndroidNounoursOnTouchListener onTouchListener = null;
+    private SensorListener sensorListener = null;
+    private TouchListener onTouchListener = null;
     private Sensor accelerometerSensor = null;
     private Sensor magneticFieldSensor = null;
 
@@ -51,14 +56,14 @@ public class NounoursActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean useSimulator = false;
+        boolean useSimulator = true;
 
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
         nounours = new AndroidNounours(this, imageView);
 
-        AndroidNounoursGestureDetector nounoursGestureDetector = new AndroidNounoursGestureDetector(nounours);
+        FlingDetector nounoursFlingDetector = new FlingDetector(nounours);
         imageView.setOnTouchListener(onTouchListener);
         //noinspection ConstantConditions
         if (!useSimulator) {
@@ -69,9 +74,9 @@ public class NounoursActivity extends Activity {
             magneticFieldSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         }
 
-        final GestureDetector gestureDetector = new GestureDetector(this, nounoursGestureDetector);
-        onTouchListener = new AndroidNounoursOnTouchListener(nounours, gestureDetector);
-        sensorListener = new AndroidNounoursSensorListener(nounours, this);
+        final GestureDetector gestureDetector = new GestureDetector(this, nounoursFlingDetector);
+        onTouchListener = new TouchListener(nounours, gestureDetector);
+        sensorListener = new SensorListener(nounours, this);
         imageView.setOnTouchListener(onTouchListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         /*
@@ -104,10 +109,10 @@ public class NounoursActivity extends Activity {
                 Trace.debug(this, "Could not register for magnetic field sensor");
         }
 
-        nounours.setEnableSound(AndroidNounoursSettings.isSoundEnabled(this));
-        nounours.setEnableVibrate(AndroidNounoursSettings.isSoundEnabled(this));
-        nounours.setIdleTimeout(AndroidNounoursSettings.getIdleTimeout(this));
-        nounours.setEnableRandomAnimations(AndroidNounoursSettings.isRandomAnimationEnabled(this));
+        nounours.setEnableSound(NounoursSettings.isSoundEnabled(this));
+        nounours.setEnableVibrate(NounoursSettings.isSoundEnabled(this));
+        nounours.setIdleTimeout(NounoursSettings.getIdleTimeout(this));
+        nounours.setEnableRandomAnimations(NounoursSettings.isRandomAnimationEnabled(this));
         boolean themeChanged = reloadThemeFromPreference();
         if(!themeChanged) nounours.onResume();
         nounours.doPing(true);
@@ -249,7 +254,7 @@ public class NounoursActivity extends Activity {
     private boolean reloadThemeFromPreference() {
         boolean nounoursIsBusy = nounours.isLoading();
         Trace.debug(this, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
-        String themeId = PreferenceManager.getDefaultSharedPreferences(this).getString(AndroidNounours.PREF_THEME, AndroidNounours.DEFAULT_THEME_ID);
+        String themeId = NounoursSettings.getThemeId(this);
         if(nounours.getCurrentTheme() != null
                 && nounours.getCurrentTheme().getId().equals(themeId)) {
             return false;
@@ -266,7 +271,7 @@ public class NounoursActivity extends Activity {
             final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
             imageView.setImageBitmap(null);
             nounours.useTheme(theme.getId());
-            sensorListener.rereadOrientationFile(theme, NounoursActivity.this);
+            sensorListener.rereadOrientationFile(theme, MainActivity.this);
         }
         return true;
     }

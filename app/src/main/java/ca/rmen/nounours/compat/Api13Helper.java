@@ -2,25 +2,25 @@
  * Copyright (c) 2015 Carmen Alvarez. All Rights Reserved.
  *
  */
-package ca.rmen.nounours.util;
+package ca.rmen.nounours.compat;
 
 import android.annotation.TargetApi;
 import android.graphics.Point;
 import android.view.Display;
 
 @TargetApi(13)
-class NounoursApi13Helper {
-    private NounoursApi13Helper() {
+public class Api13Helper {
+    private Api13Helper() {
         // Prevent instantiation
     }
 
-    static int getWidth(Display display) {
+    public static int getWidth(Display display) {
         Point point = new Point();
         display.getSize(point);
         return point.x;
     }
 
-    static int getHeight(Display display) {
+    public static int getHeight(Display display) {
         Point point = new Point();
         display.getSize(point);
         return point.y;
