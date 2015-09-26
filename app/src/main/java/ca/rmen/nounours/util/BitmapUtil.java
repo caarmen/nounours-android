@@ -22,12 +22,16 @@ package ca.rmen.nounours.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 import java.io.File;
 
+import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.compat.BitmapCompat;
 
 public class BitmapUtil {
+    private static final String TAG = Constants.TAG + BitmapUtil.class.getSimpleName();
+
     private static final int BITMAP_LOAD_RETRIES = 3;
     private static final int BITMAP_INITIAL_SUB_SAMPLE = 0;
 
@@ -43,7 +47,7 @@ public class BitmapUtil {
         int inSampleSize = BITMAP_LOAD_RETRIES - retries + initialSubSample;
         BitmapFactory.Options options = BitmapCompat.createBitmapFactoryOptions(inSampleSize);
         try {
-            Trace.debug(BitmapUtil.class, "Load image " + (file == null ? "" + resourceId : file.getAbsolutePath()) + ".  "
+            Log.v(TAG, "Load image " + (file == null ? "" + resourceId : file.getAbsolutePath()) + ".  "
                     + retries + " left.  Sample size = " + options.inSampleSize);
 
             if (file != null)

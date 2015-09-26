@@ -25,6 +25,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.Surface;
 
 import java.io.File;
@@ -43,7 +44,6 @@ import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.nounours.AndroidNounours;
-import ca.rmen.nounours.util.Trace;
 
 /**
  * Manages shaking and tilting events for Nounours on the Android device.
@@ -51,6 +51,8 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  */
 public class SensorListener implements SensorEventListener {
+    private static final String TAG = SensorListener.class.getSimpleName();
+
     private float xAccel = Float.MAX_VALUE;
     private float yAccel = Float.MAX_VALUE;
     private float zAccel = Float.MAX_VALUE;
@@ -72,7 +74,7 @@ public class SensorListener implements SensorEventListener {
     }
 
     public void rereadOrientationFile(final Theme theme, final Context context) {
-        Trace.debug(this, "rereadOrientationFile");
+        Log.v(TAG, "rereadOrientationFile");
         orientationImages.clear();
         new AsyncTask<Void,Void,Void>() {
 
@@ -87,10 +89,10 @@ public class SensorListener implements SensorEventListener {
                         orientationImages.addAll(orientationImageReader
                                 .getOrientationImages());
                     } catch (IOException e) {
-                        Trace.debug(this, e);
+                        Log.v(TAG, e.getMessage(), e);
                     }
                 } else
-                    Trace.debug(this, "No orientation file!");
+                    Log.v(TAG, "No orientation file!");
                 return null;
             }
         }.execute();
@@ -123,7 +125,7 @@ public class SensorListener implements SensorEventListener {
             }
             return new FileInputStream(orientationImageFile);
         } catch (IOException | URISyntaxException e) {
-            Trace.debug(this, e);
+            Log.v(TAG, e.getMessage(), e);
         }
         return null;
 

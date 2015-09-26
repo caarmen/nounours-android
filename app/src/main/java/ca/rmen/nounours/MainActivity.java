@@ -25,6 +25,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,11 +39,10 @@ import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.nounours.AndroidNounours;
 import ca.rmen.nounours.nounours.FlingDetector;
-import ca.rmen.nounours.nounours.orientation.SensorListener;
 import ca.rmen.nounours.nounours.TouchListener;
+import ca.rmen.nounours.nounours.orientation.SensorListener;
 import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
-import ca.rmen.nounours.util.Trace;
 
 /**
  * Android activity class which delegates nounours-specific logic to the
@@ -51,6 +51,8 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  */
 public class MainActivity extends Activity {
+
+    private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
 
     private Toast toast = null;
 
@@ -121,7 +123,7 @@ public class MainActivity extends Activity {
         if (sensorManager != null) {
             sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
             if (!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
-                Trace.debug(this, "Could not register for magnetic field sensor");
+                Log.v(TAG, "Could not register for magnetic field sensor");
         }
 
         nounours.setEnableSound(NounoursSettings.isSoundEnabled(this));
@@ -268,7 +270,7 @@ public class MainActivity extends Activity {
 
     private boolean reloadThemeFromPreference() {
         boolean nounoursIsBusy = nounours.isLoading();
-        Trace.debug(this, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
+        Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
         String themeId = NounoursSettings.getThemeId(this);
         if(nounours.getCurrentTheme() != null
                 && nounours.getCurrentTheme().getId().equals(themeId)) {

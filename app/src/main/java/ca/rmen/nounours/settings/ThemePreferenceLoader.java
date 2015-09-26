@@ -22,6 +22,7 @@ package ca.rmen.nounours.settings;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.ListPreference;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,13 +30,13 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.ThemeReader;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.ThemeUtil;
-import ca.rmen.nounours.util.Trace;
 
 public final class ThemePreferenceLoader {
     private static final class ThemePreferenceData {
@@ -47,6 +48,8 @@ public final class ThemePreferenceLoader {
             this.entryValues = entryValues;
         }
     }
+
+    private static final String TAG = Constants.TAG + ThemePreferenceLoader.class.getSimpleName();
 
     static void load(final Context context, final ListPreference listPreference) {
 
@@ -74,8 +77,7 @@ public final class ThemePreferenceLoader {
                     }
                     return new ThemePreferenceData(entries, entryValues);
                 } catch (IOException e) {
-                    Trace.debug(this, "Could not read the list of themes");
-                    Trace.debug(this, e);
+                    Log.v(TAG, "Could not read the list of themes", e);
                 }
                 return null;
             }

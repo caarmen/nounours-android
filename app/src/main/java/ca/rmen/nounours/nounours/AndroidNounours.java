@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.NounoursSoundHandler;
@@ -45,7 +46,6 @@ import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.ThemeUtil;
-import ca.rmen.nounours.util.Trace;
 
 /**
  * Implementation of the abstract Nounours class, containing logic specific to
@@ -54,6 +54,8 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  */
 public class AndroidNounours extends Nounours {
+
+    private static final String TAG = Constants.TAG + AndroidNounours.class.getSimpleName();
 
     Context context = null;
     private ProgressDialog progressDialog;
@@ -119,7 +121,7 @@ public class AndroidNounours extends Nounours {
      * Something went wrong when trying to load a theme.  Reset to the default one.
      */
     private void resetToDefaultTheme() {
-        Trace.debug(this, "resetToDefaultTheme");
+        Log.v(TAG, "resetToDefaultTheme");
         OnClickListener revertToDefaultTheme = new OnClickListener() {
 
             @Override
@@ -143,7 +145,7 @@ public class AndroidNounours extends Nounours {
             if (!themeDir.exists()) {
                 boolean mkdirsResult = themeDir.mkdirs();
                 if(!themeDir.isDirectory()) {
-                    Trace.debug(this, "Could not create theme folder " + themeDir + ". mkdirs returned " + mkdirsResult);
+                    Log.v(TAG, "Could not create theme folder " + themeDir + ". mkdirs returned " + mkdirsResult);
                     resetToDefaultTheme();
                     return false;
                 }
@@ -196,12 +198,12 @@ public class AndroidNounours extends Nounours {
 
         float widthRatio = (float) DisplayCompat.getWidth(context) / theme.getWidth();
         float heightRatio = (float) DisplayCompat.getHeight(context) / theme.getHeight();
-        Trace.debug(this, widthRatio + ": " + heightRatio);
+        Log.v(TAG, widthRatio + ": " + heightRatio);
         float ratioToUse = widthRatio > heightRatio ? heightRatio : widthRatio;
 
         layoutParams.height = (int) (ratioToUse * theme.getHeight());
         layoutParams.width = (int) (ratioToUse * theme.getWidth());
-        Trace.debug(this, "Scaling view to " + layoutParams.width + "x" + layoutParams.height);
+        Log.v(TAG, "Scaling view to " + layoutParams.width + "x" + layoutParams.height);
         imageView.setLayoutParams(layoutParams);
 
     }
@@ -248,7 +250,12 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void debug(final Object o) {
-        Trace.debug(this, o);
+        if(o instanceof Throwable) {
+            Throwable t = (Throwable) o;
+            Log.w(TAG, t.getMessage(), t);
+        } else {
+            Log.v(TAG, "" + o);
+        }
     }
 
     /**

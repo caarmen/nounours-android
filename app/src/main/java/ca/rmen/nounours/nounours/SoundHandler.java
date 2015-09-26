@@ -24,6 +24,7 @@ import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,7 +37,6 @@ import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.data.Sound;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.util.FileUtil;
-import ca.rmen.nounours.util.Trace;
 
 /**
  * Manages sound effects and music for Nounours on the Android device.
@@ -44,6 +44,8 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  */
 class SoundHandler implements NounoursSoundHandler, OnErrorListener {
+    private static final String TAG = SoundHandler.class.getSimpleName();
+
     private static final String APP_SD_DIR = "nounours";
     private MediaPlayer mediaPlayer = null;
 
@@ -96,20 +98,20 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
                 resourcePathStr = context.getPackageManager().getApplicationInfo(BuildConfig.APPLICATION_ID, 0).sourceDir;
                 final File resourcePath = new File(resourcePathStr);
                 if (resourcePath.lastModified() < sdSoundFile.lastModified()) {
-                    Trace.debug(this, sound + " on sdcard is already up to date");
+                    Log.v(TAG, sound + " on sdcard is already up to date");
                     return sdSoundFile;
                 }
-                Trace.debug(this, "Need to update " + sound + " on sdcard");
+                Log.v(TAG, "Need to update " + sound + " on sdcard");
             } catch (PackageManager.NameNotFoundException e) {
-                Trace.debug(this, e);
+                Log.v(TAG, e.getMessage(), e);
             }
         } else {
-            Trace.debug(this, "Need to create " + sound + " on sdcard");
+            Log.v(TAG, "Need to create " + sound + " on sdcard");
         }
 
         // We need to create the sound file. Retrieve the sound file from the
         // raw resources.
-        Trace.debug(this, "Looking for " + sdSoundFile);
+        Log.v(TAG, "Looking for " + sdSoundFile);
         final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
         final int soundResId = context.getResources().getIdentifier(resourceSoundFileName, "raw",
                 context.getClass().getPackage().getName());
@@ -146,8 +148,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
             // Play the sound.
             mediaPlayer.start();
         } catch (final Exception e) {
-            Trace.debug(this, "Error loading sound " + sound + ": " + e);
-            Trace.debug(this, e);
+            Log.v(TAG, "Error loading sound " + sound, e);
         }
     }
 
@@ -181,7 +182,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      */
     @Override
     public boolean onError(final MediaPlayer mp, final int what, final int extra) {
-        Trace.debug(this, "MediaPlayer error: MediaPlayer = " + mp + "(" + mp.getClass() + "), what=" + what
+        Log.v(TAG, "MediaPlayer error: MediaPlayer = " + mp + "(" + mp.getClass() + "), what=" + what
                 + ", extra = " + extra);
         return false;
     }

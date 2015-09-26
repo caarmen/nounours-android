@@ -21,21 +21,24 @@ package ca.rmen.nounours.nounours;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Log;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.util.BitmapUtil;
-import ca.rmen.nounours.util.Trace;
 
 class ImageCache {
 
     interface ImageCacheListener {
         void onImageLoaded(Image image, int progress, int total);
     }
+
+    private static final String TAG = Constants.TAG + ImageCache.class.getSimpleName();
 
     private static final Map<String, Bitmap> imageCache = new ConcurrentHashMap<>();
     private final Context context;
@@ -77,7 +80,7 @@ class ImageCache {
     Bitmap getDrawableImage(final Image image) {
         Bitmap res = imageCache.get(image.getId());
         if (res == null) {
-            Trace.debug(this, "Loading drawable image " + image);
+            Log.v(TAG, "Loading drawable image " + image);
             res = loadImage(image);
         }
         return res;
@@ -88,11 +91,11 @@ class ImageCache {
      * image.
      */
     private Bitmap loadImage(final Image image) {
-        Trace.debug(this, "Loading " + image + " into memory");
+        Log.v(TAG, "Loading " + image + " into memory");
         // This is one of the downloaded images, in the sdcard.
         if (image.getFilename().contains(EnvironmentCompat.getExternalFilesDir(context).getAbsolutePath())) {
             // Load the new image
-            Trace.debug(this, "Load themed image.");
+            Log.v(TAG, "Load themed image.");
             Bitmap newBitmap = BitmapUtil.loadBitmap(context, image.getFilename());
             return copyAndCacheImage(newBitmap, image.getId());
         }
@@ -101,9 +104,9 @@ class ImageCache {
             final int imageResId = context.getResources().getIdentifier(image.getFilename(), "drawable",
                     context.getClass().getPackage().getName());
             // Load the image from the resource file.
-            Trace.debug(this, "Load default image " + imageResId);
+            Log.v(TAG, "Load default image " + imageResId);
             Bitmap readOnlyBitmap = BitmapUtil.loadBitmap(context, imageResId);
-            Trace.debug(this, "default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
+            Log.v(TAG, "default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
                     + readOnlyBitmap.isRecycled());
             // Store the newly loaded drawable in cache for the first time.
             // Make a mutable copy of the drawable.

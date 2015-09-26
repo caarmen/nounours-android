@@ -21,13 +21,15 @@ package ca.rmen.nounours.compat;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 
-import ca.rmen.nounours.util.FileUtil;
-import ca.rmen.nounours.util.Trace;
+import ca.rmen.nounours.Constants;
 
 public class EnvironmentCompat {
+
+    private static final String TAG = Constants.TAG + EnvironmentCompat.class.getSimpleName();
 
     private EnvironmentCompat() {
         // Prevent instantiation
@@ -43,7 +45,7 @@ public class EnvironmentCompat {
         }
         if (!result.exists()) {
             if(!result.mkdirs() || !result.isDirectory()) {
-                Trace.debug(FileUtil.class, "Could not create folder " + result);
+                Log.v(TAG, "Could not create folder " + result);
             }
         }
         return result;

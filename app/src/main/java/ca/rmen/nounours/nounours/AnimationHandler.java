@@ -27,17 +27,18 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.ImageView;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.NounoursAnimationHandler;
+import ca.rmen.nounours.compat.BitmapCompat;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.compat.BitmapCompat;
-import ca.rmen.nounours.util.Trace;
 
 /**
  * Manages the Nounours animations displayed to the Android device.
@@ -45,6 +46,7 @@ import ca.rmen.nounours.util.Trace;
  * @author Carmen Alvarez
  */
 class AnimationHandler implements NounoursAnimationHandler {
+    private static final String TAG = Constants.TAG + AnimationHandler.class.getSimpleName();
 
     private AndroidNounours nounours = null;
     final private ImageView imageView;
@@ -88,10 +90,10 @@ class AnimationHandler implements NounoursAnimationHandler {
      * @see ca.rmen.nounours.Nounours#isAnimationRunning()
      */
     public boolean isAnimationRunning() {
-        Trace.debug(this, "isAnimationRunning");
+        Log.v(TAG, "isAnimationRunning");
         final AnimationDrawable currentAnimation = getCurrentAnimationDrawable();
         if (currentAnimation == null) {
-            Trace.debug(this, "Not running any animation");
+            Log.v(TAG, "Not running any animation");
             return false;
 
         }
@@ -106,11 +108,11 @@ class AnimationHandler implements NounoursAnimationHandler {
         final Drawable lastImage = currentAnimation.getFrame(currentAnimation.getNumberOfFrames() - 1);
         // If we're stuck on the last frame, close the animation.
         if (currentImage == lastImage) {
-            Trace.debug(this, "isRunning true, yet on last image?");
+            Log.v(TAG, "isRunning true, yet on last image?");
             currentAnimation.stop();
             return false;
         }
-        Trace.debug(this, "Currently running animation");
+        Log.v(TAG, "Currently running animation");
         return true;
     }
 
@@ -132,12 +134,13 @@ class AnimationHandler implements NounoursAnimationHandler {
      * @see ca.rmen.nounours.Nounours#doAnimation(Animation, boolean)
      */
     public void doAnimation(final Animation animation, final boolean isDynamicAnimation) {
+        Log.v(TAG, "doAnimation: " + animation);
         final Runnable runnable = new Runnable() {
             public void run() {
                 // Create an Android animation.
                 final AnimationDrawable animationDrawable = createAnimation(animation, !isDynamicAnimation);
                 if (animationDrawable == null) {
-                    Trace.debug(this, "No animation " + animation.getId());
+                    Log.v(TAG, "No animation " + animation.getId());
                     return;
                 }
 
@@ -145,7 +148,8 @@ class AnimationHandler implements NounoursAnimationHandler {
                 imageView.setImageDrawable(animationDrawable);
 
                 animationDrawable.start();
-                Trace.debug(this, "launched animation " + animation.getId());
+                animationDrawable.setOneShot(true);
+                Log.v(TAG, "launched animation " + animation.getId());
             }
         };
         nounours.runTask(runnable);
@@ -170,7 +174,7 @@ class AnimationHandler implements NounoursAnimationHandler {
      * @param doCache if true, this image sequence will be stored in memory for future use.
      */
     private AnimationDrawable createAnimation(final Animation animation, boolean doCache) {
-        Trace.debug(this, "createAnimation " + animation + " doCache = " + doCache);
+        Log.v(TAG, "createAnimation " + animation + " doCache = " + doCache);
         // First see if we have this stored in memory.
         AnimationDrawable animationDrawable = animationCache.get(animation.getId());
         if (animationDrawable != null) {
@@ -189,7 +193,7 @@ class AnimationHandler implements NounoursAnimationHandler {
                 // Make sure the image exists.
                 final Image image = nounours.getImages().get(animationImage.getImageId());
                 if (image == null) {
-                    Trace.debug(this, "No image " + animationImage);
+                    Log.v(TAG, "No image " + animationImage);
                     return null;
                 }
                 // Get the android image and add it to the android animation.
@@ -212,7 +216,7 @@ class AnimationHandler implements NounoursAnimationHandler {
         if (drawable == null)
             return null;
         animationDrawable.addFrame(drawable, animation.getInterval());
-        Trace.debug(this, "Loaded animation " + animation.getId());
+        Log.v(TAG, "Loaded animation " + animation.getId());
 
         return animationDrawable;
     }
@@ -233,7 +237,7 @@ class AnimationHandler implements NounoursAnimationHandler {
      * Store all animations in memory for performance.
      */
     boolean cacheAnimations() {
-        Trace.debug(this, "cacheAnimations");
+        Log.v(TAG, "cacheAnimations");
         final Map<String, Animation> animations = nounours.getAnimations();
         for (final String animationId : animations.keySet()) {
             final Animation animation = animations.get(animationId);
