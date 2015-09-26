@@ -41,8 +41,6 @@ public class NounoursActivity extends Activity {
     private Sensor accelerometerSensor = null;
     private Sensor magneticFieldSensor = null;
 
-    private boolean wasPaused = false;
-
     private static final int MENU_ACTION = 1001;
     private static final int MENU_RANDOM = 1002;
     private static final int MENU_HELP = 1003;
@@ -104,6 +102,7 @@ public class NounoursActivity extends Activity {
     @Override
     protected void onResume() {
 
+        super.onResume();
         if (sensorManager != null) {
             sensorManager.registerListener(sensorListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
             if (!sensorManager.registerListener(sensorListener, magneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
@@ -114,13 +113,9 @@ public class NounoursActivity extends Activity {
         nounours.setEnableVibrate(AndroidNounoursSettings.isSoundEnabled(this));
         nounours.setIdleTimeout(AndroidNounoursSettings.getIdleTimeout(this));
         nounours.setEnableRandomAnimations(AndroidNounoursSettings.isRandomAnimationEnabled(this));
-        super.onResume();
-        if (wasPaused) {
-            nounours.onResume();
-        }
+        boolean themeChanged = reloadThemeFromPreference();
+        if(!themeChanged) nounours.onResume();
         nounours.doPing(true);
-        wasPaused = false;
-        reloadThemeFromPreference();
 
     }
 
@@ -144,7 +139,6 @@ public class NounoursActivity extends Activity {
      */
     @Override
     protected void onPause() {
-        wasPaused = true;
         super.onPause();
         stopActivity();
     }
@@ -272,13 +266,13 @@ public class NounoursActivity extends Activity {
         System.exit(0);
     }
 
-    private void reloadThemeFromPreference() {
-        boolean nounoursIsBusy = nounours.isAnimationRunning() || nounours.isLoading();
+    private boolean reloadThemeFromPreference() {
+        boolean nounoursIsBusy = nounours.isLoading();
         Trace.debug(this, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
         String themeId = PreferenceManager.getDefaultSharedPreferences(this).getString(AndroidNounours.PREF_THEME, AndroidNounours.DEFAULT_THEME_ID);
         if(nounours.getCurrentTheme() != null
                 && nounours.getCurrentTheme().getId().equals(themeId)) {
-            return;
+            return false;
         }
         final Theme theme;
         if(AndroidNounours.DEFAULT_THEME_ID.equals(themeId)) {
@@ -289,10 +283,12 @@ public class NounoursActivity extends Activity {
         }
         if (theme != null) {
             nounours.stopAnimation();
+            final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
+            imageView.setImageBitmap(null);
             nounours.useTheme(theme.getId());
             sensorListener.rereadOrientationFile(theme, NounoursActivity.this);
         }
-
+        return true;
     }
 
 }

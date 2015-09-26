@@ -52,8 +52,8 @@ public class FileUtil {
             result = new File(sdcard, folderName);
         }
         if (!result.exists()) {
-            if(!result.mkdirs()) {
-                Trace.debug("FileUtil", "Could not create folder " + result);
+            if(!result.mkdirs() || !result.isDirectory()) {
+                Trace.debug(FileUtil.class, "Could not create folder " + result);
             }
         }
         return result;

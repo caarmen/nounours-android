@@ -9,6 +9,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.view.Surface;
 
 import java.io.File;
@@ -51,22 +52,29 @@ class AndroidNounoursSensorListener implements SensorEventListener {
         lastMagneticField = new float[]{0, 0, -1};
     }
 
-    public void rereadOrientationFile(Theme theme, Context context) {
+    public void rereadOrientationFile(final Theme theme, final Context context) {
         Trace.debug(this, "rereadOrientationFile");
         orientationImages.clear();
-        InputStream orientationImageFile = getOrientationFile(theme, context);
-        if (orientationImageFile != null) {
-            OrientationImageReader orientationImageReader;
-            try {
-                orientationImageReader = new OrientationImageReader(
-                        orientationImageFile);
-                orientationImages.addAll(orientationImageReader
-                        .getOrientationImages());
-            } catch (IOException e) {
-                Trace.debug(this, e);
+        new AsyncTask<Void,Void,Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                InputStream orientationImageFile = getOrientationFile(theme, context);
+                if (orientationImageFile != null) {
+                    OrientationImageReader orientationImageReader;
+                    try {
+                        orientationImageReader = new OrientationImageReader(
+                                orientationImageFile);
+                        orientationImages.addAll(orientationImageReader
+                                .getOrientationImages());
+                    } catch (IOException e) {
+                        Trace.debug(this, e);
+                    }
+                } else
+                    Trace.debug(this, "No orientation file!");
+                return null;
             }
-        } else
-            Trace.debug(this, "No orientation file!");
+        }.execute();
 
     }
 

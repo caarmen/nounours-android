@@ -100,6 +100,24 @@ class AndroidNounours extends Nounours {
     }
 
     /**
+     * Something went wrong when trying to load a theme.  Reset to the default one.
+     */
+    private void resetToDefaultTheme() {
+        Trace.debug(this, "resetToDefaultTheme");
+        OnClickListener revertToDefaultTheme = new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_THEME, DEFAULT_THEME_ID).commit();
+                useTheme(Nounours.DEFAULT_THEME_ID);
+            }
+        };
+        CharSequence message = context.getText(R.string.themeLoadError);
+
+        showAlertDialog(message, revertToDefaultTheme);
+    }
+
+    /**
      * Load the new image set in a separate thread, showing the progress bar
      */
     @Override
@@ -107,8 +125,11 @@ class AndroidNounours extends Nounours {
         if (!Nounours.DEFAULT_THEME_ID.equals(id)) {
             File themeDir = new File(getAppDir(), id);
             if (!themeDir.exists()) {
-                if(themeDir.mkdirs()) {
+                themeDir.mkdirs();
+                if(!themeDir.isDirectory()) {
                     Trace.debug(this, "Could not create theme folder " + themeDir);
+                    resetToDefaultTheme();
+                    return false;
                 }
             }
         }
@@ -131,19 +152,10 @@ class AndroidNounours extends Nounours {
 
                 boolean loadedTheme = AndroidNounours.super.useTheme(id);
                 if (!loadedTheme) {
-                    debug("Could not load theme " + id + ":  load default theme instead");
-                    OnClickListener revertToDefaultTheme = new OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (!Nounours.DEFAULT_THEME_ID.equals(id))
-                                useTheme(Nounours.DEFAULT_THEME_ID);
-
-                        }
-                    };
-                    CharSequence message = context.getText(R.string.themeLoadError);
-
-                    showAlertDialog(message, revertToDefaultTheme);
+                    if (!Nounours.DEFAULT_THEME_ID.equals(id)) {
+                        debug("Could not load theme " + id + ":  load default theme instead");
+                        resetToDefaultTheme();
+                    }
                 }
 
                 runTask(new Runnable() {

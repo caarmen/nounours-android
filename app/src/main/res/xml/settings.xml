@@ -4,7 +4,7 @@
         android:icon="@drawable/ic_menu_gallery"
         android:key="Theme"
         android:title="@string/themes"
-        android:defaultValue="5000"
+        android:defaultValue="0"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
