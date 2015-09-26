@@ -125,9 +125,9 @@ class AndroidNounours extends Nounours {
         if (!Nounours.DEFAULT_THEME_ID.equals(id)) {
             File themeDir = new File(getAppDir(), id);
             if (!themeDir.exists()) {
-                themeDir.mkdirs();
+                boolean mkdirsResult = themeDir.mkdirs();
                 if(!themeDir.isDirectory()) {
-                    Trace.debug(this, "Could not create theme folder " + themeDir);
+                    Trace.debug(this, "Could not create theme folder " + themeDir + ". mkdirs returned " + mkdirsResult);
                     resetToDefaultTheme();
                     return false;
                 }
@@ -362,6 +362,7 @@ class AndroidNounours extends Nounours {
         return FileUtil.getSdFolder(context);
     }
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final ImageCache.ImageCacheListener imageCacheListener = new ImageCache.ImageCacheListener() {
         @Override
         public void onImageLoaded(final Image image, int progress, int total) {

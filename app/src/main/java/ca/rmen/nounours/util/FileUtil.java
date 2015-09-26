@@ -15,7 +15,6 @@ $Id: FileUtil.java 625 2009-04-26 22:45:17Z bod $
 package ca.rmen.nounours.util;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Environment;
 
 import java.io.File;
@@ -24,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class FileUtil {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isSdPresent() {
         final String externalStorageState = Environment.getExternalStorageState();
         return externalStorageState.equals(Environment.MEDIA_MOUNTED)
@@ -40,12 +40,9 @@ public class FileUtil {
     }
 
     public static File getSdFolder(Context context) {
-        if(!isSdPresent()) {
-            return null;
-        }
         File result;
         String folderName = "nounours";
-        if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
+        if (NounoursApiHelper.getAPILevel() >= 8) {
             result = NounoursApi8Helper.getSdFolder(context, folderName);
         } else {
             File sdcard = Environment.getExternalStorageDirectory();

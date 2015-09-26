@@ -5,11 +5,9 @@
 package ca.rmen.nounours.util;
 
 import android.content.Context;
-import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
 
-@SuppressWarnings("deprecation")
 public class DisplayCompat {
 
     public static int getWidth(Context context) {
@@ -17,9 +15,10 @@ public class DisplayCompat {
                 .getApplicationContext().getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
-        if (Integer.parseInt(Build.VERSION.SDK) >= 13) {
+        if (NounoursApiHelper.getAPILevel() >= 13) {
             return NounoursApi13Helper.getWidth(display);
         }
+        //noinspection deprecation
         return display.getWidth();
 
     }
@@ -29,9 +28,10 @@ public class DisplayCompat {
                 .getApplicationContext().getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
-        if (Integer.parseInt(Build.VERSION.SDK) >= 13) {
+        if (NounoursApiHelper.getAPILevel() >= 13) {
             return NounoursApi13Helper.getHeight(display);
         }
+        //noinspection deprecation
         return display.getHeight();
 
     }
@@ -41,9 +41,10 @@ public class DisplayCompat {
                 .getApplicationContext().getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
-        if (Integer.parseInt(Build.VERSION.SDK) >= 8) {
+        if (NounoursApiHelper.getAPILevel() >= 8) {
             return NounoursApi8Helper.getRotation(display);
         }
+        //noinspection deprecation
         return display.getOrientation();
     }
 }

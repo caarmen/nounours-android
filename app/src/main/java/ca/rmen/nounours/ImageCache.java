@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015 Carmen Alvarez. All Rights Reserved.
+ *
+ */
 package ca.rmen.nounours;
 
 import android.content.Context;
@@ -13,10 +17,7 @@ import ca.rmen.nounours.util.BitmapUtil;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.Trace;
 
-/**
- * Created by calvarez on 26/09/15.
- */
-public class ImageCache {
+class ImageCache {
 
     interface ImageCacheListener {
         void onImageLoaded(Image image, int progress, int total);
