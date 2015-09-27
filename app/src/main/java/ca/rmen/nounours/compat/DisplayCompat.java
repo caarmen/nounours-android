@@ -27,7 +27,7 @@ public class DisplayCompat {
 
     public static int getWidth(Context context) {
         final WindowManager wm = (WindowManager) context
-                .getApplicationContext().getSystemService(
+                .getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
         if (ApiHelper.getAPILevel() >= 13) {
@@ -40,7 +40,7 @@ public class DisplayCompat {
 
     public static int getHeight(Context context) {
         final WindowManager wm = (WindowManager) context
-                .getApplicationContext().getSystemService(
+                .getSystemService(
                         Context.WINDOW_SERVICE);
         final Display display = wm.getDefaultDisplay();
         if (ApiHelper.getAPILevel() >= 13) {

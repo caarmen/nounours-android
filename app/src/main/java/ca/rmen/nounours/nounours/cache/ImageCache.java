@@ -104,7 +104,8 @@ public class ImageCache {
         Log.v(TAG, "Loading " + image + " into memory");
         final Bitmap result;
         // This is one of the downloaded images, in the sdcard.
-        if (image.getFilename().contains(EnvironmentCompat.getExternalFilesDir(mContext).getAbsolutePath())) {
+        String externalFilesPath = EnvironmentCompat.getExternalFilesPath(mContext);
+        if (externalFilesPath != null && image.getFilename().contains(externalFilesPath)) {
             // Load the new image
             Log.v(TAG, "Load themed image.");
             result = BitmapUtil.loadBitmap(mContext, image.getFilename());
