@@ -19,6 +19,7 @@
 
 package ca.rmen.nounours.nounours;
 
+import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -28,6 +29,7 @@ import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
+import ca.rmen.nounours.util.AnimationUtil;
 
 /**
  * Manages the Nounours animations displayed to the Android device.
@@ -37,11 +39,13 @@ import ca.rmen.nounours.nounours.cache.AnimationCache;
 class AnimationHandler implements NounoursAnimationHandler {
     private static final String TAG = Constants.TAG + AnimationHandler.class.getSimpleName();
 
+    private final Context mContext;
     private final AndroidNounours mNounours;
     private final ImageView mImageView;
     private final AnimationCache mAnimationCache;
 
-    public AnimationHandler(AndroidNounours nounours, ImageView imageView, AnimationCache animationCache) {
+    public AnimationHandler(Context context, AndroidNounours nounours, ImageView imageView, AnimationCache animationCache) {
+        mContext = context;
         mNounours = nounours;
         mImageView = imageView;
         mAnimationCache = animationCache;
@@ -103,6 +107,9 @@ class AnimationHandler implements NounoursAnimationHandler {
             public void run() {
                 // Create an Android animation.
                 final AnimationDrawable animationDrawable = mAnimationCache.createAnimation(animation, !isDynamicAnimation);
+                if(isDynamicAnimation) {
+                    AnimationUtil.saveAnimation(mContext, animationDrawable, animation.getId());
+                }
                 if (animationDrawable == null) {
                     Log.v(TAG, "No animation " + animation.getId());
                     return;

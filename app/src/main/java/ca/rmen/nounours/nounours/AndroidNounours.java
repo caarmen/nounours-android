@@ -94,7 +94,7 @@ public class AndroidNounours extends Nounours {
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        AnimationHandler animationHandler = new AnimationHandler(this, imageView, mAnimationCache);
+        AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
         SoundHandler soundHandler = new SoundHandler(this, context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         Resources resources = context.getResources();
