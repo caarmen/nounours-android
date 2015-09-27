@@ -60,7 +60,6 @@ typical modern Android project:
   loaded, even if proper checks on ```Build.VERSION``` ensured it would never be executed. The
   result would be a ```AndroidRuntime: java.lang.VerifyError: com.mycompany.MyClass```. To prevent
   this, code for higher API levels must be completely isolated into separate classes.
-* The check for the API level is done on the String ```Build.VERSION.SDK``` instead of the int
-  ```Build.VERSION.SDK_INT```
+* The check for the API level is done on the String ```Build.VERSION.SDK``` instead of the int ```Build.VERSION.SDK_INT```.
 * No support library is included.  The only library included in this project is libnounours.
 
