@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import java.util.Map;
 
+import ca.rmen.nounours.compat.ActivityCompat;
 import ca.rmen.nounours.compat.ApiHelper;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
@@ -79,7 +80,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-        mNounours = new AndroidNounours(this, new Handler(), imageView);
+        mNounours = new AndroidNounours(this, new Handler(), imageView, mListener);
 
         FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
         imageView.setOnTouchListener(mTouchListener);
@@ -285,5 +286,12 @@ public class MainActivity extends Activity {
         }
         return true;
     }
+
+    private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
+        @Override
+        public void onThemeLoaded() {
+            ActivityCompat.invalidateOptionsMenu(MainActivity.this);
+        }
+    };
 
 }

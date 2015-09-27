@@ -63,8 +63,8 @@ public class ImageCache {
             Bitmap bitmap = loadImage(image);
             if (bitmap == null)
                 return false;
-            final int progress = i;
             i++;
+            final int progress = i;
             mUIHandler.post(new Runnable(){
                 @Override
                 public void run() {

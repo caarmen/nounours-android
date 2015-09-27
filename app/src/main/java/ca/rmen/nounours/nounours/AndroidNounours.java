@@ -59,6 +59,10 @@ import ca.rmen.nounours.util.ThemeUtil;
  */
 public class AndroidNounours extends Nounours {
 
+    public interface AndroidNounoursListener {
+        void onThemeLoaded();
+    }
+
     private static final String TAG = Constants.TAG + AndroidNounours.class.getSimpleName();
 
     private final Context mContext;
@@ -66,6 +70,7 @@ public class AndroidNounours extends Nounours {
     private final ImageView mImageView;
     private final ImageCache mImageCache;
     private final AnimationCache mAnimationCache;
+    private final AndroidNounoursListener mListener;
 
     private ProgressDialog mProgressDialog;
 
@@ -77,13 +82,14 @@ public class AndroidNounours extends Nounours {
      *
      * @param context The android mContext.
      */
-    public AndroidNounours(final Context context, Handler uiHandler, ImageView imageView) {
+    public AndroidNounours(final Context context, Handler uiHandler, ImageView imageView, AndroidNounoursListener listener) {
 
         mContext = context;
         mUIHandler = uiHandler;
         mImageView = imageView;
         mImageCache = new ImageCache(context, mUIHandler, mImageCacheListener);
         mAnimationCache = new AnimationCache(context, this, mImageCache);
+        mListener = listener;
 
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
@@ -138,10 +144,12 @@ public class AndroidNounours extends Nounours {
                 }
             }
         }
+        int taskSize = 1;
         Theme theme = getThemes().get(id);
         if (!ThemeUtil.isValid(theme)) theme = getCurrentTheme();
         if (!ThemeUtil.isValid(theme)) theme = getDefaultTheme();
-        int taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
+        if (!theme.getSounds().isEmpty())
+            taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
         // MEMORY
         mImageCache.clearImageCache();
@@ -161,7 +169,7 @@ public class AndroidNounours extends Nounours {
 
                 runTask(new Runnable() {
                     public void run() {
-                        resizeView();
+                        themeLoaded();
                     }
                 });
 
@@ -173,6 +181,12 @@ public class AndroidNounours extends Nounours {
 
     }
 
+    private void themeLoaded() {
+        Log.v(TAG, "themeLoaded");
+        resizeView();
+        mProgressDialog.dismiss();
+        mListener.onThemeLoaded();
+    }
     private void resizeView() {
         Theme theme = getCurrentTheme();
         if (theme == null)
@@ -258,6 +272,7 @@ public class AndroidNounours extends Nounours {
             public void run() {
                 task.run();
                 mProgressDialog.dismiss();
+                Log.v(TAG, "runTaskWithProgressBar complete");
             }
         };
         new Thread(runnable).start();
@@ -279,6 +294,7 @@ public class AndroidNounours extends Nounours {
                 mProgressDialog.setMax(max);
                 mProgressDialog.setMessage(message);
                 debug("updateProgressBar " + progress + "/" + max + ": " + message);
+                if(progress == max) mProgressDialog.dismiss();
 
             }
         };
