@@ -38,6 +38,7 @@ public class BitmapCompat {
     public static BitmapFactory.Options createBitmapFactoryOptions(int sampleSize) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = sampleSize;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
         if (ApiHelper.getAPILevel() >= 4) {
             Api4Helper.setBitmapFactoryOptions(options);
         }

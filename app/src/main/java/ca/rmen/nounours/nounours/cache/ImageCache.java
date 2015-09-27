@@ -20,7 +20,6 @@ package ca.rmen.nounours.nounours.cache;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.Handler;
 import android.util.Log;
 
@@ -103,12 +102,12 @@ public class ImageCache {
      */
     private Bitmap loadImage(final Image image) {
         Log.v(TAG, "Loading " + image + " into memory");
+        final Bitmap result;
         // This is one of the downloaded images, in the sdcard.
         if (image.getFilename().contains(EnvironmentCompat.getExternalFilesDir(mContext).getAbsolutePath())) {
             // Load the new image
             Log.v(TAG, "Load themed image.");
-            Bitmap newBitmap = BitmapUtil.loadBitmap(mContext, image.getFilename());
-            return copyAndCacheImage(newBitmap, image.getId());
+            result = BitmapUtil.loadBitmap(mContext, image.getFilename());
         }
         // This is one of the default images bundled in the apk.
         else {
@@ -116,31 +115,10 @@ public class ImageCache {
                     mContext.getClass().getPackage().getName());
             // Load the image from the resource file.
             Log.v(TAG, "Load default image " + imageResId);
-            Bitmap readOnlyBitmap = BitmapUtil.loadBitmap(mContext, imageResId);
-            Log.v(TAG, "default image mutable = " + readOnlyBitmap.isMutable() + ", recycled="
-                    + readOnlyBitmap.isRecycled());
-            // Store the newly loaded drawable in cache for the first time.
-            // Make a mutable copy of the drawable.
-            return copyAndCacheImage(readOnlyBitmap, image.getId());
+            result = BitmapUtil.loadBitmap(mContext, imageResId);
         }
-    }
-
-    /**
-     * Create a mutable copy of the given immutable bitmap, and store it in the
-     * cache.
-     *
-     * @param readOnlyBitmap the immutable bitmap
-     * @return the mutable copy of the read-only bitmap.
-     */
-    private Bitmap copyAndCacheImage(Bitmap readOnlyBitmap, String imageId) {
-        Bitmap mutableBitmap = readOnlyBitmap.copy(readOnlyBitmap.getConfig(), true);
-        Canvas canvas = new Canvas(mutableBitmap);
-        canvas.drawBitmap(readOnlyBitmap, 0, 0, null);
-        readOnlyBitmap.recycle();
-        synchronized (mImageCache) {
-            mImageCache.put(imageId, mutableBitmap);
-        }
-        return mutableBitmap;
+        mImageCache.put(image.getId(), result);
+        return result;
     }
 
 }
