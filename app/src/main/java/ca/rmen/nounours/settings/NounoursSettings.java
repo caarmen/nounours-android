@@ -27,7 +27,9 @@ import ca.rmen.nounours.Nounours;
 public final class NounoursSettings {
     static final String PREF_THEME = "Theme";
     static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
-    static final String PREF_IDLE_TIMEOUT = "IdleTimeout";
+    // IdleTimeout changed from 1.3.5 to 2.0.0 from a Long to a String
+    // We just rename the preference here and don't care about migrating this setting.
+    static final String PREF_IDLE_TIMEOUT = "IdleTimeout2";
 
     private NounoursSettings() {
         // Prevent instantiation

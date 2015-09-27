@@ -35,7 +35,7 @@
 
     <ListPreference
         android:icon="@drawable/ic_pref_idle_timeout"
-        android:key="IdleTimeout"
+        android:key="IdleTimeout2"
         android:title="@string/idleTimeout"
         android:defaultValue="30000"
         android:entries="@array/idleTimeout"
