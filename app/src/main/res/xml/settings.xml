@@ -28,6 +28,7 @@
         android:positiveButtonText="@null" />
 
     <CheckBoxPreference
+        android:icon="@drawable/ic_pref_sound"
         android:key="SoundAndVibrate"
         android:title="@string/enablesound"
         android:defaultValue="true" />
@@ -38,6 +39,7 @@
         android:defaultValue="true" />
 
     <ListPreference
+        android:icon="@drawable/ic_pref_idle_timeout"
         android:key="IdleTimeout"
         android:title="@string/idleTimeout"
         android:defaultValue="30000"
