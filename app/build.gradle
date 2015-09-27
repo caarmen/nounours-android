@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 23
     buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "ca.rmen.nounours"
         minSdkVersion 3
-        targetSdkVersion 21
+        targetSdkVersion 23
     }
 
     buildTypes {
