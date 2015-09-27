@@ -1,17 +1,22 @@
 /*
-This source is part of the
-     _____  ___   ____
- __ / / _ \/ _ | / __/___  _______ _
-/ // / , _/ __ |/ _/_/ _ \/ __/ _ `/
-\___/_/|_/_/ |_/_/ (_)___/_/  \_, /
-                             /___/
-repository. It is licensed under a Creative Commons
-Attribution-Noncommercial-Share Alike 3.0 Unported License:
-http://creativecommons.org/licenses/by-nc-sa/3.0.
-Contact BoD@JRAF.org for more information.
-
-$Id: FileUtil.java 625 2009-04-26 22:45:17Z bod $
+ *   Copyright (c) 2009 - 2015 Carmen Alvarez
+ *
+ *   This file is part of Nounours for Android.
+ *
+ *   Nounours for Android is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   Nounours for Android is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package ca.rmen.nounours.util;
 
 import android.content.Context;
