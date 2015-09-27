@@ -49,7 +49,7 @@ import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
 
 /**
- * Android activity class which delegates mNounours-specific logic to the
+ * Android activity class which delegates Nounours-specific logic to the
  * {@link AndroidNounours} class.
  *
  * @author Carmen Alvarez
@@ -66,7 +66,7 @@ public class MainActivity extends Activity {
     private Sensor mMagneticFieldSensor;
 
     /**
-     * Initialize mNounours (read the CSV data files, register as a listener for
+     * Initialize Nounours (read the CSV data files, register as a listener for
      * touch events).
      *
      * @see android.app.Activity#onCreate(android.os.Bundle)
