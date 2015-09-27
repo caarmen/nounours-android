@@ -1,0 +1,4 @@
+-dontwarn org.apache.http.**
+
+-optimizations !code/allocation/variable
+-keepattributes SourceFile,LineNumberTable
