@@ -50,8 +50,6 @@
 	<string name="startle">Startle</string>
 	<string name="toast_remindMenuButton">Press the MENU button for more options\u2026</string>
 	<string name="themeLoadError">Oops, I couldn\'t load my theme. Try again! Check your network connection</string>
-	<string name="enableRandomAnimations">Enable random animations</string>
-	<string name="disableRandomAnimations">Disable random animations</string>
 	<string name="options">Options</string>
 	<string name="idleTimeout">Time before I fall asleep</string>
 	

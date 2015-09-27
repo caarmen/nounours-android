@@ -33,11 +33,6 @@
         android:title="@string/enablesound"
         android:defaultValue="true" />
 
-    <CheckBoxPreference
-        android:key="Random"
-        android:title="@string/enableRandomAnimations"
-        android:defaultValue="true" />
-
     <ListPreference
         android:icon="@drawable/ic_pref_idle_timeout"
         android:key="IdleTimeout"

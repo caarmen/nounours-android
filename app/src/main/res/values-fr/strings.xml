@@ -50,8 +50,6 @@
 	<string name="startle">Effrayer</string>
     <string name="toast_remindMenuButton">Appuyez sur le bouton MENU pour plus d\'options\u2026</string>
     <string name="themeLoadError">Oups, je n\'ai pas pu charger ce thème ! Essaie de nouveau. Vérifie ta connexion internet.</string>
-	<string name="enableRandomAnimations">Activer les animations aléatoires</string>
-	<string name="disableRandomAnimations">Désactiver les animations aléatoires</string>
 	<string name="options">Options</string>
 	<string name="idleTimeout">Temps avant de m\'endormir</string>
 	

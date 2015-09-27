@@ -27,7 +27,6 @@ import ca.rmen.nounours.Nounours;
 public final class NounoursSettings {
     static final String PREF_THEME = "Theme";
     static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
-    static final String PREF_RANDOM = "Random";
     static final String PREF_IDLE_TIMEOUT = "IdleTimeout";
 
     private NounoursSettings() {
@@ -36,10 +35,6 @@ public final class NounoursSettings {
 
     public static boolean isSoundEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_SOUND_AND_VIBRATE, true);
-    }
-
-    public static boolean isRandomAnimationEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_RANDOM, true);
     }
 
     public static long getIdleTimeout(Context context) {

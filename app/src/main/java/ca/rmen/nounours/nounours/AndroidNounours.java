@@ -115,7 +115,7 @@ public class AndroidNounours extends Nounours {
                     soundFile, themeId);
             setEnableVibrate(NounoursSettings.isSoundEnabled(context));
             setEnableSound(NounoursSettings.isSoundEnabled(context));
-            setEnableRandomAnimations(NounoursSettings.isRandomAnimationEnabled(context));
+            setEnableRandomAnimations(true);
             setIdleTimeout(NounoursSettings.getIdleTimeout(context));
         } catch (final IOException e) {
             Log.e(TAG, "Error initializing nounours", e);
