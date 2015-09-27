@@ -38,5 +38,6 @@ class Api4Helper {
     static void setBitmapFactoryOptions(BitmapFactory.Options options) {
         options.inPurgeable = true;
         options.inInputShareable = true;
+        options.inScaled = false;
     }
 }
