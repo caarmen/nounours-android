@@ -103,7 +103,9 @@ public class MainActivity extends Activity {
          * SensorManagerSimulator.connectSimulator(); }
          */
 
-        Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG).show();
+        if (ApiHelper.getAPILevel() < 11) {
+            Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG).show();
+        }
 
     }
 
