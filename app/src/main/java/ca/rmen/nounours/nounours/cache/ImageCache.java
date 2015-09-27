@@ -117,7 +117,7 @@ public class ImageCache {
             Log.v(TAG, "Load default image " + imageResId);
             result = BitmapUtil.loadBitmap(mContext, imageResId);
         }
-        mImageCache.put(image.getId(), result);
+        if(result != null) mImageCache.put(image.getId(), result);
         return result;
     }
 
