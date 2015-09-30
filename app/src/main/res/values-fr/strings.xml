@@ -52,5 +52,7 @@
     <string name="themeLoadError">Oups, je n\'ai pas pu charger ce thème ! Essaie de nouveau. Vérifie ta connexion internet.</string>
 	<string name="options">Options</string>
 	<string name="idleTimeout">Temps avant de m\'endormir</string>
-	
+	<string name="record_start">Enregistrer</string>
+	<string name="record_stop">Arrêter l\'enregistrement</string>
+
 </resources>

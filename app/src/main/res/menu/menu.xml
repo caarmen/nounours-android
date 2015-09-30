@@ -37,6 +37,12 @@
         tools:ignore="UnusedAttribute" />
 
     <item
+        android:id="@+id/menu_record"
+        android:showAsAction="never"
+        android:title="@string/record_start"
+        tools:ignore="UnusedAttribute" />
+
+    <item
         android:id="@+id/menu_help"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_menu_help"

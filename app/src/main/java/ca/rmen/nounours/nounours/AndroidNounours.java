@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -43,11 +44,13 @@ import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.compat.EnvironmentCompat;
+import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
+import ca.rmen.nounours.util.AnimationUtil;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.ThemeUtil;
 
@@ -227,6 +230,7 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void displayImage(final Image image) {
+        Log.v(TAG, "displayImage " + image);
         if (image == null) {
             return;
         }
@@ -315,6 +319,11 @@ public class AndroidNounours extends Nounours {
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
         debug("createProgressDialog " + max + ": " + message);
+    }
+
+    public void saveAnimation(final Animation animation) {
+        final AnimationDrawable animationDrawable = mAnimationCache.createAnimation(animation, false);
+        AnimationUtil.saveAnimation(mContext, animationDrawable, animation.getId());
     }
 
     /**

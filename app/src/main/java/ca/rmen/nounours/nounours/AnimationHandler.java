@@ -29,7 +29,6 @@ import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
-import ca.rmen.nounours.util.AnimationUtil;
 
 /**
  * Manages the Nounours animations displayed to the Android device.
@@ -107,9 +106,6 @@ class AnimationHandler implements NounoursAnimationHandler {
             public void run() {
                 // Create an Android animation.
                 final AnimationDrawable animationDrawable = mAnimationCache.createAnimation(animation, !isDynamicAnimation);
-                if(isDynamicAnimation) {
-                    AnimationUtil.saveAnimation(mContext, animationDrawable, animation.getId());
-                }
                 if (animationDrawable == null) {
                     Log.v(TAG, "No animation " + animation.getId());
                     return;
@@ -149,5 +145,6 @@ class AnimationHandler implements NounoursAnimationHandler {
     public void addAnimation(Animation animation) {
         // Do nothing
     }
+
 
 }

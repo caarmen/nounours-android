@@ -52,5 +52,7 @@
 	<string name="themeLoadError">Oops, I couldn\'t load my theme. Try again! Check your network connection</string>
 	<string name="options">Options</string>
 	<string name="idleTimeout">Time before I fall asleep</string>
-	
+	<string name="record_start">Start recording</string>
+	<string name="record_stop">Stop recording</string>
+
 </resources>

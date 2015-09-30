@@ -51,7 +51,7 @@ public class AnimationUtil {
         for (int i=0; i < numberOfFrames; i++) {
             BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
             int frameDuration = animationDrawable.getDuration(i);
-            int frameFps = frameDuration < 0 ? 30 : 1000/frameDuration;
+            float frameFps = frameDuration < 0 ? 30 : (float) 1000/frameDuration;
             encoder.addFrame(frame.getBitmap());
             encoder.setFrameRate(frameFps);
         }

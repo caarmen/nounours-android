@@ -216,6 +216,13 @@ public class MainActivity extends Activity {
             animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
             setupAnimationMenu(animationMenu.getSubMenu());
         }
+        MenuItem recordingMenu = menu.findItem(R.id.menu_record);
+        if (recordingMenu != null) {
+            NounoursRecorder nounoursRecorder = mNounours.getNounoursRecorder();
+            if(nounoursRecorder.isRecording()) recordingMenu.setTitle(R.string.record_stop);
+            else recordingMenu.setTitle(R.string.record_start);
+
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -239,6 +246,17 @@ public class MainActivity extends Activity {
         // The user picked the random animation
         else if (menuItem.getItemId() == R.id.menu_random_animation) {
             mNounours.doRandomAnimation();
+            return true;
+        }
+        else if (menuItem.getItemId() == R.id.menu_record) {
+            NounoursRecorder nounoursRecorder = mNounours.getNounoursRecorder();
+            if(nounoursRecorder.isRecording()) {
+                Animation animation = nounoursRecorder.stop();
+                mNounours.saveAnimation(animation);
+            } else {
+                nounoursRecorder.start();
+            }
+            ActivityCompat.invalidateOptionsMenu(this);
             return true;
         }
         // Show an animation or change the theme.
