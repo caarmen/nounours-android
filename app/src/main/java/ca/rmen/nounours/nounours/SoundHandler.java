@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ca.rmen.nounours.BuildConfig;
+import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.data.Sound;
@@ -43,7 +44,7 @@ import ca.rmen.nounours.util.FileUtil;
  * @author Carmen Alvarez
  */
 class SoundHandler implements NounoursSoundHandler, OnErrorListener {
-    private static final String TAG = SoundHandler.class.getSimpleName();
+    private static final String TAG = Constants.TAG + SoundHandler.class.getSimpleName();
 
     private final MediaPlayer mMediaPlayer;
 

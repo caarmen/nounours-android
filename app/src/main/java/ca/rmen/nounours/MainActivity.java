@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-        mRecordButton = (ImageButton) findViewById(R.id.menu_record);
+        mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
         mRecordButton.setOnClickListener(mOnClickListener);
         mNounours = new AndroidNounours(this, new Handler(), imageView, mListener);
 
@@ -231,7 +231,7 @@ public class MainActivity extends Activity {
             animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
             setupAnimationMenu(animationMenu.getSubMenu());
         }
-        MenuItem recordingMenu = menu.findItem(R.id.menu_record);
+        MenuItem recordingMenu = menu.findItem(R.id.menu_start_recording);
         if (recordingMenu != null) {
             recordingMenu.setEnabled(FileUtil.isSdPresent() && !mNounours.getNounoursRecorder().isRecording());
         }
@@ -260,7 +260,7 @@ public class MainActivity extends Activity {
             mNounours.doRandomAnimation();
             return true;
         }
-        else if (menuItem.getItemId() == R.id.menu_record) {
+        else if (menuItem.getItemId() == R.id.menu_start_recording) {
             startRecording();
             ActivityCompat.invalidateOptionsMenu(this);
             return true;
@@ -332,20 +332,31 @@ public class MainActivity extends Activity {
         }
     };
 
+    /**
+     * When the user taps on the record button, we stop recording.
+     */
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(view.getId() == R.id.menu_record) {
+            if(view.getId() == R.id.btn_stop_recording) {
                 stopRecording();
             }
         }
     };
 
+    /**
+     * When the file has been saved, let's prompt the user to share it.
+     */
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(AnimationSaveService.ACTION_SAVE_ANIMATION.equals(intent.getAction())) {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                // We clear the notification because we don't need it here: we will directly
+                // prompt the user to share the file.  (The notification is useful if the
+                // file saving takes a long time, and the user leaves the activity in the middle
+                // of the saving.  In that case, the user will have to tap on the notification
+                // see the share app list.
                 notificationManager.cancel(AnimationSaveService.NOTIFICATION_ID);
                 Intent shareIntent = intent.getParcelableExtra(AnimationSaveService.EXTRA_SHARE_INTENT);
                 startActivity(shareIntent);

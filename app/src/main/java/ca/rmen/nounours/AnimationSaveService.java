@@ -38,6 +38,9 @@ import ca.rmen.nounours.util.AnimationUtil;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  * <p/>
+ * This service saves an animation file to the disk.  It displays a notification to indicate
+ * the progress of the saving, and at the end, it prompts the user to choose an app to share
+ * the animation.
  */
 public class AnimationSaveService extends IntentService {
     private static final String TAG = Constants.TAG + AnimationSaveService.class.getSimpleName();
@@ -93,6 +96,8 @@ public class AnimationSaveService extends IntentService {
 
         // Save the file
         File file = AnimationUtil.saveAnimation(this, animation);
+
+        // Notify based on the save result.
         if(file != null && file.exists()) {
             // Notify that the save is done.
             Intent shareIntent = getShareIntent(file);
@@ -114,11 +119,18 @@ public class AnimationSaveService extends IntentService {
         Log.v(TAG, "end saving animation " + animation);
     }
 
+    /**
+     * While the saving is in progress, we need a PendingIntent for the notification. We'll
+     * just have a PendingIntent which launches the MainActivity.
+     */
     private PendingIntent getMainActivityIntent() {
         Intent intent = new Intent(this, MainActivity.class);
         return PendingIntent.getActivity(this, 0, intent, 0);
     }
 
+    /**
+     * @return an Intent to show a chooser of apps to share a file.
+     */
     private Intent getShareIntent(File file) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);

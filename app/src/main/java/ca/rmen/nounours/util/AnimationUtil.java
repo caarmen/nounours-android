@@ -44,6 +44,10 @@ import ca.rmen.nounours.data.AnimationImage;
 public class AnimationUtil {
     private static final String TAG = Constants.TAG + AnimationUtil.class.getSimpleName();
 
+    /**
+     * Save an animation as an animated gif.
+     * @return a file containing the animated gif render of the given animation.
+     */
     public static File saveAnimation(Context context, Animation animation) {
         Log.v(TAG, "saveAnimation " + animation);
         if (!FileUtil.isSdPresent()) return null;
@@ -126,13 +130,15 @@ public class AnimationUtil {
         }
     }
 
+    /**
+     * @return an AnimationDrawable containing Bitmaps for each image in the given Animation.
+     */
     private static AnimationDrawable createAnimationDrawable(Context context, Animation animation) {
         AnimationDrawable animationDrawable = new AnimationDrawable();
         // Go through the list of images in the nounours animation, "repeat"
         // times.
         for (int i = 0; i < animation.getRepeat(); i++) {
             for (final AnimationImage animationImage : animation.getImages()) {
-                Log.v(TAG, "createAnimationDrawable: image " + animationImage);
                 // Get the android image and add it to the android animation.
                 BitmapDrawable drawable = BitmapUtil.createBitmapDrawable(context, animationImage.getImage());
                 animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));
