@@ -23,6 +23,9 @@ import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 
 import com.external.nbadal.AnimatedGifEncoder;
 
@@ -75,6 +78,48 @@ public class AnimationUtil {
             }
         }
 
+    }
+
+    /**
+     * Show the imageView and start its animation drawable.
+     */
+    public static void startAnimation(final ImageView imageView) {
+        if (imageView.getVisibility() != View.VISIBLE) {
+            Log.v(TAG, "startAnimation");
+            imageView.setVisibility(View.VISIBLE);
+            final AnimationDrawable animationDrawable = (AnimationDrawable) imageView.getDrawable();
+            // On some devices, directly calling start() on the animation does not work.
+            // We have to wait until the ImageView is visible before starting the animation.
+            imageView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @SuppressWarnings("deprecation")
+                @Override
+                public void onGlobalLayout() {
+                    if (!animationDrawable.isRunning()) {
+                        imageView.post(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                animationDrawable.setVisible(true, false);
+                                animationDrawable.start();
+                            }
+                        });
+                    }
+                    imageView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+            });
+        }
+    }
+
+    /**
+     * Stop the animation drawable on this imageView and hide the imageView.
+     */
+    public static void stopAnimation(final ImageView imageView) {
+        if (imageView.getVisibility() == View.VISIBLE) {
+            Log.v(TAG, "stopAnimation");
+            imageView.setVisibility(View.INVISIBLE);
+            final AnimationDrawable animationDrawable = (AnimationDrawable) imageView.getDrawable();
+            animationDrawable.setVisible(false, false);
+        }
     }
 
 }

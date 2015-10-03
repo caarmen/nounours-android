@@ -32,6 +32,8 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ import ca.rmen.nounours.nounours.TouchListener;
 import ca.rmen.nounours.nounours.orientation.SensorListener;
 import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
+import ca.rmen.nounours.util.AnimationUtil;
 
 /**
  * Android activity class which delegates Nounours-specific logic to the
@@ -64,6 +67,7 @@ public class MainActivity extends Activity {
     private TouchListener mTouchListener;
     private Sensor mAccelerometerSensor;
     private Sensor mMagneticFieldSensor;
+    private ImageButton mRecordButton;
 
     /**
      * Initialize Nounours (read the CSV data files, register as a listener for
@@ -80,6 +84,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
+        mRecordButton = (ImageButton) findViewById(R.id.menu_record);
+        mRecordButton.setOnClickListener(mOnClickListener);
         mNounours = new AndroidNounours(this, new Handler(), imageView, mListener);
 
         FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
@@ -218,10 +224,7 @@ public class MainActivity extends Activity {
         }
         MenuItem recordingMenu = menu.findItem(R.id.menu_record);
         if (recordingMenu != null) {
-            NounoursRecorder nounoursRecorder = mNounours.getNounoursRecorder();
-            if(nounoursRecorder.isRecording()) recordingMenu.setTitle(R.string.record_stop);
-            else recordingMenu.setTitle(R.string.record_start);
-
+            recordingMenu.setEnabled(!mNounours.getNounoursRecorder().isRecording());
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -249,13 +252,7 @@ public class MainActivity extends Activity {
             return true;
         }
         else if (menuItem.getItemId() == R.id.menu_record) {
-            NounoursRecorder nounoursRecorder = mNounours.getNounoursRecorder();
-            if(nounoursRecorder.isRecording()) {
-                Animation animation = nounoursRecorder.stop();
-                mNounours.saveAnimation(animation);
-            } else {
-                nounoursRecorder.start();
-            }
+            startRecording();
             ActivityCompat.invalidateOptionsMenu(this);
             return true;
         }
@@ -280,6 +277,17 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         mNounours.onDestroy();
         super.onDestroy();
+    }
+
+    private void startRecording() {
+        AnimationUtil.startAnimation(mRecordButton);
+        mNounours.getNounoursRecorder().start();
+    }
+
+    private void stopRecording() {
+        AnimationUtil.stopAnimation(mRecordButton);
+        Animation animation = mNounours.getNounoursRecorder().stop();
+        mNounours.saveAnimation(animation);
     }
 
     private boolean reloadThemeFromPreference() {
@@ -311,6 +319,15 @@ public class MainActivity extends Activity {
         @Override
         public void onThemeLoaded() {
             ActivityCompat.invalidateOptionsMenu(MainActivity.this);
+        }
+    };
+
+    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(view.getId() == R.id.menu_record) {
+                stopRecording();
+            }
         }
     };
 
