@@ -84,8 +84,7 @@ public class AnimationCache {
         if (doCache)
             mAnimationCache.put(animation.getId(), animationDrawable);
         // Add the default image at the end.
-        final Bitmap bitmap = ImageCache.getInstance().getDrawableImage(context, defaultImage);
-        BitmapDrawable drawable = getDrawable(context, bitmap);
+        BitmapDrawable drawable = getDrawable(context, defaultImage);
         animationDrawable.addFrame(drawable, animation.getInterval());
         Log.v(TAG, "Loaded animation " + animation.getId());
 
@@ -98,16 +97,8 @@ public class AnimationCache {
         // times.
         for (int i = 0; i < animation.getRepeat(); i++) {
             for (final AnimationImage animationImage : animation.getImages()) {
-                // Make sure the image exists.
-                final Image image = animationImage.getImage();
-                if (image == null) {
-                    Log.v(TAG, "No image " + animationImage);
-                    return null;
-                }
                 // Get the android image and add it to the android animation.
-                final Bitmap bitmap = ImageCache.getInstance().getDrawableImage(context, image);
-
-                BitmapDrawable drawable = getDrawable(context, bitmap);
+                BitmapDrawable drawable = getDrawable(context, animationImage.getImage());
                 animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));
             }
         }
@@ -117,13 +108,15 @@ public class AnimationCache {
     /**
      * Store bitmap drawables for bitmaps in cache.
      */
-    private BitmapDrawable getDrawable(Context context, Bitmap bitmap) {
+    private BitmapDrawable getDrawable(Context context, Image image) {
+        final Bitmap bitmap = ImageCache.getInstance().getDrawableImage(context, image);
         BitmapDrawable result = mBitmapDrawables.get(bitmap);
         if (result != null) return result;
         result = BitmapCompat.createBitmapDrawable(context, bitmap);
         mBitmapDrawables.put(bitmap, result);
         return result;
     }
+
 
     public void clearAnimationCache() {
         for (AnimationDrawable animationDrawable : mAnimationCache.values()) {

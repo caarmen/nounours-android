@@ -22,12 +22,15 @@ package ca.rmen.nounours.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 
 import java.io.File;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.compat.BitmapCompat;
+import ca.rmen.nounours.compat.EnvironmentCompat;
+import ca.rmen.nounours.data.Image;
 
 public class BitmapUtil {
     private static final String TAG = Constants.TAG + BitmapUtil.class.getSimpleName();
@@ -41,6 +44,31 @@ public class BitmapUtil {
 
     public static Bitmap loadBitmap(Context context, int resourceId) {
         return loadBitmap(context, null, resourceId, BITMAP_INITIAL_SUB_SAMPLE, BITMAP_LOAD_RETRIES);
+    }
+
+    public static Bitmap createBitmap(Context context, Image image) {
+        final Bitmap result;
+        // This is one of the downloaded images, in the sdcard.
+        String externalFilesPath = EnvironmentCompat.getExternalFilesPath(context);
+        if (externalFilesPath != null && image.getFilename().contains(externalFilesPath)) {
+            // Load the new image
+            Log.v(TAG, "Load themed image.");
+            result = loadBitmap(context, image.getFilename());
+        }
+        // This is one of the default images bundled in the apk.
+        else {
+            final int imageResId = context.getResources().getIdentifier(image.getFilename(), "drawable",
+                    context.getClass().getPackage().getName());
+            // Load the image from the resource file.
+            Log.v(TAG, "Load default image " + imageResId);
+            result = loadBitmap(context, imageResId);
+        }
+        return result;
+    }
+
+    public static BitmapDrawable createBitmapDrawable(Context context, Image image) {
+        Bitmap bitmap = createBitmap(context, image);
+        return BitmapCompat.createBitmapDrawable(context, bitmap);
     }
 
     private static Bitmap loadBitmap(Context context, File file, int resourceId, int initialSubSample, int retries) {
@@ -61,4 +89,5 @@ public class BitmapUtil {
         }
         return null;
     }
+
 }

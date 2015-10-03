@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ca.rmen.nounours.Constants;
-import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.util.BitmapUtil;
 
@@ -104,24 +103,10 @@ public class ImageCache {
      */
     private Bitmap loadImage(Context context, final Image image) {
         Log.v(TAG, "Loading " + image + " into memory");
-        final Bitmap result;
-        // This is one of the downloaded images, in the sdcard.
-        String externalFilesPath = EnvironmentCompat.getExternalFilesPath(context);
-        if (externalFilesPath != null && image.getFilename().contains(externalFilesPath)) {
-            // Load the new image
-            Log.v(TAG, "Load themed image.");
-            result = BitmapUtil.loadBitmap(context, image.getFilename());
-        }
-        // This is one of the default images bundled in the apk.
-        else {
-            final int imageResId = context.getResources().getIdentifier(image.getFilename(), "drawable",
-                    context.getClass().getPackage().getName());
-            // Load the image from the resource file.
-            Log.v(TAG, "Load default image " + imageResId);
-            result = BitmapUtil.loadBitmap(context, imageResId);
-        }
+        Bitmap result = BitmapUtil.createBitmap(context, image);
         if(result != null) mImageCache.put(image.getId(), result);
         return result;
     }
+
 
 }

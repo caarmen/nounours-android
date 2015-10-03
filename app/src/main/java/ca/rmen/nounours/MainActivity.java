@@ -20,7 +20,11 @@
 package ca.rmen.nounours;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -50,6 +54,7 @@ import ca.rmen.nounours.nounours.orientation.SensorListener;
 import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
 import ca.rmen.nounours.util.AnimationUtil;
+import ca.rmen.nounours.util.FileUtil;
 
 /**
  * Android activity class which delegates Nounours-specific logic to the
@@ -68,6 +73,7 @@ public class MainActivity extends Activity {
     private Sensor mAccelerometerSensor;
     private Sensor mMagneticFieldSensor;
     private ImageButton mRecordButton;
+
 
     /**
      * Initialize Nounours (read the CSV data files, register as a listener for
@@ -139,6 +145,7 @@ public class MainActivity extends Activity {
         boolean themeChanged = reloadThemeFromPreference();
         if(!themeChanged) mNounours.onResume();
         mNounours.doPing(true);
+        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
 
     }
 
@@ -151,6 +158,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         stopActivity();
+
         super.onStop();
     }
 
@@ -163,6 +171,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
         stopActivity();
     }
 
@@ -224,7 +233,7 @@ public class MainActivity extends Activity {
         }
         MenuItem recordingMenu = menu.findItem(R.id.menu_record);
         if (recordingMenu != null) {
-            recordingMenu.setEnabled(!mNounours.getNounoursRecorder().isRecording());
+            recordingMenu.setEnabled(FileUtil.isSdPresent() && !mNounours.getNounoursRecorder().isRecording());
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -327,6 +336,18 @@ public class MainActivity extends Activity {
         public void onClick(View view) {
             if(view.getId() == R.id.menu_record) {
                 stopRecording();
+            }
+        }
+    };
+
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(AnimationSaveService.ACTION_SAVE_ANIMATION.equals(intent.getAction())) {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancel(AnimationSaveService.NOTIFICATION_ID);
+                Intent shareIntent = intent.getParcelableExtra(AnimationSaveService.EXTRA_SHARE_INTENT);
+                startActivity(shareIntent);
             }
         }
     };

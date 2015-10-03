@@ -44,7 +44,9 @@ import ca.rmen.nounours.util.AnimationUtil;
 public class AnimationSaveService extends IntentService {
     private static final String TAG = Constants.TAG + AnimationSaveService.class.getSimpleName();
 
-    private static final String ACTION_SAVE_ANIMATION = "ca.rmen.nounours.action.SAVE_ANIMATION";
+    public static final String ACTION_SAVE_ANIMATION = "ca.rmen.nounours.action.SAVE_ANIMATION";
+    public static final String EXTRA_SHARE_INTENT = "ca.rmen.nounours.extra.SHARE_INTENT";
+    public static final int NOTIFICATION_ID = TAG.hashCode();
 
     private static final String EXTRA_ANIMATION = "ca.rmen.nounours.extra.ANIMATION";
 
@@ -82,23 +84,34 @@ public class AnimationSaveService extends IntentService {
      */
     private void handleActionSaveAnimation(Animation animation) {
         Log.v(TAG, "begin saving animation " + animation);
-        final int notificationId = TAG.hashCode();
         final int iconId = R.drawable.icon;
 
         // Notify that the save is in progress
         Notification notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_in_progress, R.string.notif_save_animation_in_progress, getMainActivityIntent());
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(notificationId, notification);
+        notificationManager.notify(NOTIFICATION_ID, notification);
 
         // Save the file
-        final AnimationDrawable animationDrawable = AnimationCache.getInstance().createAnimation(this, animation);
-        File file = AnimationUtil.saveAnimation(this, animationDrawable, animation.getId());
+        File file = AnimationUtil.saveAnimation(this, animation);
+        if(file != null && file.exists()) {
+            // Notify that the save is done.
+            Intent shareIntent = getShareIntent(file);
+            PendingIntent pendingShareIntent = PendingIntent.getActivity(this, 0, shareIntent, 0);
+            notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_done, R.string.notif_save_animation_done, pendingShareIntent);
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            notificationManager.notify(NOTIFICATION_ID, notification);
+            // Also broadcast that the save is done.
+            Intent broadcastIntent = new Intent(ACTION_SAVE_ANIMATION);
+            broadcastIntent.putExtra(EXTRA_SHARE_INTENT, shareIntent);
+            sendBroadcast(broadcastIntent);
+        } else {
+            // Notify that the save failed.
+            notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_failed, R.string.notif_save_animation_failed, getMainActivityIntent());
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            notificationManager.notify(NOTIFICATION_ID, notification);
+        }
 
-        // Notify that the save is done.
-        notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_done, R.string.notif_save_animation_done, getShareIntent(file));
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-        notificationManager.notify(notificationId, notification);
         Log.v(TAG, "end saving animation " + animation);
     }
 
@@ -107,13 +120,11 @@ public class AnimationSaveService extends IntentService {
         return PendingIntent.getActivity(this, 0, intent, 0);
     }
 
-    private PendingIntent getShareIntent(File file) {
+    private Intent getShareIntent(File file) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file.getAbsolutePath()));
         sendIntent.setType("image/gif");
-
-        Intent chooserIntent = Intent.createChooser(sendIntent, getString(R.string.share_app_chooser_title));
-        return PendingIntent.getActivity(this, 0, chooserIntent, 0);
+        return Intent.createChooser(sendIntent, getString(R.string.share_app_chooser_title));
     }
 }
