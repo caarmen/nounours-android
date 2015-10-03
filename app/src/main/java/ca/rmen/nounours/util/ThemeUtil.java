@@ -39,6 +39,7 @@ public final class ThemeUtil {
         return themeLabel;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isValid(Theme theme) {
         return theme != null && theme.getImages() != null && !theme.getImages().isEmpty();
     }

@@ -26,7 +26,7 @@ import ca.rmen.nounours.Nounours;
 
 public final class NounoursSettings {
     static final String PREF_THEME = "Theme";
-    static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
+    private static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
     // IdleTimeout changed from 1.3.5 to 2.0.0 from a Long to a String
     // We just rename the preference here and don't care about migrating this setting.
     static final String PREF_IDLE_TIMEOUT = "IdleTimeout2";
@@ -47,7 +47,7 @@ public final class NounoursSettings {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_THEME, Nounours.DEFAULT_THEME_ID);
     }
 
-    public static void setThemeId(Context context, String themeId) {
+    public static void setThemeId(Context context, @SuppressWarnings("SameParameterValue") String themeId) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_THEME, themeId).commit();
     }
 }

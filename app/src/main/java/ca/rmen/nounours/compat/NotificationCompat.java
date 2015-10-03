@@ -44,9 +44,11 @@ public final class NotificationCompat {
             Notification notification = new Notification();
             notification.tickerText = tickerText;
             notification.when = System.currentTimeMillis();
+            //noinspection deprecation
             notification.icon = iconId;
             notification.contentIntent = pendingIntent;
             // Google removed setLatestEventInfo in sdk 23.
+            //noinspection TryWithIdenticalCatches
             try {
                 Method method = Notification.class.getMethod("setLatestEventInfo", Context.class, CharSequence.class, CharSequence.class, PendingIntent.class);
                 method.invoke(notification, context, tickerText, contentText, pendingIntent);

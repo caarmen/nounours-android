@@ -26,16 +26,16 @@ import android.view.Display;
 import java.io.File;
 
 @TargetApi(8)
-public class Api8Helper {
+class Api8Helper {
     private Api8Helper() {
         // prevent instantiation
     }
 
-    public static int getRotation(Display display) {
+    static int getRotation(Display display) {
         return display.getRotation();
     }
 
-    public static File getExternalFilesDir(Context context, String name){
+    static File getExternalFilesDir(Context context, String name){
         return context.getExternalFilesDir(name);
     }
 }

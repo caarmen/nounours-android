@@ -1,19 +1,14 @@
 package com.external.nbadal;
 
-import java.io.OutputStream;
-
-import java.io.OutputStream;
-
-
-
-import java.io.IOException;
-import java.io.OutputStream;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+@SuppressWarnings({"CanBeFinal", "UnusedReturnValue", "unused", "JavaDoc", "JavadocReference", "PointlessBitwiseExpression"})
 public class AnimatedGifEncoder {
 
 	  protected int width; // image size
@@ -514,7 +509,8 @@ public class AnimatedGifEncoder {
 	 */
 
 //	 Ported to Java 12/00 K Weiner
-	class NeuQuant {
+@SuppressWarnings({"unused", "EmptyCatchBlock", "PointlessArithmeticExpression", "RedundantCast", "PointlessBitwiseExpression"})
+class NeuQuant {
 
 	  protected static final int netsize = 256; /* number of colours used */
 
@@ -1001,6 +997,7 @@ public class AnimatedGifEncoder {
 //	 Adapted from Jef Poskanzer's Java port by way of J. M. G. Elliott.
 //	 K Weiner 12/00
 
+	@SuppressWarnings("ALL")
 	class LZWEncoder {
 
 	  private static final int EOF = -1;

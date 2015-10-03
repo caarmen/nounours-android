@@ -25,11 +25,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 
 @TargetApi(16)
-public class Api16Helper {
+class Api16Helper {
     private Api16Helper() {
         // prevent instantiation
     }
-    public static Notification createNotification(Context context, int iconId, String tickerText, String contentText, PendingIntent pendingIntent) {
+    static Notification createNotification(Context context, int iconId, String tickerText, String contentText, PendingIntent pendingIntent) {
         return new Notification.Builder(context)
                 .setContentTitle(contentText)
                 .setContentText(tickerText)

@@ -38,14 +38,6 @@ public class BitmapUtil {
     private static final int BITMAP_LOAD_RETRIES = 3;
     private static final int BITMAP_INITIAL_SUB_SAMPLE = 0;
 
-    public static Bitmap loadBitmap(Context context, String filename) {
-        return loadBitmap(context, new File(filename), 0, BITMAP_INITIAL_SUB_SAMPLE, BITMAP_LOAD_RETRIES);
-    }
-
-    public static Bitmap loadBitmap(Context context, int resourceId) {
-        return loadBitmap(context, null, resourceId, BITMAP_INITIAL_SUB_SAMPLE, BITMAP_LOAD_RETRIES);
-    }
-
     public static Bitmap createBitmap(Context context, Image image) {
         final Bitmap result;
         // This is one of the downloaded images, in the sdcard.
@@ -69,6 +61,14 @@ public class BitmapUtil {
     public static BitmapDrawable createBitmapDrawable(Context context, Image image) {
         Bitmap bitmap = createBitmap(context, image);
         return BitmapCompat.createBitmapDrawable(context, bitmap);
+    }
+
+    private static Bitmap loadBitmap(Context context, String filename) {
+        return loadBitmap(context, new File(filename), 0, BITMAP_INITIAL_SUB_SAMPLE, BITMAP_LOAD_RETRIES);
+    }
+
+    private static Bitmap loadBitmap(Context context, int resourceId) {
+        return loadBitmap(context, null, resourceId, BITMAP_INITIAL_SUB_SAMPLE, BITMAP_LOAD_RETRIES);
     }
 
     private static Bitmap loadBitmap(Context context, File file, int resourceId, int initialSubSample, int retries) {

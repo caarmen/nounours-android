@@ -17,7 +17,7 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -41,4 +41,4 @@
         android:src="@drawable/blinking_circle"
         android:visibility="gone"
         tools:ignore="RtlHardcoded,UnusedAttribute" />
-</FrameLayout>
+</merge>

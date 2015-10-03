@@ -61,6 +61,7 @@ public class AnimationSaveService extends IntentService {
         context.startService(intent);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public AnimationSaveService() {
         super(TAG);
     }
