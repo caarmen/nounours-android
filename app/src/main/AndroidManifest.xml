@@ -32,7 +32,9 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:maxSdkVersion="18" android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
 
     <application
         android:icon="@drawable/icon"
@@ -52,18 +54,24 @@
         </activity>
         <activity
             android:name=".settings.SettingsActivity"
-            android:parentActivityName=".MainActivity"
-            android:label="@string/options" >
+            android:label="@string/options"
+            android:parentActivityName=".MainActivity" >
         </activity>
         <activity
             android:name=".AboutActivity"
-            android:parentActivityName=".settings.SettingsActivity"
-            android:label="@string/about">
+            android:label="@string/about"
+            android:parentActivityName=".settings.SettingsActivity" >
             <intent-filter>
                 <action android:name="ca.rmen.nounours.AboutActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".AnimationSaveService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

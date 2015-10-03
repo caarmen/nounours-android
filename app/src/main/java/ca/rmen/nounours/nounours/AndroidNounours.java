@@ -26,7 +26,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -36,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.rmen.nounours.AnimationSaveService;
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursAnimationHandler;
@@ -50,7 +50,6 @@ import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
-import ca.rmen.nounours.util.AnimationUtil;
 import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.ThemeUtil;
 
@@ -71,8 +70,6 @@ public class AndroidNounours extends Nounours {
     private final Context mContext;
     private final Handler mUIHandler;
     private final ImageView mImageView;
-    private final ImageCache mImageCache;
-    private final AnimationCache mAnimationCache;
     private final AndroidNounoursListener mListener;
 
     private ProgressDialog mProgressDialog;
@@ -90,14 +87,12 @@ public class AndroidNounours extends Nounours {
         mContext = context;
         mUIHandler = uiHandler;
         mImageView = imageView;
-        mImageCache = new ImageCache(context, mUIHandler, mImageCacheListener);
-        mAnimationCache = new AnimationCache(context, this, mImageCache);
         mListener = listener;
 
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
+        AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView);
         SoundHandler soundHandler = new SoundHandler(this, context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         Resources resources = context.getResources();
@@ -127,8 +122,8 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected boolean cacheImages() {
-        return mImageCache.cacheImages(getImages().values())
-            && mAnimationCache.cacheAnimations(getAnimations().values());
+        return ImageCache.getInstance().cacheImages(mContext, getImages().values(), mUIHandler, mImageCacheListener)
+            && AnimationCache.getInstance().cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
     }
 
     /**
@@ -155,8 +150,8 @@ public class AndroidNounours extends Nounours {
             taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
         // MEMORY
-        mImageCache.clearImageCache();
-        mAnimationCache.clearAnimationCache();
+        ImageCache.getInstance().clearImageCache();
+        AnimationCache.getInstance().clearAnimationCache();
         Runnable themeLoader = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -234,7 +229,7 @@ public class AndroidNounours extends Nounours {
         if (image == null) {
             return;
         }
-        final Bitmap bitmap = mImageCache.getDrawableImage(image);
+        final Bitmap bitmap = ImageCache.getInstance().getDrawableImage(mContext, image);
         if (bitmap == null)
             return;
         mImageView.setImageBitmap(bitmap);
@@ -322,8 +317,7 @@ public class AndroidNounours extends Nounours {
     }
 
     public void saveAnimation(final Animation animation) {
-        final AnimationDrawable animationDrawable = mAnimationCache.createAnimation(animation, false);
-        AnimationUtil.saveAnimation(mContext, animationDrawable, animation.getId());
+        AnimationSaveService.startActionSaveAnimation(mContext, animation);
     }
 
     /**
@@ -331,8 +325,8 @@ public class AndroidNounours extends Nounours {
      */
     public void onDestroy() {
         debug("destroy");
-        mImageCache.clearImageCache();
-        mAnimationCache.clearAnimationCache();
+        ImageCache.getInstance().clearImageCache();
+        AnimationCache.getInstance().clearAnimationCache();
     }
 
     @Override
