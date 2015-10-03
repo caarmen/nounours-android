@@ -34,7 +34,7 @@ import ca.rmen.nounours.io.NounoursReader;
  *
  * @author Carmen Alvarez
  */
-public class OrientationImageReader extends NounoursReader {
+class OrientationImageReader extends NounoursReader {
 
     private static final String COL_IMAGE_ID = "ImageId";
     private static final String COL_MIN_YAW = "MinYaw";

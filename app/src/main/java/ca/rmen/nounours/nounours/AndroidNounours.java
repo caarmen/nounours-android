@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ca.rmen.nounours.AnimationSaveService;
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursAnimationHandler;
@@ -43,6 +44,7 @@ import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.compat.EnvironmentCompat;
+import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
@@ -68,8 +70,6 @@ public class AndroidNounours extends Nounours {
     private final Context mContext;
     private final Handler mUIHandler;
     private final ImageView mImageView;
-    private final ImageCache mImageCache;
-    private final AnimationCache mAnimationCache;
     private final AndroidNounoursListener mListener;
 
     private ProgressDialog mProgressDialog;
@@ -87,14 +87,12 @@ public class AndroidNounours extends Nounours {
         mContext = context;
         mUIHandler = uiHandler;
         mImageView = imageView;
-        mImageCache = new ImageCache(context, mUIHandler, mImageCacheListener);
-        mAnimationCache = new AnimationCache(context, this, mImageCache);
         mListener = listener;
 
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        AnimationHandler animationHandler = new AnimationHandler(this, imageView, mAnimationCache);
+        AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView);
         SoundHandler soundHandler = new SoundHandler(this, context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         Resources resources = context.getResources();
@@ -124,8 +122,8 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected boolean cacheImages() {
-        return mImageCache.cacheImages(getImages().values())
-            && mAnimationCache.cacheAnimations(getAnimations().values());
+        return ImageCache.getInstance().cacheImages(mContext, getImages().values(), mUIHandler, mImageCacheListener)
+            && AnimationCache.getInstance().cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
     }
 
     /**
@@ -152,8 +150,8 @@ public class AndroidNounours extends Nounours {
             taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
         // MEMORY
-        mImageCache.clearImageCache();
-        mAnimationCache.clearAnimationCache();
+        ImageCache.getInstance().clearImageCache();
+        AnimationCache.getInstance().clearAnimationCache();
         Runnable themeLoader = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -227,10 +225,11 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void displayImage(final Image image) {
+        Log.v(TAG, "displayImage " + image);
         if (image == null) {
             return;
         }
-        final Bitmap bitmap = mImageCache.getDrawableImage(image);
+        final Bitmap bitmap = ImageCache.getInstance().getDrawableImage(mContext, image);
         if (bitmap == null)
             return;
         mImageView.setImageBitmap(bitmap);
@@ -317,13 +316,17 @@ public class AndroidNounours extends Nounours {
         debug("createProgressDialog " + max + ": " + message);
     }
 
+    public void saveAnimation(final Animation animation) {
+        AnimationSaveService.startActionSaveAnimation(mContext, animation);
+    }
+
     /**
      * Cleanup.
      */
     public void onDestroy() {
         debug("destroy");
-        mImageCache.clearImageCache();
-        mAnimationCache.clearAnimationCache();
+        ImageCache.getInstance().clearImageCache();
+        AnimationCache.getInstance().clearAnimationCache();
     }
 
     @Override

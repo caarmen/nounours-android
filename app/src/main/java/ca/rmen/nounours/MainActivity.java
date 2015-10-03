@@ -20,7 +20,11 @@
 package ca.rmen.nounours;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
@@ -32,6 +36,8 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -47,6 +53,8 @@ import ca.rmen.nounours.nounours.TouchListener;
 import ca.rmen.nounours.nounours.orientation.SensorListener;
 import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
+import ca.rmen.nounours.util.AnimationUtil;
+import ca.rmen.nounours.util.FileUtil;
 
 /**
  * Android activity class which delegates Nounours-specific logic to the
@@ -64,6 +72,8 @@ public class MainActivity extends Activity {
     private TouchListener mTouchListener;
     private Sensor mAccelerometerSensor;
     private Sensor mMagneticFieldSensor;
+    private ImageButton mRecordButton;
+
 
     /**
      * Initialize Nounours (read the CSV data files, register as a listener for
@@ -80,6 +90,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
 
         final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
+        mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
+        mRecordButton.setOnClickListener(mOnClickListener);
         mNounours = new AndroidNounours(this, new Handler(), imageView, mListener);
 
         FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
@@ -133,6 +145,7 @@ public class MainActivity extends Activity {
         boolean themeChanged = reloadThemeFromPreference();
         if(!themeChanged) mNounours.onResume();
         mNounours.doPing(true);
+        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
 
     }
 
@@ -145,6 +158,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onStop() {
         stopActivity();
+
         super.onStop();
     }
 
@@ -157,6 +171,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
         stopActivity();
     }
 
@@ -216,6 +231,10 @@ public class MainActivity extends Activity {
             animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
             setupAnimationMenu(animationMenu.getSubMenu());
         }
+        MenuItem recordingMenu = menu.findItem(R.id.menu_start_recording);
+        if (recordingMenu != null) {
+            recordingMenu.setEnabled(FileUtil.isSdPresent() && !mNounours.getNounoursRecorder().isRecording());
+        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -241,6 +260,11 @@ public class MainActivity extends Activity {
             mNounours.doRandomAnimation();
             return true;
         }
+        else if (menuItem.getItemId() == R.id.menu_start_recording) {
+            startRecording();
+            ActivityCompat.invalidateOptionsMenu(this);
+            return true;
+        }
         // Show an animation or change the theme.
         else {
             final Map<String, Animation> animations = mNounours.getAnimations();
@@ -262,6 +286,18 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         mNounours.onDestroy();
         super.onDestroy();
+    }
+
+    private void startRecording() {
+        AnimationUtil.startAnimation(mRecordButton);
+        mNounours.getNounoursRecorder().start();
+    }
+
+    private void stopRecording() {
+        AnimationUtil.stopAnimation(mRecordButton);
+        mNounours.getNounoursRecorder().addImage(mNounours.getCurrentImage());
+        Animation animation = mNounours.getNounoursRecorder().stop();
+        mNounours.saveAnimation(animation);
     }
 
     private boolean reloadThemeFromPreference() {
@@ -293,6 +329,38 @@ public class MainActivity extends Activity {
         @Override
         public void onThemeLoaded() {
             ActivityCompat.invalidateOptionsMenu(MainActivity.this);
+        }
+    };
+
+    /**
+     * When the user taps on the record button, we stop recording.
+     */
+    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(view.getId() == R.id.btn_stop_recording) {
+                stopRecording();
+            }
+        }
+    };
+
+    /**
+     * When the file has been saved, let's prompt the user to share it.
+     */
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(AnimationSaveService.ACTION_SAVE_ANIMATION.equals(intent.getAction())) {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                // We clear the notification because we don't need it here: we will directly
+                // prompt the user to share the file.  (The notification is useful if the
+                // file saving takes a long time, and the user leaves the activity in the middle
+                // of the saving.  In that case, the user will have to tap on the notification
+                // see the share app list.
+                notificationManager.cancel(AnimationSaveService.NOTIFICATION_ID);
+                Intent shareIntent = intent.getParcelableExtra(AnimationSaveService.EXTRA_SHARE_INTENT);
+                startActivity(shareIntent);
+            }
         }
     };
 

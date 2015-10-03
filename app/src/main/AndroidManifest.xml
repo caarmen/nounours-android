@@ -17,6 +17,7 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ca.rmen.nounours"
     android:versionCode="200"
     android:versionName="2.0.0">
@@ -25,11 +26,14 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="18" />
+        android:maxSdkVersion="18"
+        tools:ignore="UnusedAttribute" />
 
     <application
+        android:fullBackupContent="false"
         android:icon="@drawable/icon"
-        android:label="@string/app_name">
+        android:label="@string/app_name"
+        tools:ignore="UnusedAttribute">
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -47,17 +51,25 @@
             android:name=".settings.SettingsActivity"
             android:label="@string/options"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/NounoursActivityStyle"/>
+            android:theme="@style/NounoursActivityStyle"
+            tools:ignore="UnusedAttribute"/>
         <activity
             android:name=".AboutActivity"
             android:label="@string/about"
             android:parentActivityName=".settings.SettingsActivity"
-            android:theme="@style/NounoursActivityStyle">
+            android:theme="@style/NounoursActivityStyle"
+            tools:ignore="UnusedAttribute">
             <intent-filter>
                 <action android:name="ca.rmen.nounours.AboutActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".AnimationSaveService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

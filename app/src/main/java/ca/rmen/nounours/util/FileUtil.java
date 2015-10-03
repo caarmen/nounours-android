@@ -34,13 +34,16 @@ public class FileUtil {
     }
 
     public static void copy(final InputStream in, final OutputStream out) throws IOException {
-        final byte[] buffer = new byte[1500];
-        int read;
-        while ((read = in.read(buffer)) != -1) {
-            out.write(buffer, 0, read);
-            out.flush();
+        try {
+            final byte[] buffer = new byte[1500];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+                out.flush();
+            }
+        } finally {
+            in.close();
+            out.close();
         }
     }
-
-
 }

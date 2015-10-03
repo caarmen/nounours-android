@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
+import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.Util;
@@ -51,7 +52,7 @@ import ca.rmen.nounours.nounours.AndroidNounours;
  * @author Carmen Alvarez
  */
 public class SensorListener implements SensorEventListener {
-    private static final String TAG = SensorListener.class.getSimpleName();
+    private static final String TAG = Constants.TAG + SensorListener.class.getSimpleName();
 
     private float mXAccel = Float.MAX_VALUE;
     private float mYAccel = Float.MAX_VALUE;

@@ -28,46 +28,46 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ca.rmen.nounours.Constants;
-import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.util.BitmapUtil;
 
 public class ImageCache {
 
+
+    private static final String TAG = Constants.TAG + ImageCache.class.getSimpleName();
+    private static final ImageCache INSTANCE = new ImageCache();
+
+    private final Map<String, Bitmap> mImageCache = new ConcurrentHashMap<>();
+
     public interface ImageCacheListener {
         void onImageLoaded(Image image, int progress, int total);
     }
 
-    private static final String TAG = Constants.TAG + ImageCache.class.getSimpleName();
+    public static ImageCache getInstance() {
+        return INSTANCE;
+    }
 
-    private final Map<String, Bitmap> mImageCache = new ConcurrentHashMap<>();
-    private final Context mContext;
-    private final ImageCacheListener mListener;
-    private final Handler mUIHandler;
-
-    public ImageCache(Context context, Handler uiHandler, ImageCacheListener listener) {
-        mContext = context;
-        mUIHandler = uiHandler;
-        mListener = listener;
+    private ImageCache() {
+        Log.v(TAG, "Constructor");
     }
 
     /**
      * Load the images into memory.
      */
-    public boolean cacheImages(Collection<Image> images) {
+    public boolean cacheImages(Context context, Collection<Image> images, Handler uiHandler, final ImageCacheListener listener) {
         Log.v(TAG, "cacheImages");
         int i = 0;
         final int max = images.size();
         for (final Image image : images) {
-            Bitmap bitmap = loadImage(image);
+            Bitmap bitmap = loadImage(context, image);
             if (bitmap == null)
                 return false;
             i++;
             final int progress = i;
-            mUIHandler.post(new Runnable(){
+            uiHandler.post(new Runnable(){
                 @Override
                 public void run() {
-                    mListener.onImageLoaded(image, progress, max);
+                    listener.onImageLoaded(image, progress, max);
                 }
             });
         }
@@ -87,39 +87,26 @@ public class ImageCache {
     /**
      * Find the Android image for the given nounours image.
      */
-    public Bitmap getDrawableImage(final Image image) {
+    public Bitmap getDrawableImage(Context context, final Image image) {
         Bitmap res = mImageCache.get(image.getId());
         if (res == null) {
             Log.v(TAG, "Loading drawable image " + image);
-            res = loadImage(image);
+            res = loadImage(context, image);
         }
         return res;
     }
+
 
     /**
      * Load an image from the disk into memory. Return the Drawable for the
      * image.
      */
-    private Bitmap loadImage(final Image image) {
+    private Bitmap loadImage(Context context, final Image image) {
         Log.v(TAG, "Loading " + image + " into memory");
-        final Bitmap result;
-        // This is one of the downloaded images, in the sdcard.
-        String externalFilesPath = EnvironmentCompat.getExternalFilesPath(mContext);
-        if (externalFilesPath != null && image.getFilename().contains(externalFilesPath)) {
-            // Load the new image
-            Log.v(TAG, "Load themed image.");
-            result = BitmapUtil.loadBitmap(mContext, image.getFilename());
-        }
-        // This is one of the default images bundled in the apk.
-        else {
-            final int imageResId = mContext.getResources().getIdentifier(image.getFilename(), "drawable",
-                    mContext.getClass().getPackage().getName());
-            // Load the image from the resource file.
-            Log.v(TAG, "Load default image " + imageResId);
-            result = BitmapUtil.loadBitmap(mContext, imageResId);
-        }
+        Bitmap result = BitmapUtil.createBitmap(context, image);
         if(result != null) mImageCache.put(image.getId(), result);
         return result;
     }
+
 
 }

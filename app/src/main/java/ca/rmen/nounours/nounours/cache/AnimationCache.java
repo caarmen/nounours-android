@@ -35,7 +35,6 @@ import ca.rmen.nounours.compat.BitmapCompat;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.nounours.AndroidNounours;
 
 /**
  * @author Carmen Alvarez
@@ -43,26 +42,25 @@ import ca.rmen.nounours.nounours.AndroidNounours;
 public class AnimationCache {
     private static final String TAG = Constants.TAG + AnimationCache.class.getSimpleName();
 
-    private final AndroidNounours mNounours;
-    private final Context mContext;
-    private final ImageCache mImageCache;
-
+    private static final AnimationCache INSTANCE = new AnimationCache();
     private final Map<String, AnimationDrawable> mAnimationCache = new HashMap<>();
     private final Map<Bitmap, BitmapDrawable> mBitmapDrawables = new HashMap<>();
 
-    public AnimationCache(Context context, AndroidNounours nounours, ImageCache imageCache) {
-        mContext = context;
-        mNounours = nounours;
-        mImageCache = imageCache;
+    private AnimationCache() {
+        Log.v(TAG, "Constructor");
+    }
+
+    public static AnimationCache getInstance() {
+        return INSTANCE;
     }
 
     /**
      * Store all animations in memory for performance.
      */
-    public boolean cacheAnimations(Collection<Animation> animations) {
+    public boolean cacheAnimations(Context context, Collection<Animation> animations, Image defaultImage) {
         Log.v(TAG, "cacheAnimations");
         for (final Animation animation : animations) {
-            AnimationDrawable animationDrawable = createAnimation(animation, true);
+            AnimationDrawable animationDrawable = createAnimation(context, animation, defaultImage, true);
             if (animationDrawable == null) return false;
         }
         return true;
@@ -73,7 +71,7 @@ public class AnimationCache {
      *
      * @param doCache if true, this image sequence will be stored in memory for future use.
      */
-    public AnimationDrawable createAnimation(final Animation animation, boolean doCache) {
+    public AnimationDrawable createAnimation(Context context, final Animation animation, Image defaultImage, boolean doCache) {
         Log.v(TAG, "createAnimation " + animation + " doCache = " + doCache);
         // First see if we have this stored in memory.
         AnimationDrawable animationDrawable = mAnimationCache.get(animation.getId());
@@ -82,46 +80,43 @@ public class AnimationCache {
         }
 
         // Create the android animation.
-        animationDrawable = new AnimationDrawable();
+        animationDrawable = createAnimation(context, animation);
         if (doCache)
             mAnimationCache.put(animation.getId(), animationDrawable);
-
-        // Go through the list of images in the nounours animation, "repeat"
-        // times.
-        for (int i = 0; i < animation.getRepeat(); i++) {
-            for (final AnimationImage animationImage : animation.getImages()) {
-                // Make sure the image exists.
-                final Image image = mNounours.getImages().get(animationImage.getImageId());
-                if (image == null) {
-                    Log.v(TAG, "No image " + animationImage);
-                    return null;
-                }
-                // Get the android image and add it to the android animation.
-                final Bitmap bitmap = mImageCache.getDrawableImage(image);
-
-                BitmapDrawable drawable = getDrawable(bitmap);
-                animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));
-            }
-        }
         // Add the default image at the end.
-        final Bitmap bitmap = mImageCache.getDrawableImage(mNounours.getDefaultImage());
-        BitmapDrawable drawable = getDrawable(bitmap);
+        BitmapDrawable drawable = getDrawable(context, defaultImage);
         animationDrawable.addFrame(drawable, animation.getInterval());
         Log.v(TAG, "Loaded animation " + animation.getId());
 
         return animationDrawable;
     }
 
+    private AnimationDrawable createAnimation(Context context, Animation animation) {
+        AnimationDrawable animationDrawable = new AnimationDrawable();
+        // Go through the list of images in the nounours animation, "repeat"
+        // times.
+        for (int i = 0; i < animation.getRepeat(); i++) {
+            for (final AnimationImage animationImage : animation.getImages()) {
+                // Get the android image and add it to the android animation.
+                BitmapDrawable drawable = getDrawable(context, animationImage.getImage());
+                animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));
+            }
+        }
+        return animationDrawable;
+    }
+
     /**
      * Store bitmap drawables for bitmaps in cache.
      */
-    private BitmapDrawable getDrawable(Bitmap bitmap) {
+    private BitmapDrawable getDrawable(Context context, Image image) {
+        final Bitmap bitmap = ImageCache.getInstance().getDrawableImage(context, image);
         BitmapDrawable result = mBitmapDrawables.get(bitmap);
         if (result != null) return result;
-        result = BitmapCompat.createBitmapDrawable(mContext, bitmap);
+        result = BitmapCompat.createBitmapDrawable(context, bitmap);
         mBitmapDrawables.put(bitmap, result);
         return result;
     }
+
 
     public void clearAnimationCache() {
         for (AnimationDrawable animationDrawable : mAnimationCache.values()) {

@@ -21,15 +21,28 @@ package ca.rmen.nounours.compat;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 
 @TargetApi(11)
-public class Api11Helper {
+class Api11Helper {
     private Api11Helper() {
         // prevent instantiation
     }
 
-    public static void invalidateOptionsMenu(Activity activity) {
+    static void invalidateOptionsMenu(Activity activity) {
         activity.invalidateOptionsMenu();
+    }
+
+    static Notification createNotification(Context context, int iconId, String tickerText, String contentText, PendingIntent pendingIntent) {
+        //noinspection deprecation
+        return new Notification.Builder(context)
+                .setContentTitle(contentText)
+                .setContentText(tickerText)
+                .setSmallIcon(iconId)
+                .setContentIntent(pendingIntent)
+                .getNotification();
     }
 
 }

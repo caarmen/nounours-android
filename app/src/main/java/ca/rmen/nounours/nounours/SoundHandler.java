@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ca.rmen.nounours.BuildConfig;
+import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.data.Sound;
@@ -43,7 +44,7 @@ import ca.rmen.nounours.util.FileUtil;
  * @author Carmen Alvarez
  */
 class SoundHandler implements NounoursSoundHandler, OnErrorListener {
-    private static final String TAG = SoundHandler.class.getSimpleName();
+    private static final String TAG = Constants.TAG + SoundHandler.class.getSimpleName();
 
     private final MediaPlayer mMediaPlayer;
 
@@ -114,11 +115,6 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
         // Write the file
         final FileOutputStream writer = new FileOutputStream(sdSoundFile);
         FileUtil.copy(soundFileData, writer);
-        final byte[] buffer = new byte[1024];
-        for (int read = soundFileData.read(buffer, 0, buffer.length); read > 0; read = soundFileData.read(buffer, 0,
-                buffer.length)) {
-            writer.write(buffer, 0, read);
-        }
         // Return the newly created sdcard file.
         return sdSoundFile;
     }

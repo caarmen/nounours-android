@@ -17,31 +17,25 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.util;
+package ca.rmen.nounours.compat;
 
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 
-import ca.rmen.nounours.R;
-import ca.rmen.nounours.data.Theme;
-
-public final class ThemeUtil {
-
-    private ThemeUtil() {
-        // Prevent instantiation
+@TargetApi(16)
+class Api16Helper {
+    private Api16Helper() {
+        // prevent instantiation
     }
-
-    public static CharSequence getThemeLabel(Context context, Theme theme) {
-        String themeLabel = theme.getName();
-        int themeLabelId = context.getResources().getIdentifier(theme.getName(), "string",
-                R.class.getPackage().getName());
-        if (themeLabelId > 0)
-            return context.getResources().getText(themeLabelId);
-        return themeLabel;
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isValid(Theme theme) {
-        return theme != null && theme.getImages() != null && !theme.getImages().isEmpty();
+    static Notification createNotification(Context context, int iconId, String tickerText, String contentText, PendingIntent pendingIntent) {
+        return new Notification.Builder(context)
+                .setContentTitle(contentText)
+                .setContentText(tickerText)
+                .setSmallIcon(iconId)
+                .setContentIntent(pendingIntent)
+                .build();
     }
 
 }

@@ -24,7 +24,7 @@ package ca.rmen.nounours.nounours.orientation;
  *
  * @author Carmen Alvarez
  */
-public final class OrientationImage {
+final class OrientationImage {
 
     public final String imageId;
     public final float minYaw;
