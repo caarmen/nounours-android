@@ -86,7 +86,7 @@ public class AnimationSaveService extends IntentService {
      */
     private void handleActionSaveAnimation(Animation animation) {
         Log.v(TAG, "begin saving animation " + animation);
-        final int iconId = R.drawable.icon;
+        final int iconId = R.drawable.ic_stat_content_save;
 
         // Notify that the save is in progress
         Notification notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_in_progress, R.string.notif_save_animation_in_progress, getMainActivityIntent());
