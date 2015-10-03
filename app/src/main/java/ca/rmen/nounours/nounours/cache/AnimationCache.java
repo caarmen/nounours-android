@@ -91,7 +91,7 @@ public class AnimationCache {
         return animationDrawable;
     }
 
-    public AnimationDrawable createAnimation(Context context, Animation animation) {
+    private AnimationDrawable createAnimation(Context context, Animation animation) {
         AnimationDrawable animationDrawable = new AnimationDrawable();
         // Go through the list of images in the nounours animation, "repeat"
         // times.

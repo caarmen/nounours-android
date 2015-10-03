@@ -295,6 +295,7 @@ public class MainActivity extends Activity {
 
     private void stopRecording() {
         AnimationUtil.stopAnimation(mRecordButton);
+        mNounours.getNounoursRecorder().addImage(mNounours.getCurrentImage());
         Animation animation = mNounours.getNounoursRecorder().stop();
         mNounours.saveAnimation(animation);
     }

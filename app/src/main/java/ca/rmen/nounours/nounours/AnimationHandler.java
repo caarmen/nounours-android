@@ -103,7 +103,7 @@ class AnimationHandler implements NounoursAnimationHandler {
         final Runnable runnable = new Runnable() {
             public void run() {
                 // Create an Android animation.
-                final AnimationDrawable animationDrawable = AnimationCache.getInstance().createAnimation(mContext, animation);
+                final AnimationDrawable animationDrawable = AnimationCache.getInstance().createAnimation(mContext, animation, mNounours.getDefaultImage(), false);
                 if (animationDrawable == null) {
                     Log.v(TAG, "No animation " + animation.getId());
                     return;

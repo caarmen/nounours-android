@@ -43,50 +43,45 @@ import ca.rmen.nounours.data.AnimationImage;
 
 public class AnimationUtil {
     private static final String TAG = Constants.TAG + AnimationUtil.class.getSimpleName();
+
     public static File saveAnimation(Context context, Animation animation) {
         Log.v(TAG, "saveAnimation " + animation);
-        if(!FileUtil.isSdPresent()) return null;
-        AnimationDrawable animationDrawable = createAnimationDrawable(context, animation);
-
-        int numberOfFrames = animationDrawable.getNumberOfFrames();
-        //http://stackoverflow.com/questions/16331437/how-to-create-an-animated-gif-from-jpegs-in-android-development
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        AnimatedGifEncoder encoder = new AnimatedGifEncoder();
-        encoder.start(bos);
-        encoder.setRepeat(0);
-        for (int i=0; i < numberOfFrames; i++) {
-            BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
-            int frameDuration = animationDrawable.getDuration(i);
-            float frameFps = frameDuration < 0 ? 30 : (float) 1000/frameDuration;
-            encoder.addFrame(frame.getBitmap());
-            encoder.setFrameRate(frameFps);
-        }
-        encoder.finish();
-        File file = new File(EnvironmentCompat.getExternalFilesDir(context), "nounours-animation-" + animation.getId() + ".gif");
-        FileOutputStream fos = null;
+        if (!FileUtil.isSdPresent()) return null;
+        AnimationDrawable animationDrawable = null;
         try {
-            fos = new FileOutputStream(file);
+            animationDrawable = createAnimationDrawable(context, animation);
+
+            int numberOfFrames = animationDrawable.getNumberOfFrames();
+            //http://stackoverflow.com/questions/16331437/how-to-create-an-animated-gif-from-jpegs-in-android-development
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            AnimatedGifEncoder encoder = new AnimatedGifEncoder();
+            encoder.start(bos);
+            encoder.setRepeat(0);
+            for (int i = 0; i < numberOfFrames; i++) {
+                BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
+                int frameDuration = animationDrawable.getDuration(i);
+                float frameFps = frameDuration < 0 ? 30 : (float) 1000 / frameDuration;
+                encoder.addFrame(frame.getBitmap());
+                encoder.setFrameRate(frameFps);
+            }
+            encoder.finish();
+            File file = new File(EnvironmentCompat.getExternalFilesDir(context), "nounours-animation-" + animation.getId() + ".gif");
+            FileOutputStream fos = new FileOutputStream(file);
             InputStream is = new ByteArrayInputStream(bos.toByteArray());
             FileUtil.copy(is, fos);
             Log.v(TAG, "Saved file " + file);
             return file;
-        } catch (IOException e) {
+        } catch (IOException |OutOfMemoryError e) {
             Log.w(TAG, "Couldn't write animated gif: " + e.getMessage(), e);
             return null;
         } finally {
-            if(fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {}
+            if(animationDrawable != null) {
+                for (int i = 0; i < animationDrawable.getNumberOfFrames(); i++) {
+                    BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
+                    frame.getBitmap().recycle();
+                }
             }
-            /*
-            for (int i=0; i < numberOfFrames; i++) {
-                BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
-                frame.getBitmap().recycle();
-            }
-            */
         }
-
     }
 
     /**
@@ -137,6 +132,7 @@ public class AnimationUtil {
         // times.
         for (int i = 0; i < animation.getRepeat(); i++) {
             for (final AnimationImage animationImage : animation.getImages()) {
+                Log.v(TAG, "createAnimationDrawable: image " + animationImage);
                 // Get the android image and add it to the android animation.
                 BitmapDrawable drawable = BitmapUtil.createBitmapDrawable(context, animationImage.getImage());
                 animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));

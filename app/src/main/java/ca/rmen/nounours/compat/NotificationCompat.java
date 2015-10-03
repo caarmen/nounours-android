@@ -22,11 +22,17 @@ package ca.rmen.nounours.compat;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.widget.RemoteViews;
+import android.util.Log;
 
-import ca.rmen.nounours.R;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import ca.rmen.nounours.Constants;
 
 public final class NotificationCompat {
+
+    private static final String TAG = Constants.TAG + NotificationCompat.class.getSimpleName();
+
     private NotificationCompat() {
         // prevent instantiation
     }
@@ -40,9 +46,17 @@ public final class NotificationCompat {
             notification.when = System.currentTimeMillis();
             notification.icon = iconId;
             notification.contentIntent = pendingIntent;
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.notif);
-            remoteViews.setTextViewText(R.id.text, contentText);
-            notification.contentView = remoteViews;
+            // Google removed setLatestEventInfo in sdk 23.
+            try {
+                Method method = Notification.class.getMethod("setLatestEventInfo", Context.class, CharSequence.class, CharSequence.class, PendingIntent.class);
+                method.invoke(notification, context, tickerText, contentText, pendingIntent);
+            } catch (NoSuchMethodException e) {
+                Log.v(TAG, e.getMessage(), e);
+            } catch (IllegalAccessException e) {
+                Log.v(TAG, e.getMessage(), e);
+            } catch (InvocationTargetException e) {
+                Log.v(TAG, e.getMessage(), e);
+            }
             return notification;
         } else if (ApiHelper.getAPILevel() < 16) {
             return Api11Helper.createNotification(context, iconId, tickerText, contentText, pendingIntent);

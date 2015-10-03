@@ -25,7 +25,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.util.Log;
 
@@ -33,7 +32,6 @@ import java.io.File;
 
 import ca.rmen.nounours.compat.NotificationCompat;
 import ca.rmen.nounours.data.Animation;
-import ca.rmen.nounours.nounours.cache.AnimationCache;
 import ca.rmen.nounours.util.AnimationUtil;
 
 /**
@@ -125,6 +123,7 @@ public class AnimationSaveService extends IntentService {
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + file.getAbsolutePath()));
         sendIntent.setType("image/gif");
+        sendIntent.setFlags(PendingIntent.FLAG_CANCEL_CURRENT);
         return Intent.createChooser(sendIntent, getString(R.string.share_app_chooser_title));
     }
 }

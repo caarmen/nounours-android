@@ -114,11 +114,6 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
         // Write the file
         final FileOutputStream writer = new FileOutputStream(sdSoundFile);
         FileUtil.copy(soundFileData, writer);
-        final byte[] buffer = new byte[1024];
-        for (int read = soundFileData.read(buffer, 0, buffer.length); read > 0; read = soundFileData.read(buffer, 0,
-                buffer.length)) {
-            writer.write(buffer, 0, read);
-        }
         // Return the newly created sdcard file.
         return sdSoundFile;
     }
