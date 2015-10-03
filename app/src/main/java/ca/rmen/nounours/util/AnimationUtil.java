@@ -20,6 +20,7 @@
 package ca.rmen.nounours.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
@@ -82,7 +83,8 @@ public class AnimationUtil {
             if(animationDrawable != null) {
                 for (int i = 0; i < animationDrawable.getNumberOfFrames(); i++) {
                     BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
-                    frame.getBitmap().recycle();
+                    Bitmap bitmap = frame.getBitmap();
+                    if (bitmap != null) bitmap.recycle();
                 }
             }
         }
