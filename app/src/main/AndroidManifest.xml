@@ -38,7 +38,6 @@
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:theme="@style/NounoursActivityStyle">
             <intent-filter>
