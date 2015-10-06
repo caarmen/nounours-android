@@ -20,12 +20,28 @@
 package ca.rmen.nounours;
 
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
 
 public class AboutActivity extends Activity {
+
+    private static final String TAG = Constants.TAG + AboutActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_about);
+        TextView aboutText = (TextView) findViewById(R.id.tv_about_text);
+        String versionName;
+        try {
+            versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            versionName = "?";
+        }
+        aboutText.setText(Html.fromHtml(getString(R.string.abouttext, versionName)));
+        aboutText.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }

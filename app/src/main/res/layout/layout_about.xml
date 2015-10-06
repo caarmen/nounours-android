@@ -17,22 +17,21 @@
     You should have received a copy of the GNU General Public License
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<LinearLayout
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
-	android:orientation="vertical"
 	android:layout_height="fill_parent"
 >
 
 	<TextView
+		android:id="@+id/tv_about_text"
 		android:layout_width="fill_parent"
 		android:gravity="fill_horizontal"
 		android:layout_marginLeft="10dip"
 		android:layout_marginRight="10dip"
 		android:text="@string/abouttext"
-		android:autoLink="web|email"
 		android:textSize="14sp"
 		android:layout_height="fill_parent"
 		android:singleLine="false" />
 
-</LinearLayout>
+</ScrollView>

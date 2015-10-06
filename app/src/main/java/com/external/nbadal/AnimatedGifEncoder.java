@@ -1,3 +1,8 @@
+/*
+ * Source:
+ * https://github.com/nbadal/android-gif-encoder (Nick Badal)
+ * http://www.jappit.com/blog/2008/12/04/j2me-animated-gif-encoder/ (Alessandro La Rosa)
+ */
 package com.external.nbadal;
 
 import android.graphics.Bitmap;
