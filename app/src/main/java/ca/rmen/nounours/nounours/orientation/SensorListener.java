@@ -39,6 +39,7 @@ import java.util.Set;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
+import ca.rmen.nounours.NounoursRecorder;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.Util;
 import ca.rmen.nounours.compat.DisplayCompat;
@@ -227,6 +228,8 @@ public class SensorListener implements SensorEventListener {
                         orientationImage.imageId);
                 mNounours.stopAnimation();
                 mNounours.setImage(image);
+                NounoursRecorder nounoursRecorder = mNounours.getNounoursRecorder();
+                if(nounoursRecorder.isRecording()) nounoursRecorder.addImage(image);
                 // Note that we are currently displaying a "tilt" image.
                 mIsTiltImage = true;
                 return;
