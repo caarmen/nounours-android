@@ -65,9 +65,8 @@ public class AnimationUtil {
             for (int i = 0; i < numberOfFrames; i++) {
                 BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
                 int frameDuration = animationDrawable.getDuration(i);
-                float frameFps = frameDuration < 0 ? 30 : (float) 1000 / frameDuration;
+                encoder.setDelay(frameDuration);
                 encoder.addFrame(frame.getBitmap());
-                encoder.setFrameRate(frameFps);
             }
             encoder.finish();
             File file = new File(EnvironmentCompat.getExternalFilesDir(context), "nounours-animation-" + animation.getId() + ".gif");
