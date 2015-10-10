@@ -69,7 +69,8 @@ public class AnimationUtil {
                 encoder.addFrame(frame.getBitmap());
             }
             encoder.finish();
-            File file = new File(EnvironmentCompat.getExternalFilesDir(context), "nounours-animation-" + animation.getId() + ".gif");
+            File file = new File(EnvironmentCompat.getExternalFilesDir(context), "nounours-animation.gif");
+            Log.v(TAG, "Saving file " + file);
             FileOutputStream fos = new FileOutputStream(file);
             InputStream is = new ByteArrayInputStream(bos.toByteArray());
             FileUtil.copy(is, fos);
