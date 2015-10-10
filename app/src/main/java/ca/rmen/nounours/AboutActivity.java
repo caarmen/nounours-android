@@ -28,8 +28,6 @@ import android.widget.TextView;
 
 public class AboutActivity extends Activity {
 
-    private static final String TAG = Constants.TAG + AboutActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
