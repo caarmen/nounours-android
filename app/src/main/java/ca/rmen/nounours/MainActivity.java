@@ -293,9 +293,10 @@ public class MainActivity extends Activity {
     }
 
     private void stopRecording() {
+        Toast.makeText(this, R.string.notif_save_animation_in_progress_title, Toast.LENGTH_LONG).show();
         AnimationUtil.stopAnimation(mRecordButton);
         Animation animation = mNounours.getNounoursRecorder().stop();
-        mNounours.saveAnimation(animation);
+        AnimationSaveService.startActionSaveAnimation(this, animation);
     }
 
     private boolean reloadThemeFromPreference() {

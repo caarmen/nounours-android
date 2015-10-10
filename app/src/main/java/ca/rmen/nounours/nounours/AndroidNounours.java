@@ -35,7 +35,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ca.rmen.nounours.AnimationSaveService;
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursAnimationHandler;
@@ -44,7 +43,6 @@ import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.compat.EnvironmentCompat;
-import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
@@ -324,10 +322,6 @@ public class AndroidNounours extends Nounours {
         mProgressDialog.setCancelable(false);
         mProgressDialog.show();
         debug("createProgressDialog " + max + ": " + message);
-    }
-
-    public void saveAnimation(final Animation animation) {
-        AnimationSaveService.startActionSaveAnimation(mContext, animation);
     }
 
     /**
