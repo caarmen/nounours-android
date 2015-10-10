@@ -71,6 +71,8 @@ public class AndroidNounours extends Nounours {
     private final Handler mUIHandler;
     private final ImageView mImageView;
     private final AndroidNounoursListener mListener;
+    private final ImageCache mImageCache = new ImageCache();
+    private final AnimationCache mAnimationCache = new AnimationCache(mImageCache);
 
     private ProgressDialog mProgressDialog;
 
@@ -92,7 +94,7 @@ public class AndroidNounours extends Nounours {
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent())
             themeId = Nounours.DEFAULT_THEME_ID;
-        AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView);
+        AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
         SoundHandler soundHandler = new SoundHandler(this, context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         Resources resources = context.getResources();
@@ -122,8 +124,8 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected boolean cacheImages() {
-        return ImageCache.getInstance().cacheImages(mContext, getImages().values(), mUIHandler, mImageCacheListener)
-                && AnimationCache.getInstance().cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
+        return mImageCache.cacheImages(mContext, getImages().values(), mUIHandler, mImageCacheListener)
+                && mAnimationCache.cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
     }
 
     /**
@@ -150,8 +152,8 @@ public class AndroidNounours extends Nounours {
             taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
         // MEMORY
-        ImageCache.getInstance().clearImageCache();
-        AnimationCache.getInstance().clearAnimationCache();
+        mImageCache.clearImageCache();
+        mAnimationCache.clearAnimationCache();
         Runnable themeLoader = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -230,7 +232,7 @@ public class AndroidNounours extends Nounours {
         if (image == null) {
             return;
         }
-        final Bitmap bitmap = ImageCache.getInstance().getDrawableImage(mContext, image);
+        final Bitmap bitmap = mImageCache.getDrawableImage(mContext, image);
         if (bitmap == null)
             return;
         mImageView.setImageBitmap(bitmap);
@@ -326,8 +328,8 @@ public class AndroidNounours extends Nounours {
      */
     public void onDestroy() {
         debug("destroy");
-        ImageCache.getInstance().clearImageCache();
-        AnimationCache.getInstance().clearAnimationCache();
+        mImageCache.clearImageCache();
+        mAnimationCache.clearAnimationCache();
     }
 
     @Override

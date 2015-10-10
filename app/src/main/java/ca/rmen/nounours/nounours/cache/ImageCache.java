@@ -35,7 +35,6 @@ public class ImageCache {
 
 
     private static final String TAG = Constants.TAG + ImageCache.class.getSimpleName();
-    private static final ImageCache INSTANCE = new ImageCache();
 
     private final Map<String, Bitmap> mImageCache = new ConcurrentHashMap<>();
 
@@ -43,11 +42,7 @@ public class ImageCache {
         void onImageLoaded(Image image, int progress, int total);
     }
 
-    public static ImageCache getInstance() {
-        return INSTANCE;
-    }
-
-    private ImageCache() {
+    public ImageCache() {
         Log.v(TAG, "Constructor");
     }
 

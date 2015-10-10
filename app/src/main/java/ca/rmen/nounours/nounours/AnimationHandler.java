@@ -41,11 +41,13 @@ class AnimationHandler implements NounoursAnimationHandler {
     private final Context mContext;
     private final AndroidNounours mNounours;
     private final ImageView mImageView;
+    private final AnimationCache mAnimationCache;
 
-    public AnimationHandler(Context context, AndroidNounours nounours, ImageView imageView) {
+    public AnimationHandler(Context context, AndroidNounours nounours, ImageView imageView, AnimationCache animationCache) {
         mContext = context;
         mNounours = nounours;
         mImageView = imageView;
+        mAnimationCache = animationCache;
     }
 
     /**
@@ -103,7 +105,7 @@ class AnimationHandler implements NounoursAnimationHandler {
         final Runnable runnable = new Runnable() {
             public void run() {
                 // Create an Android animation.
-                final AnimationDrawable animationDrawable = AnimationCache.getInstance().createAnimation(mContext, animation, mNounours.getDefaultImage(), false);
+                final AnimationDrawable animationDrawable = mAnimationCache.createAnimation(mContext, animation, mNounours.getDefaultImage(), false);
                 if (animationDrawable == null) {
                     Log.v(TAG, "No animation " + animation.getId());
                     return;

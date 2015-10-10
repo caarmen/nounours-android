@@ -42,16 +42,13 @@ import ca.rmen.nounours.data.Image;
 public class AnimationCache {
     private static final String TAG = Constants.TAG + AnimationCache.class.getSimpleName();
 
-    private static final AnimationCache INSTANCE = new AnimationCache();
     private final Map<String, AnimationDrawable> mAnimationCache = new HashMap<>();
     private final Map<Bitmap, BitmapDrawable> mBitmapDrawables = new HashMap<>();
+    private final ImageCache mImageCache;
 
-    private AnimationCache() {
+    public AnimationCache(ImageCache imageCache) {
         Log.v(TAG, "Constructor");
-    }
-
-    public static AnimationCache getInstance() {
-        return INSTANCE;
+        mImageCache = imageCache;
     }
 
     /**
@@ -109,7 +106,7 @@ public class AnimationCache {
      * Store bitmap drawables for bitmaps in cache.
      */
     private BitmapDrawable getDrawable(Context context, Image image) {
-        final Bitmap bitmap = ImageCache.getInstance().getDrawableImage(context, image);
+        final Bitmap bitmap = mImageCache.getDrawableImage(context, image);
         BitmapDrawable result = mBitmapDrawables.get(bitmap);
         if (result != null) return result;
         result = BitmapCompat.createBitmapDrawable(context, bitmap);
