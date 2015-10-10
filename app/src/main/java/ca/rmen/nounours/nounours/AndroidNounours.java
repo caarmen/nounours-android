@@ -157,7 +157,7 @@ public class AndroidNounours extends Nounours {
             taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
         // MEMORY
-        mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.defaultimg_sm));
+        mImageView.setImageDrawable(null);
         mImageCache.clearImageCache();
         mAnimationCache.clearAnimationCache();
         Runnable themeLoader = new Runnable() {
