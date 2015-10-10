@@ -31,8 +31,8 @@ class Api16Helper {
     }
     static Notification createNotification(Context context, int iconId, String tickerText, String contentText, PendingIntent pendingIntent) {
         return new Notification.Builder(context)
-                .setContentTitle(contentText)
-                .setContentText(tickerText)
+                .setContentTitle(tickerText)
+                .setContentText(contentText)
                 .setSmallIcon(iconId)
                 .setContentIntent(pendingIntent)
                 .build();

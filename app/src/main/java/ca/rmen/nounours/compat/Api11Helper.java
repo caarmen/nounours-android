@@ -38,8 +38,8 @@ class Api11Helper {
     static Notification createNotification(Context context, int iconId, String tickerText, String contentText, PendingIntent pendingIntent) {
         //noinspection deprecation
         return new Notification.Builder(context)
-                .setContentTitle(contentText)
-                .setContentText(tickerText)
+                .setContentTitle(tickerText)
+                .setContentText(contentText)
                 .setSmallIcon(iconId)
                 .setContentIntent(pendingIntent)
                 .getNotification();
