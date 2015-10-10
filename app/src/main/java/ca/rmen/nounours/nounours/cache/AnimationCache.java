@@ -64,7 +64,7 @@ public class AnimationCache {
     }
 
     /**
-     * Create an Android animation given the nounours animation data.
+     * @return an Android animation given the nounours animation data.
      *
      * @param doCache if true, this image sequence will be stored in memory for future use.
      */
@@ -88,7 +88,10 @@ public class AnimationCache {
         return animationDrawable;
     }
 
-    private AnimationDrawable createAnimation(Context context, Animation animation) {
+    /**
+     * @return an Android animation for the given nounours animation data. This animation will not be cached for future use.
+     */
+    public AnimationDrawable createAnimation(Context context, Animation animation) {
         AnimationDrawable animationDrawable = new AnimationDrawable();
         // Go through the list of images in the nounours animation, "repeat"
         // times.

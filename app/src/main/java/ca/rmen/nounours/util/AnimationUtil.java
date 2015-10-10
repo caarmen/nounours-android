@@ -20,7 +20,6 @@
 package ca.rmen.nounours.util;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
@@ -40,7 +39,8 @@ import java.io.InputStream;
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Animation;
-import ca.rmen.nounours.data.AnimationImage;
+import ca.rmen.nounours.nounours.cache.AnimationCache;
+import ca.rmen.nounours.nounours.cache.ImageCache;
 
 public class AnimationUtil {
     private static final String TAG = Constants.TAG + AnimationUtil.class.getSimpleName();
@@ -53,9 +53,11 @@ public class AnimationUtil {
     public static File saveAnimation(Context context, Animation animation) {
         Log.v(TAG, "saveAnimation " + animation);
         if (!FileUtil.isSdPresent()) return null;
-        AnimationDrawable animationDrawable = null;
+        ImageCache imageCache = new ImageCache();
+        AnimationCache animationCache = new AnimationCache(imageCache);
         try {
-            animationDrawable = createAnimationDrawable(context, animation);
+            AnimationDrawable animationDrawable = animationCache.createAnimation(context, animation);
+            Log.v(TAG, "saveAnimation: created animationDrawable");
 
             int numberOfFrames = animationDrawable.getNumberOfFrames();
             //http://stackoverflow.com/questions/16331437/how-to-create-an-animated-gif-from-jpegs-in-android-development
@@ -69,6 +71,7 @@ public class AnimationUtil {
                 encoder.setDelay(frameDuration);
                 encoder.addFrame(frame.getBitmap());
             }
+            Log.v(TAG, "saveAnimation: finish writing gif...");
             encoder.finish();
             File file = new File(EnvironmentCompat.getExternalFilesDir(context), "nounours-animation.gif");
             Log.v(TAG, "Saving file " + file);
@@ -81,13 +84,8 @@ public class AnimationUtil {
             Log.w(TAG, "Couldn't write animated gif: " + e.getMessage(), e);
             return null;
         } finally {
-            if (animationDrawable != null) {
-                for (int i = 0; i < animationDrawable.getNumberOfFrames(); i++) {
-                    BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
-                    Bitmap bitmap = frame.getBitmap();
-                    if (bitmap != null) bitmap.recycle();
-                }
-            }
+            imageCache.clearImageCache();
+            animationCache.clearAnimationCache();
         }
     }
 
@@ -131,23 +129,6 @@ public class AnimationUtil {
             final AnimationDrawable animationDrawable = (AnimationDrawable) imageView.getDrawable();
             animationDrawable.setVisible(false, false);
         }
-    }
-
-    /**
-     * @return an AnimationDrawable containing Bitmaps for each image in the given Animation.
-     */
-    private static AnimationDrawable createAnimationDrawable(Context context, Animation animation) {
-        AnimationDrawable animationDrawable = new AnimationDrawable();
-        // Go through the list of images in the nounours animation, "repeat"
-        // times.
-        for (int i = 0; i < animation.getRepeat(); i++) {
-            for (final AnimationImage animationImage : animation.getImages()) {
-                // Get the android image and add it to the android animation.
-                BitmapDrawable drawable = BitmapUtil.createBitmapDrawable(context, animationImage.getImage());
-                animationDrawable.addFrame(drawable, (int) (animation.getInterval() * animationImage.getDuration()));
-            }
-        }
-        return animationDrawable;
     }
 
 }

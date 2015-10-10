@@ -22,7 +22,6 @@ package ca.rmen.nounours.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 
 import java.io.File;
@@ -56,11 +55,6 @@ public class BitmapUtil {
             result = loadBitmap(context, imageResId);
         }
         return result;
-    }
-
-    public static BitmapDrawable createBitmapDrawable(Context context, Image image) {
-        Bitmap bitmap = createBitmap(context, image);
-        return BitmapCompat.createBitmapDrawable(context, bitmap);
     }
 
     private static Bitmap loadBitmap(Context context, String filename) {
