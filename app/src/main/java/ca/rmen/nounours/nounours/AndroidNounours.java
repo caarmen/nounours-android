@@ -145,7 +145,14 @@ public class AndroidNounours extends Nounours {
             }
         }
         int taskSize = 1;
-        Theme theme = getThemes().get(id);
+        Theme theme;
+
+        // Get the name of this theme.
+        if (DEFAULT_THEME_ID.equals(id)) theme = getDefaultTheme();
+        else theme = getThemes().get(id);
+        CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, theme);
+
+        // Estimate the size of the theme.
         if (!ThemeUtil.isValid(theme)) theme = getCurrentTheme();
         if (!ThemeUtil.isValid(theme)) theme = getDefaultTheme();
         if (!theme.getSounds().isEmpty())
@@ -175,7 +182,7 @@ public class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.predownload, ThemeUtil.getThemeLabel(mContext, theme)),
+        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.predownload, themeLabel),
                 taskSize);
         return true;
 
