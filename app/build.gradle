@@ -37,5 +37,5 @@ android {
 }
 
 dependencies {
-    compile "ca.rmen:libnounours:1.1.1-SNAPSHOT"
+    compile "ca.rmen:libnounours:1.1.1"
 }
