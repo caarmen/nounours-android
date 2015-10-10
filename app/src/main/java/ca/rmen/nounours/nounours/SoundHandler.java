@@ -123,7 +123,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      * Play a sound.
      */
     public void playSound(final String soundId) {
-        Log.v(TAG, "playSound " +  soundId);
+        Log.v(TAG, "playSound " + soundId);
         final Sound sound = mNounours.getSound(soundId);
 
         try {

@@ -37,7 +37,7 @@ public class EnvironmentCompat {
 
     public static String getExternalFilesPath(Context context) {
         File externalFilesDir = getExternalFilesDir(context);
-        if(externalFilesDir == null) return null;
+        if (externalFilesDir == null) return null;
         return externalFilesDir.getAbsolutePath();
     }
 
@@ -51,7 +51,7 @@ public class EnvironmentCompat {
             result = new File(sdcard, folderName);
         }
         if (!result.exists()) {
-            if(!result.mkdirs() || !result.isDirectory()) {
+            if (!result.mkdirs() || !result.isDirectory()) {
                 Log.v(TAG, "Could not create folder " + result);
             }
         }

@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
         mNounours.setIdleTimeout(NounoursSettings.getIdleTimeout(this));
         mNounours.setEnableRandomAnimations(true);
         boolean themeChanged = reloadThemeFromPreference();
-        if(!themeChanged) mNounours.onResume();
+        if (!themeChanged) mNounours.onResume();
         mNounours.doPing(true);
         registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
 
@@ -259,8 +259,7 @@ public class MainActivity extends Activity {
         else if (menuItem.getItemId() == R.id.menu_random_animation) {
             mNounours.doRandomAnimation();
             return true;
-        }
-        else if (menuItem.getItemId() == R.id.menu_start_recording) {
+        } else if (menuItem.getItemId() == R.id.menu_start_recording) {
             startRecording();
             ActivityCompat.invalidateOptionsMenu(this);
             return true;
@@ -303,12 +302,12 @@ public class MainActivity extends Activity {
         boolean nounoursIsBusy = mNounours.isLoading();
         Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
         String themeId = NounoursSettings.getThemeId(this);
-        if(mNounours.getCurrentTheme() != null
+        if (mNounours.getCurrentTheme() != null
                 && mNounours.getCurrentTheme().getId().equals(themeId)) {
             return false;
         }
         final Theme theme;
-        if(AndroidNounours.DEFAULT_THEME_ID.equals(themeId)) {
+        if (AndroidNounours.DEFAULT_THEME_ID.equals(themeId)) {
             theme = mNounours.getDefaultTheme();
         } else {
             final Map<String, Theme> themes = mNounours.getThemes();
@@ -337,7 +336,7 @@ public class MainActivity extends Activity {
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(view.getId() == R.id.btn_stop_recording) {
+            if (view.getId() == R.id.btn_stop_recording) {
                 stopRecording();
             }
         }
@@ -349,7 +348,7 @@ public class MainActivity extends Activity {
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(AnimationSaveService.ACTION_SAVE_ANIMATION.equals(intent.getAction())) {
+            if (AnimationSaveService.ACTION_SAVE_ANIMATION.equals(intent.getAction())) {
                 NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 // We clear the notification because we don't need it here: we will directly
                 // prompt the user to share the file.  (The notification is useful if the

@@ -98,7 +98,7 @@ public class AnimationSaveService extends IntentService {
         File file = AnimationUtil.saveAnimation(this, animation);
 
         // Notify based on the save result.
-        if(file != null && file.exists()) {
+        if (file != null && file.exists()) {
             // Notify that the save is done.
             Intent shareIntent = getShareIntent(file);
             PendingIntent pendingShareIntent = PendingIntent.getActivity(this, 0, shareIntent, 0);

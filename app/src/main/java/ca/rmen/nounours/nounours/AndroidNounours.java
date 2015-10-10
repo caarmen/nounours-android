@@ -123,7 +123,7 @@ public class AndroidNounours extends Nounours {
     @Override
     protected boolean cacheImages() {
         return ImageCache.getInstance().cacheImages(mContext, getImages().values(), mUIHandler, mImageCacheListener)
-            && AnimationCache.getInstance().cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
+                && AnimationCache.getInstance().cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
     }
 
     /**
@@ -135,7 +135,7 @@ public class AndroidNounours extends Nounours {
             File themeDir = new File(getAppDir(), id);
             if (!themeDir.exists()) {
                 boolean mkdirsResult = themeDir.mkdirs();
-                if(!themeDir.isDirectory()) {
+                if (!themeDir.isDirectory()) {
                     Log.v(TAG, "Could not create theme folder " + themeDir + ". mkdirs returned " + mkdirsResult);
                     resetToDefaultTheme();
                     return false;
@@ -185,6 +185,7 @@ public class AndroidNounours extends Nounours {
         mProgressDialog.dismiss();
         mListener.onThemeLoaded();
     }
+
     private void resizeView() {
         Theme theme = getCurrentTheme();
         if (theme == null)
@@ -240,7 +241,7 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void debug(final Object o) {
-        if(o instanceof Throwable) {
+        if (o instanceof Throwable) {
             Throwable t = (Throwable) o;
             Log.w(TAG, t.getMessage(), t);
         } else {
@@ -293,7 +294,7 @@ public class AndroidNounours extends Nounours {
                 mProgressDialog.setMax(max);
                 mProgressDialog.setMessage(message);
                 debug("updateProgressBar " + progress + "/" + max + ": " + message);
-                if(progress == max) mProgressDialog.dismiss();
+                if (progress == max) mProgressDialog.dismiss();
 
             }
         };
@@ -370,7 +371,7 @@ public class AndroidNounours extends Nounours {
 
         Runnable showAlert = new Runnable() {
             public void run() {
-                    new AlertDialog.Builder(mContext)
+                new AlertDialog.Builder(mContext)
                         .setMessage(mContext.getText(R.string.themeLoadError))
                         .setPositiveButton(mContext.getText(android.R.string.ok), revertToDefaultTheme)
                         .create()

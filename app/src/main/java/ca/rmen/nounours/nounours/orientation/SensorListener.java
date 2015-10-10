@@ -78,7 +78,7 @@ public class SensorListener implements SensorEventListener {
     public void rereadOrientationFile(final Theme theme, final Context context) {
         Log.v(TAG, "rereadOrientationFile");
         mOrientationImages.clear();
-        new AsyncTask<Void,Void,Void>() {
+        new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
@@ -229,7 +229,7 @@ public class SensorListener implements SensorEventListener {
                 mNounours.stopAnimation();
                 mNounours.setImage(image);
                 NounoursRecorder nounoursRecorder = mNounours.getNounoursRecorder();
-                if(nounoursRecorder.isRecording()) nounoursRecorder.addImage(image);
+                if (nounoursRecorder.isRecording()) nounoursRecorder.addImage(image);
                 // Note that we are currently displaying a "tilt" image.
                 mIsTiltImage = true;
                 return;

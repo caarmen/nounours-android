@@ -64,7 +64,7 @@ public class ImageCache {
                 return false;
             i++;
             final int progress = i;
-            uiHandler.post(new Runnable(){
+            uiHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     listener.onImageLoaded(image, progress, max);
@@ -104,7 +104,7 @@ public class ImageCache {
     private Bitmap loadImage(Context context, final Image image) {
         Log.v(TAG, "Loading " + image + " into memory");
         Bitmap result = BitmapUtil.createBitmap(context, image);
-        if(result != null) mImageCache.put(image.getId(), result);
+        if (result != null) mImageCache.put(image.getId(), result);
         return result;
     }
 

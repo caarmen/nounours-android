@@ -35,7 +35,7 @@ class Api8Helper {
         return display.getRotation();
     }
 
-    static File getExternalFilesDir(Context context, String name){
+    static File getExternalFilesDir(Context context, String name) {
         return context.getExternalFilesDir(name);
     }
 }

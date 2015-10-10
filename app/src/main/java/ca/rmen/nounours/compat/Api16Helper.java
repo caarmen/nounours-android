@@ -29,6 +29,7 @@ class Api16Helper {
     private Api16Helper() {
         // prevent instantiation
     }
+
     static Notification createNotification(Context context, int iconId, String tickerText, String contentText, PendingIntent pendingIntent) {
         return new Notification.Builder(context)
                 .setContentTitle(tickerText)

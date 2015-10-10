@@ -47,6 +47,7 @@ public class AnimationUtil {
 
     /**
      * Save an animation as an animated gif.
+     *
      * @return a file containing the animated gif render of the given animation.
      */
     public static File saveAnimation(Context context, Animation animation) {
@@ -76,11 +77,11 @@ public class AnimationUtil {
             FileUtil.copy(is, fos);
             Log.v(TAG, "Saved file " + file);
             return file;
-        } catch (IOException |OutOfMemoryError e) {
+        } catch (IOException | OutOfMemoryError e) {
             Log.w(TAG, "Couldn't write animated gif: " + e.getMessage(), e);
             return null;
         } finally {
-            if(animationDrawable != null) {
+            if (animationDrawable != null) {
                 for (int i = 0; i < animationDrawable.getNumberOfFrames(); i++) {
                     BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
                     Bitmap bitmap = frame.getBitmap();
