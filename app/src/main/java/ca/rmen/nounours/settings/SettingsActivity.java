@@ -24,8 +24,10 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.view.MenuItem;
 
 import ca.rmen.nounours.R;
+import ca.rmen.nounours.compat.ActivityCompat;
 
 
 /**
@@ -40,6 +42,12 @@ import ca.rmen.nounours.R;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends PreferenceActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ActivityCompat.setDisplayHomeAsUpEnabled(this, true);
+    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -108,5 +116,11 @@ public class SettingsActivity extends PreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

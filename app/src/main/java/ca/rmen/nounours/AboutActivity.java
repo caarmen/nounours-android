@@ -24,7 +24,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.view.MenuItem;
 import android.widget.TextView;
+
+import ca.rmen.nounours.compat.ActivityCompat;
 
 public class AboutActivity extends Activity {
 
@@ -32,6 +35,7 @@ public class AboutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_about);
+        ActivityCompat.setDisplayHomeAsUpEnabled(this, true);
         TextView aboutText = (TextView) findViewById(R.id.tv_about_text);
         String versionName;
         try {
@@ -41,5 +45,13 @@ public class AboutActivity extends Activity {
         }
         aboutText.setText(Html.fromHtml(getString(R.string.abouttext, versionName)));
         aboutText.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

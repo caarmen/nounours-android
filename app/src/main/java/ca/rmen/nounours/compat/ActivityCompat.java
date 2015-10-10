@@ -28,4 +28,10 @@ public class ActivityCompat {
             Api11Helper.invalidateOptionsMenu(activity);
         }
     }
+
+    public static void setDisplayHomeAsUpEnabled(Activity activity, boolean showHomeAsUp) {
+        if (ApiHelper.getAPILevel() >= 11) {
+            Api11Helper.setDisplayHomeAsUpEnabled(activity, showHomeAsUp);
+        }
+    }
 }

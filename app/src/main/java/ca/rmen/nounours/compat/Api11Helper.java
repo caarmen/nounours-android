@@ -20,6 +20,7 @@
 package ca.rmen.nounours.compat;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -43,6 +44,11 @@ class Api11Helper {
                 .setSmallIcon(iconId)
                 .setContentIntent(pendingIntent)
                 .getNotification();
+    }
+
+    static void setDisplayHomeAsUpEnabled(Activity activity, boolean showHomeAsUp) {
+        ActionBar actionBar = activity.getActionBar();
+        if(actionBar != null) actionBar.setDisplayHomeAsUpEnabled(showHomeAsUp);
     }
 
 }
