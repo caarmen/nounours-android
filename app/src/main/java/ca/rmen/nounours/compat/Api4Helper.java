@@ -36,7 +36,9 @@ class Api4Helper {
     }
 
     static void setBitmapFactoryOptions(BitmapFactory.Options options) {
+        //noinspection deprecation
         options.inPurgeable = true;
+        //noinspection deprecation
         options.inInputShareable = true;
         options.inScaled = false;
     }

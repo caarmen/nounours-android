@@ -35,7 +35,7 @@ public class AboutActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_about);
-        ActivityCompat.setDisplayHomeAsUpEnabled(this, true);
+        ActivityCompat.setDisplayHomeAsUpEnabled(this);
         TextView aboutText = (TextView) findViewById(R.id.tv_about_text);
         String versionName;
         try {

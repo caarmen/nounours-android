@@ -45,7 +45,4 @@ public final class NounoursSettings {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_THEME, "0");
     }
 
-    public static void setThemeId(Context context, @SuppressWarnings("SameParameterValue") String themeId) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putString(PREF_THEME, themeId).commit();
-    }
 }
