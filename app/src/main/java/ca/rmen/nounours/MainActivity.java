@@ -312,7 +312,7 @@ public class MainActivity extends Activity {
             final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
             imageView.setImageBitmap(null);
             mNounours.useTheme(theme.getId());
-            mSensorListener.rereadOrientationFile(theme, MainActivity.this);
+            mSensorListener.rereadOrientationFile(MainActivity.this);
         }
         return true;
     }
@@ -320,6 +320,7 @@ public class MainActivity extends Activity {
     private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
         @Override
         public void onThemeLoaded() {
+            mSensorListener.rereadOrientationFile(MainActivity.this);
             ActivityCompat.invalidateOptionsMenu(MainActivity.this);
         }
     };
