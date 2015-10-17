@@ -1,0 +1,766 @@
+ca.rmen.nounours.AboutActivity -> ca.rmen.nounours.AboutActivity:
+    32:32:void <init>() -> <init>
+    36:48:void onCreate(android.os.Bundle) -> onCreate
+    52:55:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+ca.rmen.nounours.AnimationSaveService -> ca.rmen.nounours.AnimationSaveService:
+    java.lang.String TAG -> b
+    int NOTIFICATION_ID -> a
+    61:65:void startActionSaveAnimation(android.content.Context,ca.rmen.nounours.data.Animation) -> a
+    69:70:void <init>() -> <init>
+    74:81:void onHandleIntent(android.content.Intent) -> onHandleIntent
+    88:120:void handleActionSaveAnimation(ca.rmen.nounours.data.Animation) -> a
+    127:128:android.app.PendingIntent getMainActivityIntent() -> a
+    135:140:android.content.Intent getShareIntent(java.io.File) -> a
+    46:50:void <clinit>() -> <clinit>
+ca.rmen.nounours.MainActivity -> ca.rmen.nounours.MainActivity:
+    java.lang.String TAG -> a
+    ca.rmen.nounours.nounours.AndroidNounours mNounours -> b
+    android.hardware.SensorManager mSensorManager -> c
+    ca.rmen.nounours.nounours.orientation.SensorListener mSensorListener -> d
+    ca.rmen.nounours.nounours.TouchListener mTouchListener -> e
+    android.hardware.Sensor mAccelerometerSensor -> f
+    android.hardware.Sensor mMagneticFieldSensor -> g
+    android.widget.ImageButton mRecordButton -> h
+    ca.rmen.nounours.nounours.AndroidNounours$AndroidNounoursListener mListener -> i
+    android.view.View$OnClickListener mOnClickListener -> j
+    android.content.BroadcastReceiver mBroadcastReceiver -> k
+    65:345:void <init>() -> <init>
+    86:122:void onCreate(android.os.Bundle) -> onCreate
+    133:151:void onResume() -> onResume
+    161:164:void onStop() -> onStop
+    174:177:void onPause() -> onPause
+    184:189:void stopActivity() -> a
+    198:199:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    203:220:void setupAnimationMenu(android.view.SubMenu) -> a
+    227:239:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
+    249:276:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    287:289:void onDestroy() -> onDestroy
+    292:294:void startRecording() -> b
+    297:301:void stopRecording() -> c
+    304:319:boolean reloadThemeFromPreference() -> d
+    65:65:ca.rmen.nounours.nounours.orientation.SensorListener access$000(ca.rmen.nounours.MainActivity) -> a
+    65:65:void access$100(ca.rmen.nounours.MainActivity) -> b
+    67:67:void <clinit>() -> <clinit>
+ca.rmen.nounours.MainActivity$1 -> ca.rmen.nounours.a:
+    ca.rmen.nounours.MainActivity this$0 -> a
+    322:322:void <init>(ca.rmen.nounours.MainActivity) -> <init>
+    325:327:void onThemeLoaded() -> a
+ca.rmen.nounours.MainActivity$2 -> ca.rmen.nounours.b:
+    ca.rmen.nounours.MainActivity this$0 -> a
+    333:333:void <init>(ca.rmen.nounours.MainActivity) -> <init>
+    336:339:void onClick(android.view.View) -> onClick
+ca.rmen.nounours.MainActivity$3 -> ca.rmen.nounours.c:
+    ca.rmen.nounours.MainActivity this$0 -> a
+    345:345:void <init>(ca.rmen.nounours.MainActivity) -> <init>
+    348:359:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+ca.rmen.nounours.Nounours -> ca.rmen.nounours.d:
+    java.util.Random random -> a
+    boolean isShaking -> b
+    ca.rmen.nounours.data.Image curImage -> c
+    ca.rmen.nounours.data.Theme curTheme -> d
+    boolean loaded -> e
+    boolean isLoading -> f
+    ca.rmen.nounours.data.Feature curFeature -> g
+    ca.rmen.nounours.data.Animation curAnimation -> h
+    float flingFactor -> i
+    int flingPrecision -> j
+    long dropVibrateDuration -> k
+    long vibrateInterval -> l
+    long idleTimeout -> m
+    long pingInterval -> n
+    long lastActionTimestamp -> o
+    java.util.Map themes -> p
+    boolean enableSound -> q
+    boolean enableVibrate -> r
+    ca.rmen.nounours.NounoursIdlePinger pinger -> s
+    ca.rmen.nounours.NounoursSoundHandler soundHandler -> t
+    ca.rmen.nounours.NounoursAnimationHandler animationHandler -> u
+    ca.rmen.nounours.NounoursVibrateHandler vibrateHandler -> v
+    ca.rmen.nounours.NounoursRecorder nounoursRecorder -> w
+    ca.rmen.nounours.io.StreamLoader streamLoader -> x
+    java.util.Properties nounoursProperties -> y
+    39:74:void <init>() -> <init>
+    int getDeviceWidth() -> a
+    int getDeviceHeight() -> b
+    void displayImage(ca.rmen.nounours.data.Image) -> a
+    void runTask(java.lang.Runnable) -> a
+    100:100:boolean isLoading() -> c
+    114:134:void doAnimation(ca.rmen.nounours.data.Animation,boolean) -> a
+    137:138:void doAnimation(ca.rmen.nounours.data.Animation) -> a
+    145:148:void stopAnimation() -> d
+    155:155:boolean isAnimationRunning() -> e
+    162:166:ca.rmen.nounours.data.Animation getCurrentAnimation() -> y
+    170:186:ca.rmen.nounours.data.Animation createRandomAnimation() -> f
+    191:191:ca.rmen.nounours.NounoursRecorder getNounoursRecorder() -> g
+    196:200:ca.rmen.nounours.data.Image getRandomImage(ca.rmen.nounours.data.Image) -> c
+    223:235:void init(ca.rmen.nounours.io.StreamLoader,ca.rmen.nounours.NounoursAnimationHandler,ca.rmen.nounours.NounoursSoundHandler,ca.rmen.nounours.NounoursVibrateHandler,java.io.InputStream,java.io.InputStream,java.lang.String) -> a
+    239:239:ca.rmen.nounours.data.Theme getCurrentTheme() -> h
+    248:268:void initHandlersAndThemes(ca.rmen.nounours.NounoursAnimationHandler,ca.rmen.nounours.NounoursSoundHandler,ca.rmen.nounours.NounoursVibrateHandler,java.io.InputStream,java.io.InputStream) -> a
+    boolean cacheResources() -> i
+    279:325:void useTheme(java.lang.String) -> a
+    337:339:void setEnableSound(boolean) -> a
+    343:344:void setEnableVibrate(boolean) -> b
+    359:360:void stopSound() -> j
+    373:373:java.util.Map getAnimations() -> k
+    380:398:void doRandomAnimation() -> l
+    414:439:void onPress(int,int) -> a
+    445:460:void onRelease() -> m
+    469:506:void onMove(int,int) -> b
+    513:539:void onShake() -> n
+    546:546:boolean isShaking() -> o
+    553:553:float getMinShakeSpeed() -> p
+    564:605:void onFling(int,int,float,float) -> a
+    619:620:void doPing(boolean) -> c
+    627:633:void onIdle() -> q
+    640:642:boolean isIdleForSleepAnimation() -> z
+    646:648:boolean isIdleForRandomAnimation() -> A
+    653:654:void setIdleTimeout(long) -> a
+    662:682:void ping() -> r
+    688:690:void reset() -> s
+    696:697:void resetIdle() -> B
+    712:712:java.util.Map getThemes() -> t
+    720:720:ca.rmen.nounours.data.Image getDefaultImage() -> u
+    729:734:void setImage(ca.rmen.nounours.data.Image) -> b
+    746:750:void onHelp() -> v
+    757:761:void onResume() -> w
+    768:768:long getVibrateInterval() -> x
+    778:778:java.lang.String getProperty(java.lang.String) -> b
+    782:785:void debug(java.lang.Object) -> a
+    39:39:ca.rmen.nounours.data.Image access$000(ca.rmen.nounours.Nounours) -> a
+    39:39:ca.rmen.nounours.data.Theme access$100(ca.rmen.nounours.Nounours) -> b
+    39:39:boolean access$202(ca.rmen.nounours.Nounours,boolean) -> a
+ca.rmen.nounours.Nounours$1 -> ca.rmen.nounours.e:
+    ca.rmen.nounours.Nounours this$0 -> a
+    312:312:void <init>(ca.rmen.nounours.Nounours) -> <init>
+    314:318:void run() -> run
+ca.rmen.nounours.Nounours$2 -> ca.rmen.nounours.f:
+    ca.rmen.nounours.Nounours this$0 -> a
+    523:523:void <init>(ca.rmen.nounours.Nounours) -> <init>
+    529:534:void run() -> run
+ca.rmen.nounours.Nounours$3 -> ca.rmen.nounours.g:
+    ca.rmen.nounours.Nounours this$0 -> a
+    665:665:void <init>(ca.rmen.nounours.Nounours) -> <init>
+    668:669:void run() -> run
+ca.rmen.nounours.Nounours$4 -> ca.rmen.nounours.h:
+    ca.rmen.nounours.Nounours this$0 -> a
+    673:673:void <init>(ca.rmen.nounours.Nounours) -> <init>
+    675:678:void run() -> run
+ca.rmen.nounours.NounoursAnimationHandler -> ca.rmen.nounours.i:
+    void addAnimation(ca.rmen.nounours.data.Animation) -> a
+    void stopAnimation() -> a
+    boolean isAnimationRunning() -> b
+    void doAnimation(ca.rmen.nounours.data.Animation,boolean) -> a
+ca.rmen.nounours.NounoursIdlePinger -> ca.rmen.nounours.j:
+    ca.rmen.nounours.Nounours nounours -> a
+    long pingInterval -> b
+    boolean doPing -> c
+    29:39:void <init>(ca.rmen.nounours.Nounours) -> <init>
+    42:43:void setDoPing(boolean) -> a
+    52:61:void run() -> run
+ca.rmen.nounours.NounoursRecorder -> ca.rmen.nounours.k:
+    long lastFrameTimestamp -> a
+    long lastPauseTimestamp -> b
+    long lastResumeTimestamp -> c
+    ca.rmen.nounours.data.Image lastImage -> d
+    ca.rmen.nounours.data.Animation animation -> e
+    java.text.SimpleDateFormat simpleDateFormat -> f
+    33:40:void <init>() -> <init>
+    43:48:void init() -> e
+    52:60:void start() -> a
+    63:63:boolean isRecording() -> b
+    68:68:boolean isPaused() -> c
+    86:93:void addImage(ca.rmen.nounours.data.Image) -> a
+    96:106:void addImages(ca.rmen.nounours.data.Animation) -> a
+    110:114:ca.rmen.nounours.data.Animation stop() -> d
+    118:134:void addLastImage() -> f
+ca.rmen.nounours.NounoursSoundHandler -> ca.rmen.nounours.l:
+    void setEnableSound(boolean) -> a
+    void playSound(java.lang.String) -> a
+    void stopSound() -> a
+ca.rmen.nounours.NounoursVibrateHandler -> ca.rmen.nounours.m:
+    void doVibrate(long) -> a
+    void doVibrate(long,long) -> a
+ca.rmen.nounours.R -> ca.rmen.nounours.n:
+    10:97:void <init>() -> <init>
+ca.rmen.nounours.Util -> ca.rmen.nounours.o:
+    49:55:long getLongProperty(java.util.Properties,java.lang.String,long) -> a
+    75:81:float getFloatProperty(java.util.Properties,java.lang.String,float) -> a
+    93:102:ca.rmen.nounours.data.Feature getClosestFeature(ca.rmen.nounours.data.Image,int,int) -> a
+    120:134:int[] translate(int,int,int,int,int,int) -> a
+    155:164:ca.rmen.nounours.data.Image getAdjacentImage(ca.rmen.nounours.data.Image,java.lang.String,int,int) -> a
+    182:187:int getDistance(ca.rmen.nounours.data.Image,java.lang.String,int,int) -> b
+    200:200:int getDistance(int,int,int,int) -> a
+    215:218:boolean pointIsInSquare(int,int,int,int,int,int) -> b
+    229:233:boolean isFaster(float,float) -> a
+ca.rmen.nounours.compat.ActivityCompat -> ca.rmen.nounours.a.a:
+    27:30:void invalidateOptionsMenu(android.app.Activity) -> a
+    33:36:void setDisplayHomeAsUpEnabled(android.app.Activity) -> b
+ca.rmen.nounours.compat.Api11Helper -> ca.rmen.nounours.a.b:
+    36:37:void invalidateOptionsMenu(android.app.Activity) -> a
+    41:46:android.app.Notification createNotification(android.content.Context,int,java.lang.String,java.lang.String,android.app.PendingIntent) -> a
+    50:52:void setDisplayHomeAsUpEnabled(android.app.Activity) -> b
+ca.rmen.nounours.compat.Api13Helper -> ca.rmen.nounours.a.c:
+    33:35:int getWidth(android.view.Display) -> a
+    39:41:int getHeight(android.view.Display) -> b
+ca.rmen.nounours.compat.Api16Helper -> ca.rmen.nounours.a.d:
+    34:39:android.app.Notification createNotification(android.content.Context,int,java.lang.String,java.lang.String,android.app.PendingIntent) -> a
+ca.rmen.nounours.compat.Api21Helper -> ca.rmen.nounours.a.e:
+    33:41:android.media.SoundPool createSoundPool() -> a
+ca.rmen.nounours.compat.Api4Helper -> ca.rmen.nounours.a.f:
+    35:35:android.graphics.drawable.BitmapDrawable createBitmapDrawable(android.content.res.Resources,android.graphics.Bitmap) -> a
+    40:44:void setBitmapFactoryOptions(android.graphics.BitmapFactory$Options) -> a
+ca.rmen.nounours.compat.Api8Helper -> ca.rmen.nounours.a.g:
+    35:35:int getRotation(android.view.Display) -> a
+    39:39:java.io.File getExternalFilesDir(android.content.Context,java.lang.String) -> a
+ca.rmen.nounours.compat.ApiHelper -> ca.rmen.nounours.a.h:
+    36:36:int getAPILevel() -> a
+ca.rmen.nounours.compat.BitmapCompat -> ca.rmen.nounours.a.i:
+    30:34:android.graphics.drawable.BitmapDrawable createBitmapDrawable(android.content.Context,android.graphics.Bitmap) -> a
+    39:45:android.graphics.BitmapFactory$Options createBitmapFactoryOptions(int) -> a
+ca.rmen.nounours.compat.DisplayCompat -> ca.rmen.nounours.a.j:
+    29:37:int getWidth(android.content.Context) -> a
+    42:50:int getHeight(android.content.Context) -> b
+    55:63:int getRotation(android.content.Context) -> c
+ca.rmen.nounours.compat.EnvironmentCompat -> ca.rmen.nounours.a.k:
+    java.lang.String TAG -> a
+    34:36:void <init>() -> <init>
+    40:52:java.io.File getExternalFilesDir(android.content.Context) -> a
+    32:32:void <clinit>() -> <clinit>
+ca.rmen.nounours.compat.NotificationCompat -> ca.rmen.nounours.a.l:
+    java.lang.String TAG -> a
+    36:38:void <init>() -> <init>
+    41:66:android.app.Notification createNotification(android.content.Context,int,int,int,android.app.PendingIntent) -> a
+    34:34:void <clinit>() -> <clinit>
+ca.rmen.nounours.compat.SoundPoolCompat -> ca.rmen.nounours.a.m:
+    29:33:android.media.SoundPool create() -> a
+ca.rmen.nounours.data.Animation -> ca.rmen.nounours.b.a:
+    java.util.List images -> a
+    java.lang.String id -> b
+    java.lang.String label -> c
+    int interval -> d
+    int repeat -> e
+    boolean visible -> f
+    boolean vibrate -> g
+    java.lang.String soundId -> h
+    37:72:void <init>(java.lang.String,java.lang.String,int,int,boolean,boolean,java.lang.String) -> <init>
+    75:76:void setId(java.lang.String) -> a
+    79:79:java.lang.String getId() -> a
+    83:83:int getRepeat() -> b
+    87:87:java.lang.String getLabel() -> c
+    91:91:int getInterval() -> d
+    95:96:void setInterval(int) -> a
+    99:101:void addImage(ca.rmen.nounours.data.Image,float) -> a
+    104:104:boolean isVisible() -> e
+    108:108:boolean isVibrate() -> f
+    112:112:java.lang.String getSoundId() -> g
+    119:119:java.util.List getImages() -> h
+    124:124:java.lang.String toString() -> toString
+    131:135:long getDuration() -> i
+    140:144:java.lang.Object clone() -> clone
+    149:160:void writeObject(java.io.ObjectOutputStream) -> writeObject
+    164:177:void readObject(java.io.ObjectInputStream) -> readObject
+    180:182:void writeAnimationImage(java.io.ObjectOutputStream,ca.rmen.nounours.data.AnimationImage) -> a
+    185:187:void writeImage(java.io.ObjectOutputStream,ca.rmen.nounours.data.Image) -> a
+    190:192:ca.rmen.nounours.data.AnimationImage readAnimationImage(java.io.ObjectInputStream) -> a
+    196:198:ca.rmen.nounours.data.Image readImage(java.io.ObjectInputStream) -> b
+ca.rmen.nounours.data.AnimationImage -> ca.rmen.nounours.b.b:
+    ca.rmen.nounours.data.Image image -> a
+    float duration -> b
+    29:35:void <init>(ca.rmen.nounours.data.Image,float) -> <init>
+    43:43:ca.rmen.nounours.data.Image getImage() -> a
+    52:52:float getDuration() -> b
+    56:56:java.lang.String toString() -> toString
+ca.rmen.nounours.data.Feature -> ca.rmen.nounours.b.c:
+    java.lang.String id -> a
+    java.lang.String name -> b
+    30:42:void <init>(java.lang.String,java.lang.String) -> <init>
+    45:45:java.lang.String getId() -> a
+    54:54:java.lang.String toString() -> toString
+ca.rmen.nounours.data.FlingAnimation -> ca.rmen.nounours.b.d:
+    java.lang.String id -> a
+    int x -> b
+    int y -> c
+    int width -> d
+    int height -> e
+    float minVelX -> f
+    float minVelY -> g
+    java.lang.String animationId -> h
+    boolean variableSpeed -> i
+    31:79:void <init>(java.lang.String,int,int,int,int,float,float,java.lang.String,boolean) -> <init>
+    91:91:int getX() -> a
+    100:100:int getY() -> b
+    108:108:int getWidth() -> c
+    116:116:int getHeight() -> d
+    123:123:float getMinVelX() -> e
+    131:131:float getMinVelY() -> f
+    138:138:java.lang.String getAnimationId() -> g
+    146:146:boolean isVariableSpeed() -> h
+ca.rmen.nounours.data.Image -> ca.rmen.nounours.b.e:
+    java.lang.String id -> a
+    java.lang.String filename -> b
+    java.util.Map featureToPosition -> c
+    java.util.Set features -> d
+    java.util.Map adjacentImages -> e
+    java.lang.String onReleaseImageId -> f
+    34:48:void <init>(java.lang.String,java.lang.String) -> <init>
+    51:51:java.lang.String getId() -> a
+    55:55:java.lang.String getFilename() -> b
+    73:76:void addFeature(ca.rmen.nounours.data.Feature,int,int) -> a
+    82:82:java.util.Set getFeatures() -> c
+    92:92:ca.rmen.nounours.data.ImageFeature getImageFeature(java.lang.String) -> a
+    108:124:void addAdjacentImage(java.lang.String,ca.rmen.nounours.data.Image) -> a
+    133:137:java.util.Set getAdjacentImages(java.lang.String) -> b
+    141:145:java.util.List getAllAdjacentImages() -> d
+    154:155:void setOnReleaseImageId(java.lang.String) -> c
+    162:162:java.lang.String getOnReleaseImageId() -> e
+    167:167:java.lang.String toString() -> toString
+ca.rmen.nounours.data.ImageFeature -> ca.rmen.nounours.b.f:
+    java.lang.String featureId -> a
+    java.lang.String imageId -> b
+    int x -> c
+    int y -> d
+    45:50:void <init>(java.lang.String,java.lang.String,int,int) -> <init>
+    61:61:int getX() -> a
+    65:65:int getY() -> b
+    70:70:java.lang.String toString() -> toString
+ca.rmen.nounours.data.Sound -> ca.rmen.nounours.b.g:
+    java.lang.String id -> a
+    java.lang.String filename -> b
+    38:41:void <init>(java.lang.String,java.lang.String) -> <init>
+    44:44:java.lang.String getId() -> a
+    48:48:java.lang.String getFilename() -> b
+    53:53:java.lang.String toString() -> toString
+ca.rmen.nounours.data.Theme -> ca.rmen.nounours.b.h:
+    java.util.Map images -> a
+    java.util.Map animations -> b
+    java.util.Map sounds -> c
+    java.util.List flingAnimations -> d
+    ca.rmen.nounours.data.Animation shakeAnimation -> e
+    ca.rmen.nounours.data.Animation resumeAnimation -> f
+    ca.rmen.nounours.data.Animation idleAnimation -> g
+    ca.rmen.nounours.data.Animation endIdleAnimation -> h
+    ca.rmen.nounours.data.Image helpImage -> i
+    ca.rmen.nounours.data.Image defaultImage -> j
+    java.lang.String id -> k
+    java.lang.String name -> l
+    java.net.URI location -> m
+    int height -> n
+    int width -> o
+    boolean isLoaded -> p
+    42:64:void <init>(java.lang.String,java.lang.String,java.net.URI) -> <init>
+    67:67:int getHeight() -> a
+    71:71:int getWidth() -> b
+    75:75:java.lang.String getId() -> c
+    80:80:java.lang.String getName() -> d
+    84:84:boolean isLoaded() -> e
+    89:89:java.lang.String toString() -> toString
+    93:105:void init(ca.rmen.nounours.io.StreamLoader) -> a
+    111:166:void init(java.io.InputStream,java.io.InputStream,java.io.InputStream,java.io.InputStream,java.io.InputStream,java.io.InputStream,java.io.InputStream,java.io.InputStream) -> a
+    174:174:java.util.Map getImages() -> f
+    183:183:java.util.Map getAnimations() -> g
+    192:192:java.util.Map getSounds() -> h
+    201:201:java.util.List getFlingAnimations() -> i
+    210:210:ca.rmen.nounours.data.Animation getShakeAnimation() -> j
+    219:219:ca.rmen.nounours.data.Animation getResumeAnimation() -> k
+    228:228:ca.rmen.nounours.data.Animation getIdleAnimation() -> l
+    237:237:ca.rmen.nounours.data.Animation getEndIdleAnimation() -> m
+    246:246:ca.rmen.nounours.data.Image getHelpImage() -> n
+    255:255:ca.rmen.nounours.data.Image getDefaultImage() -> o
+ca.rmen.nounours.io.AdjacentImageReader -> ca.rmen.nounours.c.a:
+    java.util.Map imageMap -> a
+    43:62:void <init>(java.util.Map,java.io.InputStream) -> <init>
+    73:80:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+ca.rmen.nounours.io.AnimationReader -> ca.rmen.nounours.c.b:
+    java.util.Map animations -> a
+    java.util.Map images -> b
+    48:72:void <init>(java.util.Map,java.io.InputStream) -> <init>
+    80:99:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+    105:105:java.util.Map getAnimations() -> a
+ca.rmen.nounours.io.CSVReader -> ca.rmen.nounours.c.c:
+    java.io.BufferedReader reader -> a
+    java.lang.String[] header -> b
+    java.lang.String[] currentLine -> c
+    int currentLineNumber -> d
+    38:57:void <init>(java.io.InputStream) -> <init>
+    65:66:void close() -> a
+    75:80:boolean next() -> b
+    95:95:int getLineNumber() -> c
+    109:118:java.lang.String getValue(java.lang.String) -> a
+ca.rmen.nounours.io.FeatureReader -> ca.rmen.nounours.c.d:
+    java.util.List features -> a
+    40:55:void <init>(java.io.InputStream) -> <init>
+    63:67:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+    73:73:java.util.List getFeatures() -> a
+ca.rmen.nounours.io.FlingAnimationReader -> ca.rmen.nounours.c.e:
+    java.util.List flingAnimations -> a
+    47:69:void <init>(java.io.InputStream) -> <init>
+    78:90:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+    96:96:java.util.List getFlingAnimations() -> a
+ca.rmen.nounours.io.ImageFeatureReader -> ca.rmen.nounours.c.f:
+    java.util.Map imageMap -> a
+    java.util.Map featureMap -> b
+    49:71:void <init>(java.util.Map,java.util.List,java.io.InputStream) -> <init>
+    81:96:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+ca.rmen.nounours.io.ImageReader -> ca.rmen.nounours.c.g:
+    java.util.Map images -> a
+    42:58:void <init>(java.io.InputStream) -> <init>
+    67:75:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+    81:81:java.util.Map getImages() -> a
+ca.rmen.nounours.io.NounoursReader -> ca.rmen.nounours.c.h:
+    ca.rmen.nounours.io.CSVReader reader -> a
+    33:42:void <init>(java.io.InputStream) -> <init>
+    50:54:void load() -> b
+    void readLine(ca.rmen.nounours.io.CSVReader) -> a
+ca.rmen.nounours.io.SoundReader -> ca.rmen.nounours.c.i:
+    java.util.Map sounds -> a
+    39:55:void <init>(java.io.InputStream) -> <init>
+    65:69:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+    75:75:java.util.Map getSounds() -> a
+ca.rmen.nounours.io.StreamLoader -> ca.rmen.nounours.c.j:
+    java.io.InputStream open(java.net.URI) -> a
+ca.rmen.nounours.io.ThemeReader -> ca.rmen.nounours.c.k:
+    java.util.Map themes -> a
+    38:54:void <init>(java.io.InputStream) -> <init>
+    63:77:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+    83:83:java.util.Map getThemes() -> a
+ca.rmen.nounours.nounours.AndroidNounours -> ca.rmen.nounours.d.a:
+    java.lang.String TAG -> a
+    android.content.Context mContext -> b
+    android.os.Handler mUIHandler -> c
+    android.widget.ImageView mImageView -> d
+    ca.rmen.nounours.nounours.AndroidNounours$AndroidNounoursListener mListener -> e
+    ca.rmen.nounours.nounours.cache.ImageCache mImageCache -> f
+    ca.rmen.nounours.nounours.cache.AnimationCache mAnimationCache -> g
+    ca.rmen.nounours.nounours.SoundHandler mSoundHandler -> h
+    android.app.ProgressDialog mProgressDialog -> i
+    ca.rmen.nounours.nounours.cache.ImageCache$ImageCacheListener mImageCacheListener -> j
+    66:289:void <init>(android.content.Context,android.os.Handler,android.widget.ImageView,ca.rmen.nounours.nounours.AndroidNounours$AndroidNounoursListener) -> <init>
+    108:111:boolean cacheResources() -> i
+    119:145:void useTheme(java.lang.String) -> a
+    148:152:void themeLoaded() -> A
+    155:170:void resizeView() -> B
+    179:187:void displayImage(ca.rmen.nounours.data.Image) -> a
+    194:200:void debug(java.lang.Object) -> a
+    209:210:void runTask(java.lang.Runnable) -> a
+    216:229:void runTaskWithProgressBar(java.lang.Runnable,java.lang.String,int) -> a
+    235:252:void updateProgressBar(int,int,java.lang.String) -> a
+    258:268:void createProgressDialog(int,java.lang.String) -> a
+    274:277:void onDestroy() -> y
+    281:281:int getDeviceHeight() -> b
+    286:286:int getDeviceWidth() -> a
+    54:54:void access$001(ca.rmen.nounours.nounours.AndroidNounours,java.lang.String) -> a
+    54:54:void access$100(ca.rmen.nounours.nounours.AndroidNounours) -> a
+    54:54:android.app.ProgressDialog access$200(ca.rmen.nounours.nounours.AndroidNounours) -> b
+    54:54:java.lang.String access$300() -> z
+    54:54:void access$400(ca.rmen.nounours.nounours.AndroidNounours,int,java.lang.String) -> a
+    54:54:android.content.Context access$500(ca.rmen.nounours.nounours.AndroidNounours) -> c
+    54:54:void access$600(ca.rmen.nounours.nounours.AndroidNounours,int,int,java.lang.String) -> a
+    60:60:void <clinit>() -> <clinit>
+ca.rmen.nounours.nounours.AndroidNounours$1 -> ca.rmen.nounours.d.b:
+    java.lang.String val$id -> a
+    ca.rmen.nounours.nounours.AndroidNounours this$0 -> b
+    129:129:void <init>(ca.rmen.nounours.nounours.AndroidNounours,java.lang.String) -> <init>
+    134:142:void run() -> run
+ca.rmen.nounours.nounours.AndroidNounours$1$1 -> ca.rmen.nounours.d.c:
+    ca.rmen.nounours.nounours.AndroidNounours$1 this$1 -> a
+    136:136:void <init>(ca.rmen.nounours.nounours.AndroidNounours$1) -> <init>
+    138:139:void run() -> run
+ca.rmen.nounours.nounours.AndroidNounours$2 -> ca.rmen.nounours.d.d:
+    java.lang.Runnable val$task -> a
+    ca.rmen.nounours.nounours.AndroidNounours this$0 -> b
+    219:219:void <init>(ca.rmen.nounours.nounours.AndroidNounours,java.lang.Runnable) -> <init>
+    223:226:void run() -> run
+ca.rmen.nounours.nounours.AndroidNounours$3 -> ca.rmen.nounours.d.e:
+    int val$max -> a
+    java.lang.String val$message -> b
+    int val$progress -> c
+    ca.rmen.nounours.nounours.AndroidNounours this$0 -> d
+    235:235:void <init>(ca.rmen.nounours.nounours.AndroidNounours,int,java.lang.String,int) -> <init>
+    240:249:void run() -> run
+ca.rmen.nounours.nounours.AndroidNounours$4 -> ca.rmen.nounours.d.f:
+    ca.rmen.nounours.nounours.AndroidNounours this$0 -> a
+    290:290:void <init>(ca.rmen.nounours.nounours.AndroidNounours) -> <init>
+    293:297:void onImageLoaded(ca.rmen.nounours.data.Image,int,int) -> a
+ca.rmen.nounours.nounours.AndroidNounours$AndroidNounoursListener -> ca.rmen.nounours.d.g:
+    void onThemeLoaded() -> a
+ca.rmen.nounours.nounours.AnimationHandler -> ca.rmen.nounours.d.h:
+    java.lang.String TAG -> a
+    android.content.Context mContext -> b
+    ca.rmen.nounours.nounours.AndroidNounours mNounours -> c
+    android.widget.ImageView mImageView -> d
+    ca.rmen.nounours.nounours.cache.AnimationCache mAnimationCache -> e
+    46:51:void <init>(android.content.Context,ca.rmen.nounours.nounours.AndroidNounours,android.widget.ImageView,ca.rmen.nounours.nounours.cache.AnimationCache) -> <init>
+    59:82:boolean isAnimationRunning() -> b
+    89:94:android.graphics.drawable.AnimationDrawable getCurrentAnimationDrawable() -> d
+    104:124:void doAnimation(ca.rmen.nounours.data.Animation,boolean) -> a
+    133:137:void stopAnimation() -> a
+    147:147:void addAnimation(ca.rmen.nounours.data.Animation) -> a
+    38:38:android.content.Context access$000(ca.rmen.nounours.nounours.AnimationHandler) -> a
+    38:38:ca.rmen.nounours.nounours.AndroidNounours access$100(ca.rmen.nounours.nounours.AnimationHandler) -> b
+    38:38:ca.rmen.nounours.nounours.cache.AnimationCache access$200(ca.rmen.nounours.nounours.AnimationHandler) -> c
+    38:38:java.lang.String access$300() -> c
+    38:38:android.widget.ImageView access$400(ca.rmen.nounours.nounours.AnimationHandler) -> d
+    39:39:void <clinit>() -> <clinit>
+ca.rmen.nounours.nounours.AnimationHandler$1 -> ca.rmen.nounours.d.i:
+    ca.rmen.nounours.data.Animation val$animation -> a
+    ca.rmen.nounours.nounours.AnimationHandler this$0 -> b
+    105:105:void <init>(ca.rmen.nounours.nounours.AnimationHandler,ca.rmen.nounours.data.Animation) -> <init>
+    108:120:void run() -> run
+ca.rmen.nounours.nounours.AssetStreamLoader -> ca.rmen.nounours.d.j:
+    android.content.Context mContext -> a
+    37:39:void <init>(android.content.Context) -> <init>
+    46:48:java.io.InputStream open(java.net.URI) -> a
+ca.rmen.nounours.nounours.FlingDetector -> ca.rmen.nounours.d.k:
+    ca.rmen.nounours.Nounours mNounours -> a
+    36:38:void <init>(ca.rmen.nounours.Nounours) -> <init>
+    42:43:boolean onFling(android.view.MotionEvent,android.view.MotionEvent,float,float) -> onFling
+ca.rmen.nounours.nounours.SoundHandler -> ca.rmen.nounours.d.l:
+    java.lang.String TAG -> a
+    android.content.Context mContext -> b
+    android.media.SoundPool mSoundPool -> c
+    boolean mSoundEnabled -> d
+    int mCurrentSoundId -> e
+    java.util.Map mSoundPoolIds -> f
+    47:58:void <init>(android.content.Context) -> <init>
+    61:88:void cacheSounds(ca.rmen.nounours.data.Theme) -> a
+    94:99:void playSound(java.lang.String) -> a
+    107:110:void stopSound() -> a
+    118:119:void setEnableSound(boolean) -> a
+    42:42:android.content.Context access$000(ca.rmen.nounours.nounours.SoundHandler) -> a
+    42:42:android.media.SoundPool access$100(ca.rmen.nounours.nounours.SoundHandler) -> b
+    42:42:java.lang.String access$200() -> b
+    42:42:java.util.Map access$300(ca.rmen.nounours.nounours.SoundHandler) -> c
+    43:43:void <clinit>() -> <clinit>
+ca.rmen.nounours.nounours.SoundHandler$1 -> ca.rmen.nounours.d.m:
+    ca.rmen.nounours.data.Theme val$theme -> a
+    ca.rmen.nounours.nounours.SoundHandler this$0 -> b
+    68:68:void <init>(ca.rmen.nounours.nounours.SoundHandler,ca.rmen.nounours.data.Theme) -> <init>
+    71:84:void run() -> run
+ca.rmen.nounours.nounours.TouchListener -> ca.rmen.nounours.d.n:
+    android.view.GestureDetector mGestureDetector -> a
+    ca.rmen.nounours.Nounours mNounours -> b
+    40:43:void <init>(ca.rmen.nounours.Nounours,android.view.GestureDetector) -> <init>
+    54:64:boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
+ca.rmen.nounours.nounours.VibrateHandler -> ca.rmen.nounours.d.o:
+    android.content.Context mContext -> a
+    36:38:void <init>(android.content.Context) -> <init>
+    42:44:void doVibrate(long) -> a
+    48:54:void doVibrate(long,long) -> a
+ca.rmen.nounours.nounours.cache.AnimationCache -> ca.rmen.nounours.d.a.a:
+    java.lang.String TAG -> a
+    java.util.Map mAnimationCache -> b
+    java.util.Map mBitmapDrawables -> c
+    ca.rmen.nounours.nounours.cache.ImageCache mImageCache -> d
+    45:52:void <init>(ca.rmen.nounours.nounours.cache.ImageCache) -> <init>
+    58:63:boolean cacheAnimations(android.content.Context,java.util.Collection,ca.rmen.nounours.data.Image) -> a
+    72:88:android.graphics.drawable.AnimationDrawable createAnimation(android.content.Context,ca.rmen.nounours.data.Animation,ca.rmen.nounours.data.Image,boolean) -> a
+    95:105:android.graphics.drawable.AnimationDrawable createAnimation(android.content.Context,ca.rmen.nounours.data.Animation) -> a
+    112:117:android.graphics.drawable.BitmapDrawable getDrawable(android.content.Context,ca.rmen.nounours.data.Image) -> a
+    122:131:void clearAnimationCache() -> a
+    134:144:void purgeAnimationDrawable(android.graphics.drawable.AnimationDrawable) -> a
+    43:43:void <clinit>() -> <clinit>
+ca.rmen.nounours.nounours.cache.ImageCache -> ca.rmen.nounours.d.a.b:
+    java.lang.String TAG -> a
+    java.util.Map mImageCache -> b
+    39:47:void <init>() -> <init>
+    53:69:boolean cacheImages(android.content.Context,java.util.Collection,android.os.Handler,ca.rmen.nounours.nounours.cache.ImageCache$ImageCacheListener) -> a
+    74:80:void clearImageCache() -> a
+    86:91:android.graphics.Bitmap getDrawableImage(android.content.Context,ca.rmen.nounours.data.Image) -> a
+    100:103:android.graphics.Bitmap loadImage(android.content.Context,ca.rmen.nounours.data.Image) -> b
+    37:37:void <clinit>() -> <clinit>
+ca.rmen.nounours.nounours.cache.ImageCache$1 -> ca.rmen.nounours.d.a.c:
+    ca.rmen.nounours.nounours.cache.ImageCache$ImageCacheListener val$listener -> a
+    ca.rmen.nounours.data.Image val$image -> b
+    int val$progress -> c
+    int val$max -> d
+    ca.rmen.nounours.nounours.cache.ImageCache this$0 -> e
+    62:62:void <init>(ca.rmen.nounours.nounours.cache.ImageCache,ca.rmen.nounours.nounours.cache.ImageCache$ImageCacheListener,ca.rmen.nounours.data.Image,int,int) -> <init>
+    65:66:void run() -> run
+ca.rmen.nounours.nounours.cache.ImageCache$ImageCacheListener -> ca.rmen.nounours.d.a.d:
+    void onImageLoaded(ca.rmen.nounours.data.Image,int,int) -> a
+ca.rmen.nounours.nounours.orientation.OrientationImage -> ca.rmen.nounours.d.b.a:
+    java.lang.String imageId -> a
+    float minYaw -> b
+    float maxYaw -> c
+    float minPitch -> d
+    float maxPitch -> e
+    float minRoll -> f
+    float maxRoll -> g
+    42:50:void <init>(java.lang.String,float,float,float,float,float,float) -> <init>
+    53:53:java.lang.String toString() -> toString
+ca.rmen.nounours.nounours.orientation.OrientationImageReader -> ca.rmen.nounours.d.b.b:
+    java.util.Set mOrientationImages -> a
+    47:70:void <init>(java.io.InputStream) -> <init>
+    78:88:void readLine(ca.rmen.nounours.io.CSVReader) -> a
+    94:94:java.util.Set getOrientationImages() -> a
+ca.rmen.nounours.nounours.orientation.SensorListener -> ca.rmen.nounours.d.b.c:
+    java.lang.String TAG -> a
+    float mXAccel -> b
+    float mYAccel -> c
+    float mZAccel -> d
+    boolean mIsTiltImage -> e
+    java.util.Set mOrientationImages -> f
+    ca.rmen.nounours.nounours.AndroidNounours mNounours -> g
+    android.content.Context mContext -> h
+    float[] mLastAcceleration -> i
+    float[] mLastMagneticField -> j
+    50:67:void <init>(ca.rmen.nounours.nounours.AndroidNounours,android.content.Context) -> <init>
+    70:93:void rereadOrientationFile(android.content.Context) -> a
+    102:107:java.io.InputStream getOrientationFile(java.lang.String,android.content.Context) -> a
+    121:135:void onSensorChanged(android.hardware.SensorEvent) -> onSensorChanged
+    142:167:void onAccelerationChanged(android.hardware.SensorEvent) -> a
+    173:220:void onOrientationChanged() -> b
+    223:224:void onMagneticFieldChanged(android.hardware.SensorEvent) -> b
+    227:258:float[] remapCoordinateSystem(float[]) -> a
+    264:264:void onAccuracyChanged(android.hardware.Sensor,int) -> onAccuracyChanged
+    47:47:ca.rmen.nounours.nounours.AndroidNounours access$000(ca.rmen.nounours.nounours.orientation.SensorListener) -> a
+    47:47:java.io.InputStream access$100(ca.rmen.nounours.nounours.orientation.SensorListener,java.lang.String,android.content.Context) -> a
+    47:47:java.util.Set access$200(ca.rmen.nounours.nounours.orientation.SensorListener) -> b
+    47:47:java.lang.String access$300() -> a
+    48:48:void <clinit>() -> <clinit>
+ca.rmen.nounours.nounours.orientation.SensorListener$1 -> ca.rmen.nounours.d.b.d:
+    android.content.Context val$context -> a
+    ca.rmen.nounours.nounours.orientation.SensorListener this$0 -> b
+    72:72:void <init>(ca.rmen.nounours.nounours.orientation.SensorListener,android.content.Context) -> <init>
+    76:89:java.lang.Void doInBackground(java.lang.Void[]) -> a
+    72:72:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+ca.rmen.nounours.settings.NounoursSettings -> ca.rmen.nounours.settings.a:
+    37:37:boolean isSoundEnabled(android.content.Context) -> a
+    41:41:long getIdleTimeout(android.content.Context) -> b
+    45:45:java.lang.String getThemeId(android.content.Context) -> c
+ca.rmen.nounours.settings.SettingsActivity -> ca.rmen.nounours.settings.SettingsActivity:
+    android.preference.Preference$OnPreferenceChangeListener sBindPreferenceSummaryToValueListener -> a
+    44:44:void <init>() -> <init>
+    48:50:void onCreate(android.os.Bundle) -> onCreate
+    54:65:void onPostCreate(android.os.Bundle) -> onPostCreate
+    108:116:void bindPreferenceSummaryToValue(android.preference.Preference) -> a
+    120:123:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    71:71:void <clinit>() -> <clinit>
+ca.rmen.nounours.settings.SettingsActivity$1 -> ca.rmen.nounours.settings.b:
+    71:71:void <init>() -> <init>
+    74:93:boolean onPreferenceChange(android.preference.Preference,java.lang.Object) -> onPreferenceChange
+ca.rmen.nounours.util.AnimationUtil -> ca.rmen.nounours.e.a:
+    java.lang.String TAG -> a
+    45:45:void <init>() -> <init>
+    54:88:java.io.File saveAnimation(android.content.Context,ca.rmen.nounours.data.Animation) -> a
+    96:120:void startAnimation(android.widget.ImageView) -> a
+    126:132:void stopAnimation(android.widget.ImageView) -> b
+    46:46:void <clinit>() -> <clinit>
+ca.rmen.nounours.util.AnimationUtil$1 -> ca.rmen.nounours.e.b:
+    android.graphics.drawable.AnimationDrawable val$animationDrawable -> a
+    android.widget.ImageView val$imageView -> b
+    102:102:void <init>(android.graphics.drawable.AnimationDrawable,android.widget.ImageView) -> <init>
+    106:117:void onGlobalLayout() -> onGlobalLayout
+ca.rmen.nounours.util.AnimationUtil$1$1 -> ca.rmen.nounours.e.c:
+    ca.rmen.nounours.util.AnimationUtil$1 this$0 -> a
+    107:107:void <init>(ca.rmen.nounours.util.AnimationUtil$1) -> <init>
+    111:113:void run() -> run
+ca.rmen.nounours.util.BitmapUtil -> ca.rmen.nounours.e.d:
+    java.lang.String TAG -> a
+    34:34:void <init>() -> <init>
+    43:55:android.graphics.Bitmap createBitmap(android.content.Context,ca.rmen.nounours.data.Image) -> a
+    59:59:android.graphics.Bitmap loadBitmap(android.content.Context,java.lang.String) -> a
+    63:63:android.graphics.Bitmap loadBitmap(android.content.Context,int) -> a
+    67:89:android.graphics.Bitmap loadBitmap(android.content.Context,java.lang.String,int,int,int) -> a
+    35:35:void <clinit>() -> <clinit>
+ca.rmen.nounours.util.FileUtil -> ca.rmen.nounours.e.e:
+    31:33:boolean isSdPresent() -> a
+    38:48:void copy(java.io.InputStream,java.io.OutputStream) -> a
+ca.rmen.nounours.util.ThemeUtil -> ca.rmen.nounours.e.f:
+    34:39:java.lang.CharSequence getThemeLabel(android.content.Context,ca.rmen.nounours.data.Theme) -> a
+com.external.nbadal.AnimatedGifEncoder -> a.a.a.a:
+    int width -> a
+    int height -> b
+    int x -> c
+    int y -> d
+    int transparent -> e
+    int transIndex -> f
+    int repeat -> g
+    int delay -> h
+    boolean started -> i
+    java.io.OutputStream out -> j
+    android.graphics.Bitmap image -> k
+    byte[] pixels -> l
+    byte[] indexedPixels -> m
+    int colorDepth -> n
+    byte[] colorTab -> o
+    boolean[] usedEntry -> p
+    int palSize -> q
+    int dispose -> r
+    boolean closeStream -> s
+    boolean firstFrame -> t
+    boolean sizeSet -> u
+    int sample -> v
+    17:61:void <init>() -> <init>
+    71:72:void setDelay(int) -> a
+    98:101:void setRepeat(int) -> b
+    129:160:boolean addFrame(android.graphics.Bitmap) -> a
+    168:192:boolean finish() -> a
+    235:242:void setSize(int,int) -> a
+    267:277:boolean start(java.io.OutputStream) -> a
+    284:311:void analyzePixels() -> b
+    318:338:int findClosest(int) -> c
+    345:363:void getImagePixels() -> c
+    365:370:int[] getImageData(android.graphics.Bitmap) -> b
+    377:402:void writeGraphicCtrlExt() -> d
+    408:425:void writeImageDesc() -> e
+    432:442:void writeLSD() -> f
+    448:456:void writeNetscapeExt() -> g
+    462:467:void writePalette() -> h
+    473:475:void writePixels() -> i
+    481:483:void writeShort(int) -> d
+    489:492:void writeString(java.lang.String) -> a
+com.external.nbadal.LZWEncoder -> a.a.a.b:
+    int imgW -> r
+    int imgH -> s
+    byte[] pixAry -> t
+    int initCodeSize -> u
+    int remaining -> v
+    int curPixel -> w
+    int n_bits -> a
+    int maxbits -> b
+    int maxcode -> c
+    int maxmaxcode -> d
+    int[] htab -> e
+    int[] codetab -> f
+    int hsize -> g
+    int free_ent -> h
+    boolean clear_flg -> i
+    int g_init_bits -> j
+    int ClearCode -> k
+    int EOFCode -> l
+    int cur_accum -> m
+    int cur_bits -> n
+    int[] masks -> o
+    int a_count -> p
+    byte[] accum -> q
+    1044:1114:void <init>(int,int,byte[],int) -> <init>
+    1119:1122:void char_out(byte,java.io.OutputStream) -> a
+    1128:1133:void cl_block(java.io.OutputStream) -> a
+    1137:1139:void cl_hash(int) -> a
+    1151:1209:void compress(int,java.io.OutputStream) -> a
+    1213:1221:void encode(java.io.OutputStream) -> b
+    1225:1230:void flush_char(java.io.OutputStream) -> c
+    1233:1233:int MAXCODE(int) -> b
+    1240:1247:int nextPixel() -> a
+    1251:1291:void output(int,java.io.OutputStream) -> b
+com.external.nbadal.NeuQuant -> a.a.a.c:
+    int alphadec -> a
+    byte[] thepicture -> b
+    int lengthcount -> c
+    int samplefac -> d
+    int[][] network -> e
+    int[] netindex -> f
+    int[] bias -> g
+    int[] freq -> h
+    int[] radpower -> i
+    616:650:void <init>(byte[],int,int) -> <init>
+    653:664:byte[] colorMap() -> a
+    679:721:void inxbuild() -> b
+    733:797:void learn() -> c
+    810:867:int map(int,int,int) -> a
+    871:874:byte[] process() -> d
+    886:892:void unbiasnet() -> e
+    904:935:void alterneigh(int,int,int,int,int) -> a
+    944:948:void altersingle(int,int,int,int,int) -> b
+    964:997:int contest(int,int,int) -> b
