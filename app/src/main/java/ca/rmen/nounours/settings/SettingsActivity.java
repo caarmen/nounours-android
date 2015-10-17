@@ -62,7 +62,6 @@ public class SettingsActivity extends PreferenceActivity {
         //noinspection deprecation
         bindPreferenceSummaryToValue(findPreference(NounoursSettings.PREF_IDLE_TIMEOUT));
         bindPreferenceSummaryToValue(themePreference);
-        ThemePreferenceLoader.load(this, themePreference);
     }
 
     /**
