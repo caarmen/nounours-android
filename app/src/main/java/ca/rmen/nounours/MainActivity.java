@@ -299,7 +299,7 @@ public class MainActivity extends Activity {
     }
 
     private boolean reloadThemeFromPreference() {
-        Log.v(TAG, "reloadThemeFrompreference");
+        Log.v(TAG, "reloadThemeFromPreference");
         boolean nounoursIsBusy = mNounours.isLoading();
         Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
         String themeId = NounoursSettings.getThemeId(this);
