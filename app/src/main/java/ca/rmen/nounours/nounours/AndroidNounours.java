@@ -116,7 +116,7 @@ public class AndroidNounours extends Nounours {
      * Load the new image set in a separate thread, showing the progress bar
      */
     @Override
-    public boolean useTheme(final String id) {
+    public void useTheme(final String id) {
         Log.v(TAG, "useTheme " + id);
         int taskSize = 1;
 
@@ -147,10 +147,7 @@ public class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.predownload, themeLabel),
-                taskSize);
-        return true;
-
+        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.predownload, themeLabel), taskSize);
     }
 
     private void themeLoaded() {
