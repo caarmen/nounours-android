@@ -29,7 +29,6 @@ import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
@@ -84,7 +83,7 @@ public class AndroidNounours extends Nounours {
         mUIHandler = uiHandler;
         mImageView = imageView;
         mListener = listener;
-        StreamLoader streamLoader = new AndroidStreamLoader(context);
+        StreamLoader streamLoader = new AssetStreamLoader(context);
 
         String themeId = NounoursSettings.getThemeId(context);
         AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
@@ -295,26 +294,6 @@ public class AndroidNounours extends Nounours {
             setImage(image);
             CharSequence themeName = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
             updateProgressBar(progress, total, mContext.getString(R.string.loading, themeName));
-        }
-    };
-
-    private static class AndroidStreamLoader implements StreamLoader {
-        private final Context mContext;
-
-        public AndroidStreamLoader(Context context) {
-            mContext = context;
-        }
-
-        @Override
-        public InputStream open(URI uri) throws IOException {
-            if(uri.getScheme().equalsIgnoreCase("file")) {
-                String path = uri.getPath();
-                if (path.startsWith("/android_asset/")) {
-                    path = path.substring("/android_asset/".length());
-                    return mContext.getAssets().open(path);
-                }
-            }
-            return null;
         }
     };
 }
