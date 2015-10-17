@@ -39,8 +39,6 @@
 	<string name="halloween">Halloween</string>
 	<string name="greenshirtbluebkg">Green shirt, blue backgrd</string>
 	<string name="bugdroid">Bugdroid</string>
-	<string name="predownload">Looking for my %s theme</string>
-	<string name="downloading">Downloading my %s theme online&#8230;</string>
 	<string name="loading">Loading my %s theme</string>
 	<string name="defaultTheme">Default</string>
 	<string name="abouttext"><![CDATA[

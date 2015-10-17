@@ -21,7 +21,6 @@ package ca.rmen.nounours.nounours;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
@@ -74,7 +73,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Open the CSV data files and call the superclass
-     * {@link Nounours#init(StreamLoader, NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, String)}
+     * {@link Nounours#init(StreamLoader, NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, String)}
      * method.
      *
      * @param context The android mContext.
@@ -107,9 +106,10 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected boolean cacheResources() {
-        mSoundHandler.cacheSounds(getCurrentTheme());
-        return mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener)
+        boolean result = mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener)
                 && mAnimationCache.cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
+        mSoundHandler.cacheSounds(getCurrentTheme());
+        return result;
     }
 
     /**
@@ -118,15 +118,10 @@ public class AndroidNounours extends Nounours {
     @Override
     public void useTheme(final String id) {
         Log.v(TAG, "useTheme " + id);
-        int taskSize = 1;
 
         // Get the name of this theme.
         Theme theme = getThemes().get(id);
         CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, theme);
-
-        // Estimate the size of the theme.
-        if (!theme.getSounds().isEmpty())
-            taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
         // MEMORY
         mImageView.setImageDrawable(null);
@@ -147,7 +142,7 @@ public class AndroidNounours extends Nounours {
 
             }
         };
-        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.predownload, themeLabel), taskSize);
+        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.loading, themeLabel), theme.getImages().size());
     }
 
     private void themeLoaded() {
@@ -296,9 +291,10 @@ public class AndroidNounours extends Nounours {
     private final ImageCache.ImageCacheListener mImageCacheListener = new ImageCache.ImageCacheListener() {
         @Override
         public void onImageLoaded(final Image image, int progress, int total) {
+            Log.v(TAG, "onImageLoaded: " + progress + "/" + total);
             setImage(image);
             CharSequence themeName = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
-            updateProgressBar(total + (progress), 2 * total, mContext.getString(R.string.loading, themeName));
+            updateProgressBar(progress, total, mContext.getString(R.string.loading, themeName));
         }
     };
 
