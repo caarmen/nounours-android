@@ -20,35 +20,17 @@
 package ca.rmen.nounours.compat;
 
 import android.content.Context;
-import android.os.Environment;
-import android.util.Log;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 
-import java.io.File;
+public class SoundPoolCompat {
 
-import ca.rmen.nounours.Constants;
-
-public class EnvironmentCompat {
-
-    private static final String TAG = Constants.TAG + EnvironmentCompat.class.getSimpleName();
-
-    private EnvironmentCompat() {
-        // Prevent instantiation
-    }
-
-    public static File getExternalFilesDir(Context context) {
-        File result;
-        String folderName = "nounours";
-        if (ApiHelper.getAPILevel() >= 8) {
-            result = Api8Helper.getExternalFilesDir(context, folderName);
+    public static SoundPool create(Context context) {
+        if (ApiHelper.getAPILevel() < Build.VERSION_CODES.LOLLIPOP) {
+            return new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
         } else {
-            File sdcard = Environment.getExternalStorageDirectory();
-            result = new File(sdcard, folderName);
+            return Api21Helper.createSoundPool(context);
         }
-        if (!result.exists()) {
-            if (!result.mkdirs() || !result.isDirectory()) {
-                Log.v(TAG, "Could not createSoundPool folder " + result);
-            }
-        }
-        return result;
     }
 }

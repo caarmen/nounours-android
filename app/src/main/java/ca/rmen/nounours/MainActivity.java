@@ -299,6 +299,7 @@ public class MainActivity extends Activity {
     }
 
     private boolean reloadThemeFromPreference() {
+        Log.v(TAG, "reloadThemeFrompreference");
         boolean nounoursIsBusy = mNounours.isLoading();
         Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
         String themeId = NounoursSettings.getThemeId(this);
@@ -312,7 +313,6 @@ public class MainActivity extends Activity {
             final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
             imageView.setImageBitmap(null);
             mNounours.useTheme(theme.getId());
-            mSensorListener.rereadOrientationFile(MainActivity.this);
         }
         return true;
     }

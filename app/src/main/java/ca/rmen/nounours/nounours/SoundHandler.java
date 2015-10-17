@@ -21,7 +21,6 @@ package ca.rmen.nounours.nounours;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
-import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 
@@ -31,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.NounoursSoundHandler;
+import ca.rmen.nounours.compat.SoundPoolCompat;
 import ca.rmen.nounours.data.Sound;
 import ca.rmen.nounours.data.Theme;
 
@@ -54,7 +54,7 @@ class SoundHandler implements NounoursSoundHandler {
     public SoundHandler(Context context) {
         mContext = context;
         // Initialize the media player.
-        mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        mSoundPool = SoundPoolCompat.create(context);
     }
 
     public void cacheSounds(final Theme theme) {
