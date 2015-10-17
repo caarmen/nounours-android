@@ -40,9 +40,9 @@ public class BitmapUtil {
     public static Bitmap createBitmap(Context context, Image image) {
         final Bitmap result;
         // This is one of the themed images, in the assets.
-        if(image.getFilename().startsWith("file:///android_asset")) {
+        if(image.getFilename().startsWith("themes")) {
             Log.v(TAG, "Load themed image.");
-            result = loadBitmap(context, image.getFilename().substring("file:///android_asset/".length()));
+            result = loadBitmap(context, image.getFilename());
         }
         // This is one of the default images bundled in the apk.
         else {

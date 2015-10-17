@@ -114,7 +114,6 @@ public class AndroidNounours extends Nounours {
                     soundFile, themeId);
             setEnableVibrate(NounoursSettings.isSoundEnabled(context));
             setEnableSound(NounoursSettings.isSoundEnabled(context));
-            setEnableRandomAnimations(true);
             setIdleTimeout(NounoursSettings.getIdleTimeout(context));
         } catch (final IOException e) {
             Log.e(TAG, "Error initializing nounours", e);
@@ -124,7 +123,7 @@ public class AndroidNounours extends Nounours {
     @Override
     protected boolean cacheImages() {
         mSoundHandler.cacheSounds(getCurrentTheme());
-        return mImageCache.cacheImages(mContext, getImages().values(), mUIHandler, mImageCacheListener)
+        return mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener)
                 && mAnimationCache.cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
     }
 
@@ -201,21 +200,6 @@ public class AndroidNounours extends Nounours {
         Log.v(TAG, "Scaling view to " + layoutParams.width + "x" + layoutParams.height);
         mImageView.setLayoutParams(layoutParams);
 
-    }
-
-    /**
-     * Update the progress bar with the download status.
-     */
-    @Override
-    protected void updateDownloadProgress(int progress, int max) {
-        CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
-        updateProgressBar(progress, 2 * max, mContext.getString(R.string.downloading, themeLabel));
-    }
-
-    @Override
-    protected void updatePreloadProgress(int progress, int max) {
-        CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
-        updateProgressBar(progress, 2 * max, mContext.getString(R.string.predownload, themeLabel));
     }
 
     /**

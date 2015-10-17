@@ -141,7 +141,6 @@ public class MainActivity extends Activity {
         mNounours.setEnableSound(NounoursSettings.isSoundEnabled(this));
         mNounours.setEnableVibrate(NounoursSettings.isSoundEnabled(this));
         mNounours.setIdleTimeout(NounoursSettings.getIdleTimeout(this));
-        mNounours.setEnableRandomAnimations(true);
         boolean themeChanged = reloadThemeFromPreference();
         if (!themeChanged) mNounours.onResume();
         mNounours.doPing(true);

@@ -209,7 +209,7 @@ public class SensorListener implements SensorEventListener {
                     && pitch <= orientationImage.maxPitch
                     && roll >= orientationImage.minRoll
                     && roll <= orientationImage.maxRoll) {
-                final Image image = mNounours.getImages().get(
+                final Image image = mNounours.getCurrentTheme().getImages().get(
                         orientationImage.imageId);
                 mNounours.stopAnimation();
                 mNounours.setImage(image);
