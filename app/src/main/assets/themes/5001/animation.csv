@@ -1,0 +1,15 @@
+Id,Label,Interval,Repeat,Sequence,Visible,Vibrate,Sound
+1,spin,50,5,Default;SlightLeft;Rotate730;Rotate900;Rotate1030;Rotate1200;Rotate130;Rotate300;Rotate430;SlightRight,true,false,swoosh
+2,cartwheel,400,1,Default;LieLeft;OnHead;LieRight;Default,true,false,woohoo
+3,headbang,100,7,Default;HeadDown1;HeadDown2;HeadDown1;Default;HeadUp;,true,false,lullaby_guitar
+4,disco,500,4,LHUp;LHFwd;,true,false,disco
+5,clap,100,10,Default;BothFwd;Clap;BothFwd,true,false,clap
+6,sleep,1000,200,Sleep1;Sleep2,false
+7,shake,60,20,SlightLeft;SlightRight,true,true,psychotoy
+8,reverseSpin,50,5,Default;SlightRight;Rotate430;Rotate300;Rotate130;Rotate1200;Rotate1030;Rotate900;Rotate730;SlightLeft,false,false,swoosh
+9,ska,120,1,d=4;RHFwd;BothFwd;LHFwd;Default;RHUp;BothUp;LHUp;Default;d=1;SlightRight;Rotate430;Rotate300;Rotate130;Rotate1200;Rotate1030;Rotate900;Rotate730;SlightLeft;d=4;RHUp;d=8;BothUp,true,false,kmacleod_broll
+10,boing,300,4,BothUp;LeftEar;BothUp;RightEar,true,false,boing
+11,fly,100,1,d=7;HeadUp;d=2;BothUp;Default;BothUp;Default;BothUp;Default;BothUp;Default;d=1;BothUp;Default;BothUp;Default;BothUp;Default;BothUp;Default;d=2;Float;BothUpFloat;Float;d=1;LeftEar;Float;LeftEar;Float;BothUpFloat;Float;d=2;BothUpFloat;Float;BothUpFloat;d=1;LeftEar;Float;LeftEar;Float;d=3;BothUp;d=6;HeadUp,true,false,fly
+12,sleepsound,1000,200,Sleep1;Sleep2,true,false,lullaby_musicbox
+13,startle,500,1,d=.5;Default;d=0.5;Float;d=1;Default;d=0.2;HeadLeft1;d=.5;HeadLeft2;d=0.2;HeadLeft1;HeadRight1;d=.5;HeadRight2;d=0.2;HeadRight1;HeadLeft1;d=.5;HeadLeft2;d=0.2;HeadLeft1;HeadRight1;d=.5;HeadRight2;d=0.2;HeadRight1;Default,true,false,startle
+14,excited,500,3,d=.2;Default;Float;d=.5;BothUpFloat;d=.2;Float;Default;d=.1;SlightRight;Rotate430;Rotate300;Rotate130;Rotate1200;Rotate1030;Rotate900;Rotate730;SlightLeft,true,false,excited

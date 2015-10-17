@@ -29,9 +29,9 @@ public class ActivityCompat {
         }
     }
 
-    public static void setDisplayHomeAsUpEnabled(Activity activity, boolean showHomeAsUp) {
+    public static void setDisplayHomeAsUpEnabled(Activity activity) {
         if (ApiHelper.getAPILevel() >= 11) {
-            Api11Helper.setDisplayHomeAsUpEnabled(activity, showHomeAsUp);
+            Api11Helper.setDisplayHomeAsUpEnabled(activity);
         }
     }
 }

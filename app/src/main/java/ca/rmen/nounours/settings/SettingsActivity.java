@@ -46,7 +46,7 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCompat.setDisplayHomeAsUpEnabled(this, true);
+        ActivityCompat.setDisplayHomeAsUpEnabled(this);
     }
 
     @Override
@@ -62,7 +62,6 @@ public class SettingsActivity extends PreferenceActivity {
         //noinspection deprecation
         bindPreferenceSummaryToValue(findPreference(NounoursSettings.PREF_IDLE_TIMEOUT));
         bindPreferenceSummaryToValue(themePreference);
-        ThemePreferenceLoader.load(this, themePreference);
     }
 
     /**

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Copyright (c) 2009 - 2015 Carmen Alvarez
 
     This file is part of Nounours for Android.
@@ -17,6 +16,10 @@
     You should have received a copy of the GNU General Public License
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/text"
-    android:layout_width="match_parent" android:layout_height="match_parent"/>
+<resources>
+    <string name="defaultTheme">Default</string>
+    <string name="rainbow">Rainbow background</string>
+    <string name="greenshirtbluebkg">Green shirt, blue backgrd</string>
+    <string name="halloween">Halloween</string>
+    <string name="bugdroid">Bugdroid</string>
+</resources>

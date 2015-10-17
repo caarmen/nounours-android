@@ -19,30 +19,11 @@
 -->
 <resources>
 	<string name="app_name">Nounours</string>
-	<string name="spin">Tourniquet</string>
-	<string name="cartwheel">La roue</string>
-	<string name="headbang">Hardos</string>
-	<string name="disco">Disco</string>
-	<string name="clap">Bravo</string>
-	<string name="sleepsound">Dodo</string>
-	<string name="shake">Trembler</string>
-	<string name="reverseSpin">Tourniquet à l\'envers</string>
-	<string name="ska">Macarenours</string>
-	<string name="boing">Boing !</string>
-	<string name="fly">Voler</string>
-	<string name="excited">Excité</string>
 	<string name="random">Aléatoire</string>
 	<string name="actions">Actions</string>
 	<string name="about">À propos</string>
 	<string name="themes">Thèmes</string>
-	<string name="predownload">Je cherche mon thème %s</string>
-	<string name="downloading">Je télécharge mon thème %s&#8230;</string>
 	<string name="loading">Je charge mon thème %s</string>
-	<string name="defaultTheme">Standard</string>
-	<string name="rainbow">Fond arc-en-ciel</string>
-	<string name="halloween">Halloween</string>
-	<string name="greenshirtbluebkg">Pull vert, fond bleu</string>
-	<string name="bugdroid">Bugdroid</string>
 	<string name="abouttext"><![CDATA[
 <h1>Nounours version %s</h1>
 Par Carmen Alvarez (<a href="mailto:c@rmen.ca">c@rmen.ca</a>)<br>
@@ -52,11 +33,8 @@ B-Roll (musique Macarenours) : <a href="http://incompetech.com">Kevin MacLeod</a
 <a href="https://github.com/nbadal/android-gif-encoder">Nick Badal</a> et <a href="http://www.jappit.com/blog/2008/12/04/j2me-animated-gif-encoder/">Alessandro La Rosa</a>, pour l\'encodeur des gifs animés<br><br>
 Le robot Android(TM) est crée et partagé par Google et utilisé selon les conditions de la Licence Creative Commons 3.0 Attribution.]]></string>
 	<string name="help">Aide</string>
-	<string name="disablesound">Désactiver son/vibreur</string>
 	<string name="enablesound">Activer son/vibreur</string>
-	<string name="startle">Effrayer</string>
     <string name="toast_remindMenuButton">Appuyez sur le bouton MENU pour plus d\'options\u2026</string>
-    <string name="themeLoadError">Oups, je n\'ai pas pu charger ce thème ! Essaie de nouveau. Vérifie ta connexion internet.</string>
 	<string name="options">Options</string>
 	<string name="idleTimeout">Temps avant de m\'endormir</string>
 	<string name="record_start">Enregistrer</string>

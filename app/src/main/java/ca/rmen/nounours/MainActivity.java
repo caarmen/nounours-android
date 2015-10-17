@@ -130,6 +130,7 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume begin");
 
         super.onResume();
         if (mSensorManager != null) {
@@ -141,11 +142,11 @@ public class MainActivity extends Activity {
         mNounours.setEnableSound(NounoursSettings.isSoundEnabled(this));
         mNounours.setEnableVibrate(NounoursSettings.isSoundEnabled(this));
         mNounours.setIdleTimeout(NounoursSettings.getIdleTimeout(this));
-        mNounours.setEnableRandomAnimations(true);
         boolean themeChanged = reloadThemeFromPreference();
         if (!themeChanged) mNounours.onResume();
         mNounours.doPing(true);
         registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
+        Log.v(TAG, "onResume end");
 
     }
 
@@ -300,6 +301,7 @@ public class MainActivity extends Activity {
     }
 
     private boolean reloadThemeFromPreference() {
+        Log.v(TAG, "reloadThemeFromPreference");
         boolean nounoursIsBusy = mNounours.isLoading();
         Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
         String themeId = NounoursSettings.getThemeId(this);
@@ -307,19 +309,12 @@ public class MainActivity extends Activity {
                 && mNounours.getCurrentTheme().getId().equals(themeId)) {
             return false;
         }
-        final Theme theme;
-        if (AndroidNounours.DEFAULT_THEME_ID.equals(themeId)) {
-            theme = mNounours.getDefaultTheme();
-        } else {
-            final Map<String, Theme> themes = mNounours.getThemes();
-            theme = themes.get(themeId);
-        }
+        final Theme theme = mNounours.getThemes().get(themeId);
         if (theme != null) {
             mNounours.stopAnimation();
             final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
             imageView.setImageBitmap(null);
             mNounours.useTheme(theme.getId());
-            mSensorListener.rereadOrientationFile(theme, MainActivity.this);
         }
         return true;
     }
@@ -327,6 +322,7 @@ public class MainActivity extends Activity {
     private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
         @Override
         public void onThemeLoaded() {
+            mSensorListener.rereadOrientationFile(MainActivity.this);
             ActivityCompat.invalidateOptionsMenu(MainActivity.this);
         }
     };

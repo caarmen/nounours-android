@@ -1,0 +1,4 @@
+Id,X,Y,Width,Height,MinVelX,MinVelY,AnimationId,VariableSpeed
+1,0,100,320,355,1500,0,7,false
+2,0,100,320,355,-1500,0,4,false
+3,0,100,320,355,0,-1500,6,false

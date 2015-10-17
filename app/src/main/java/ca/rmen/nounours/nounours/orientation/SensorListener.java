@@ -28,23 +28,15 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Surface;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
 import ca.rmen.nounours.Constants;
-import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursRecorder;
-import ca.rmen.nounours.R;
-import ca.rmen.nounours.Util;
 import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.nounours.AndroidNounours;
 
 /**
@@ -71,18 +63,17 @@ public class SensorListener implements SensorEventListener {
                           Context context) {
         mNounours = nounours;
         mContext = context;
-        rereadOrientationFile(nounours.getCurrentTheme(), context);
         mLastMagneticField = new float[]{0, 0, -1};
     }
 
-    public void rereadOrientationFile(final Theme theme, final Context context) {
+    public void rereadOrientationFile(final Context context) {
         Log.v(TAG, "rereadOrientationFile");
         mOrientationImages.clear();
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
-                InputStream orientationImageFile = getOrientationFile(theme, context);
+                InputStream orientationImageFile = getOrientationFile(mNounours.getCurrentTheme().getId(), context);
                 if (orientationImageFile != null) {
                     OrientationImageReader orientationImageReader;
                     try {
@@ -106,29 +97,13 @@ public class SensorListener implements SensorEventListener {
      *
      * @return a stream to read the orientation file for the given theme.
      */
-    private InputStream getOrientationFile(Theme theme, Context context) {
-
-        if (theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
-            return context.getResources()
-                    .openRawResource(R.raw.orientationimage);
-        }
-        String themesDir = mNounours.getAppDir().getAbsolutePath();
+    private InputStream getOrientationFile(String themeId, Context context) {
         try {
-            File orientationImageFile = new File(themesDir + File.separator
-                    + theme.getId() + File.separator + "orientationimage2.csv");
-            if (!orientationImageFile.exists()) {
-                URI remoteOrientationImageFile = new URI(theme.getLocation()
-                        + "/orientationimage2.csv");
-                Util.downloadFile(remoteOrientationImageFile,
-                        orientationImageFile);
-                if (!orientationImageFile.exists())
-                    return null;
-                return new FileInputStream(orientationImageFile);
-            }
-            return new FileInputStream(orientationImageFile);
-        } catch (IOException | URISyntaxException e) {
-            Log.v(TAG, e.getMessage(), e);
+            return context.getAssets().open("themes/" + themeId + "/orientationimage2.csv");
+        } catch (IOException e) {
+            Log.v(TAG, "Couldn't open orientation file: " + e.getMessage(), e);
         }
+
         return null;
 
     }
@@ -224,7 +199,7 @@ public class SensorListener implements SensorEventListener {
                     && pitch <= orientationImage.maxPitch
                     && roll >= orientationImage.minRoll
                     && roll <= orientationImage.maxRoll) {
-                final Image image = mNounours.getImages().get(
+                final Image image = mNounours.getCurrentTheme().getImages().get(
                         orientationImage.imageId);
                 mNounours.stopAnimation();
                 mNounours.setImage(image);
