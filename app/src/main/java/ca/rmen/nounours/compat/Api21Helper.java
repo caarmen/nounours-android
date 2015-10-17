@@ -20,7 +20,6 @@
 package ca.rmen.nounours.compat;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 
@@ -30,7 +29,7 @@ class Api21Helper {
         // prevent instantiation
     }
 
-    static SoundPool createSoundPool(Context context) {
+    static SoundPool createSoundPool() {
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)

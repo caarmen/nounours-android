@@ -54,7 +54,7 @@ class SoundHandler implements NounoursSoundHandler {
     public SoundHandler(Context context) {
         mContext = context;
         // Initialize the media player.
-        mSoundPool = SoundPoolCompat.create(context);
+        mSoundPool = SoundPoolCompat.create();
     }
 
     public void cacheSounds(final Theme theme) {

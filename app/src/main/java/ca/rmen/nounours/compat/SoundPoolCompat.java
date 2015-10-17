@@ -19,18 +19,18 @@
 
 package ca.rmen.nounours.compat;
 
-import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
 
 public class SoundPoolCompat {
 
-    public static SoundPool create(Context context) {
+    public static SoundPool create() {
         if (ApiHelper.getAPILevel() < Build.VERSION_CODES.LOLLIPOP) {
+            //noinspection deprecation
             return new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
         } else {
-            return Api21Helper.createSoundPool(context);
+            return Api21Helper.createSoundPool();
         }
     }
 }
