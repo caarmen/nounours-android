@@ -36,9 +36,9 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -89,13 +89,12 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.main);
 
-        final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
+        final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
         mRecordButton.setOnClickListener(mOnClickListener);
-        mNounours = new AndroidNounours(this, new Handler(), imageView, mListener);
+        mNounours = new AndroidNounours(this, new Handler(), surfaceView, mListener);
 
         FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
-        imageView.setOnTouchListener(mTouchListener);
         if (!isOldEmulator) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
@@ -106,8 +105,8 @@ public class MainActivity extends Activity {
 
         final GestureDetector gestureDetector = new GestureDetector(this, nounoursFlingDetector);
         mTouchListener = new TouchListener(mNounours, gestureDetector);
+        surfaceView.setOnTouchListener(mTouchListener);
         mSensorListener = new SensorListener(mNounours, this);
-        imageView.setOnTouchListener(mTouchListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         /*
          * if (isOldEmulator) { Hardware.mContentResolver = getContentResolver();
@@ -312,8 +311,6 @@ public class MainActivity extends Activity {
         final Theme theme = mNounours.getThemes().get(themeId);
         if (theme != null) {
             mNounours.stopAnimation();
-            final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-            imageView.setImageBitmap(null);
             mNounours.useTheme(theme.getId());
         }
         return true;

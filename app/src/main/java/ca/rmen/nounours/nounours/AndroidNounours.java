@@ -22,10 +22,13 @@ package ca.rmen.nounours.nounours;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +39,6 @@ import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
-import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
@@ -60,10 +62,11 @@ public class AndroidNounours extends Nounours {
 
     private final Context mContext;
     private final Handler mUIHandler;
-    private final ImageView mImageView;
+    private final SurfaceView mSurfaceView;
     private final AndroidNounoursListener mListener;
     private final ImageCache mImageCache = new ImageCache();
     private final SoundHandler mSoundHandler;
+    private final Paint mPaint = new Paint();
 
     private ProgressDialog mProgressDialog;
 
@@ -75,11 +78,11 @@ public class AndroidNounours extends Nounours {
      *
      * @param context The android mContext.
      */
-    public AndroidNounours(final Context context, Handler uiHandler, ImageView imageView, AndroidNounoursListener listener) {
+    public AndroidNounours(final Context context, Handler uiHandler, SurfaceView surfaceView, AndroidNounoursListener listener) {
 
         mContext = context;
         mUIHandler = uiHandler;
-        mImageView = imageView;
+        mSurfaceView = surfaceView;
         mListener = listener;
         StreamLoader streamLoader = new AssetStreamLoader(context);
 
@@ -120,7 +123,6 @@ public class AndroidNounours extends Nounours {
         CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, theme);
 
         // MEMORY
-        mImageView.setImageResource(R.drawable.defaultimg_sm);
         mImageCache.clearImageCache();
         Runnable themeLoader = new Runnable() {
             @SuppressWarnings("synthetic-access")
@@ -142,27 +144,8 @@ public class AndroidNounours extends Nounours {
 
     private void themeLoaded() {
         Log.v(TAG, "themeLoaded");
-        resizeView();
         mProgressDialog.dismiss();
         mListener.onThemeLoaded();
-    }
-
-    private void resizeView() {
-        Theme theme = getCurrentTheme();
-        if (theme == null)
-            return;
-        ViewGroup.LayoutParams layoutParams = mImageView.getLayoutParams();
-
-        float widthRatio = (float) DisplayCompat.getWidth(mContext) / theme.getWidth();
-        float heightRatio = (float) DisplayCompat.getHeight(mContext) / theme.getHeight();
-        Log.v(TAG, widthRatio + ": " + heightRatio);
-        float ratioToUse = widthRatio > heightRatio ? heightRatio : widthRatio;
-
-        layoutParams.height = (int) (ratioToUse * theme.getHeight());
-        layoutParams.width = (int) (ratioToUse * theme.getWidth());
-        Log.v(TAG, "Scaling view to " + layoutParams.width + "x" + layoutParams.height);
-        mImageView.setLayoutParams(layoutParams);
-
     }
 
     /**
@@ -179,7 +162,35 @@ public class AndroidNounours extends Nounours {
         final Bitmap bitmap = mImageCache.getDrawableImage(mContext, image);
         if (bitmap == null)
             return;
-        mImageView.setImageBitmap(bitmap);
+        SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
+        Canvas c = surfaceHolder.lockCanvas();
+        if (c != null) {
+            c.save();
+            int deviceWidth = mSurfaceView.getWidth();
+            int deviceHeight = mSurfaceView.getHeight();
+            int bitmapWidth = bitmap.getWidth();
+            int bitmapHeight = bitmap.getHeight();
+            int deviceCenterX = deviceWidth / 2;
+            int deviceCenterY = deviceHeight / 2;
+            int bitmapCenterX = bitmapWidth / 2;
+            int bitmapCenterY = bitmapHeight / 2;
+
+            float scaleX = (float) deviceWidth / bitmapWidth;
+            float scaleY = (float) deviceHeight / bitmapHeight;
+            float offsetX = deviceCenterX - bitmapCenterX;
+            float offsetY = deviceCenterY - bitmapCenterY;
+
+            float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
+            c.drawColor(mContext.getResources().getColor(android.R.color.black));
+            Matrix m = new Matrix();
+            m.postTranslate(offsetX, offsetY);
+            m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
+            c.setMatrix(m);
+            c.drawBitmap(bitmap, 0, 0, mPaint);
+            c.restore();
+            // TODO setting if (dim) c.drawColor(0x88000000);
+            surfaceHolder.unlockCanvasAndPost(c);
+        }
     }
 
     /**
@@ -273,12 +284,12 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected int getDeviceHeight() {
-        return mImageView.getHeight();
+        return mSurfaceView.getHeight();
     }
 
     @Override
     protected int getDeviceWidth() {
-        return mImageView.getWidth();
+        return mSurfaceView.getWidth();
     }
 
     @SuppressWarnings("FieldCanBeLocal")
