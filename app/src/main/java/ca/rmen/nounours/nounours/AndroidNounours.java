@@ -31,7 +31,6 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -43,10 +42,8 @@ import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.DisplayCompat;
-import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
-import ca.rmen.nounours.io.DefaultStreamLoader;
 import ca.rmen.nounours.io.StreamLoader;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
 import ca.rmen.nounours.nounours.cache.ImageCache;
@@ -136,17 +133,6 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     public boolean useTheme(final String id) {
-        if (!Nounours.DEFAULT_THEME_ID.equals(id)) {
-            File themeDir = new File(getAppDir(), id);
-            if (!themeDir.exists()) {
-                boolean mkdirsResult = themeDir.mkdirs();
-                if (!themeDir.isDirectory()) {
-                    Log.v(TAG, "Could not create theme folder " + themeDir + ". mkdirs returned " + mkdirsResult);
-                    resetToDefaultTheme();
-                    return false;
-                }
-            }
-        }
         int taskSize = 1;
         Theme theme;
 
@@ -349,11 +335,6 @@ public class AndroidNounours extends Nounours {
         return mImageView.getWidth();
     }
 
-    @Override
-    public File getAppDir() {
-        return EnvironmentCompat.getExternalFilesDir(mContext);
-    }
-
     /**
      * Something went wrong when trying to load a theme.  Reset to the default one.
      */
@@ -390,11 +371,10 @@ public class AndroidNounours extends Nounours {
         }
     };
 
-    private static class AndroidStreamLoader extends DefaultStreamLoader {
+    private static class AndroidStreamLoader implements StreamLoader {
         private final Context mContext;
 
         public AndroidStreamLoader(Context context) {
-            super(EnvironmentCompat.getExternalFilesDir(context));
             mContext = context;
         }
 
@@ -407,7 +387,7 @@ public class AndroidNounours extends Nounours {
                     return mContext.getAssets().open(path);
                 }
             }
-            return super.open(uri);
+            return null;
         }
     };
 }

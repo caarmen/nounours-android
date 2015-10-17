@@ -35,12 +35,6 @@ public class EnvironmentCompat {
         // Prevent instantiation
     }
 
-    public static String getExternalFilesPath(Context context) {
-        File externalFilesDir = getExternalFilesDir(context);
-        if (externalFilesDir == null) return null;
-        return externalFilesDir.getAbsolutePath();
-    }
-
     public static File getExternalFilesDir(Context context) {
         File result;
         String folderName = "nounours";
