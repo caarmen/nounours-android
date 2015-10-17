@@ -26,7 +26,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,43 +48,6 @@ public class AnimationCache {
     public AnimationCache(ImageCache imageCache) {
         Log.v(TAG, "Constructor");
         mImageCache = imageCache;
-    }
-
-    /**
-     * Store all animations in memory for performance.
-     */
-    public boolean cacheAnimations(Context context, Collection<Animation> animations, Image defaultImage) {
-        Log.v(TAG, "cacheAnimations");
-        for (final Animation animation : animations) {
-            AnimationDrawable animationDrawable = createAnimation(context, animation, defaultImage, true);
-            if (animationDrawable == null) return false;
-        }
-        return true;
-    }
-
-    /**
-     * @return an Android animation given the nounours animation data.
-     *
-     * @param doCache if true, this image sequence will be stored in memory for future use.
-     */
-    public AnimationDrawable createAnimation(Context context, final Animation animation, Image defaultImage, boolean doCache) {
-        Log.v(TAG, "createAnimation " + animation + " doCache = " + doCache);
-        // First see if we have this stored in memory.
-        AnimationDrawable animationDrawable = mAnimationCache.get(animation.getId());
-        if (animationDrawable != null) {
-            return animationDrawable;
-        }
-
-        // Create the android animation.
-        animationDrawable = createAnimation(context, animation);
-        if (doCache)
-            mAnimationCache.put(animation.getId(), animationDrawable);
-        // Add the default image at the end.
-        BitmapDrawable drawable = getDrawable(context, defaultImage);
-        animationDrawable.addFrame(drawable, animation.getInterval());
-        Log.v(TAG, "Loaded animation " + animation.getId());
-
-        return animationDrawable;
     }
 
     /**

@@ -19,16 +19,18 @@
 
 package ca.rmen.nounours.nounours;
 
-import android.content.Context;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.util.Log;
-import android.widget.ImageView;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.data.Animation;
-import ca.rmen.nounours.nounours.cache.AnimationCache;
+import ca.rmen.nounours.data.AnimationImage;
+import ca.rmen.nounours.data.Image;
 
 /**
  * Manages the Nounours animations displayed to the Android device.
@@ -38,16 +40,19 @@ import ca.rmen.nounours.nounours.cache.AnimationCache;
 class AnimationHandler implements NounoursAnimationHandler {
     private static final String TAG = Constants.TAG + AnimationHandler.class.getSimpleName();
 
-    private final Context mContext;
     private final AndroidNounours mNounours;
-    private final ImageView mImageView;
-    private final AnimationCache mAnimationCache;
+    private final AtomicBoolean mIsDoingAnimation = new AtomicBoolean();
+    private final Handler mBackgroundHandler;
+    private final Handler mUiHandler;
+    private final AnimationTask mAnimationTask;
 
-    public AnimationHandler(Context context, AndroidNounours nounours, ImageView imageView, AnimationCache animationCache) {
-        mContext = context;
+    public AnimationHandler(AndroidNounours nounours) {
         mNounours = nounours;
-        mImageView = imageView;
-        mAnimationCache = animationCache;
+        HandlerThread thread = new HandlerThread(TAG);
+        thread.start();
+        mBackgroundHandler = new Handler(thread.getLooper());
+        mAnimationTask = new AnimationTask();
+        mUiHandler = new Handler();
     }
 
     /**
@@ -57,41 +62,7 @@ class AnimationHandler implements NounoursAnimationHandler {
     @Override
     public boolean isAnimationRunning() {
         Log.v(TAG, "isAnimationRunning");
-        final AnimationDrawable currentAnimation = getCurrentAnimationDrawable();
-        if (currentAnimation == null) {
-            Log.v(TAG, "Not running any animation");
-            return false;
-
-        }
-        // It is not running
-        if (!currentAnimation.isRunning()) {
-            return false;
-        }
-        // For some reason, isRunning() can be true, even after the animation
-        // has completed. The animation is stuck
-        // on its last frame.
-        final Drawable currentImage = currentAnimation.getCurrent();
-        final Drawable lastImage = currentAnimation.getFrame(currentAnimation.getNumberOfFrames() - 1);
-        // If we're stuck on the last frame, close the animation.
-        if (currentImage == lastImage) {
-            Log.v(TAG, "isRunning true, yet on last image?");
-            currentAnimation.stop();
-            return false;
-        }
-        Log.v(TAG, "Currently running animation");
-        return true;
-    }
-
-    /**
-     * @return the currently running android animation, if any.
-     */
-    private AnimationDrawable getCurrentAnimationDrawable() {
-        final Drawable currentDrawable = mImageView.getDrawable();
-        // First see if an animation is visible on the screen.
-        if (currentDrawable instanceof AnimationDrawable) {
-            return (AnimationDrawable) currentDrawable;
-        }
-        return null;
+        return mIsDoingAnimation.get();
     }
 
     /**
@@ -102,25 +73,8 @@ class AnimationHandler implements NounoursAnimationHandler {
     @Override
     public void doAnimation(final Animation animation, final boolean isDynamicAnimation) {
         Log.v(TAG, "doAnimation: " + animation);
-        final Runnable runnable = new Runnable() {
-            public void run() {
-                // Create an Android animation.
-                final AnimationDrawable animationDrawable = mAnimationCache.createAnimation(mContext, animation, mNounours.getDefaultImage(), false);
-                if (animationDrawable == null) {
-                    Log.v(TAG, "No animation " + animation.getId());
-                    return;
-                }
-
-                // Display the Android animation.
-                mImageView.setImageDrawable(animationDrawable);
-
-                animationDrawable.start();
-                animationDrawable.setOneShot(true);
-                Log.v(TAG, "launched animation " + animation.getId());
-            }
-        };
-        mNounours.runTask(runnable);
-
+        mAnimationTask.setAnimation(animation, isDynamicAnimation);
+        mBackgroundHandler.post(mAnimationTask);
     }
 
     /**
@@ -130,10 +84,7 @@ class AnimationHandler implements NounoursAnimationHandler {
      */
     @Override
     public void stopAnimation() {
-        final AnimationDrawable animation = getCurrentAnimationDrawable();
-        if (animation != null) {
-            animation.stop();
-        }
+        mIsDoingAnimation.set(false);
     }
 
     /**
@@ -144,6 +95,54 @@ class AnimationHandler implements NounoursAnimationHandler {
     @Override
     public void addAnimation(Animation animation) {
         // Do nothing
+    }
+
+    private class AnimationTask implements Runnable {
+
+        private Animation mAnimation;
+        private boolean mIsDynamicAnimation;
+
+        public void setAnimation(Animation animation, boolean isDynamicAnimation) {
+            mAnimation = animation;
+            mIsDynamicAnimation = isDynamicAnimation;
+        }
+
+        @Override
+        public void run() {
+            // Note that we are doing an animation
+            mIsDoingAnimation.set(true);
+
+            // Iterate through each of the images and display them.
+            for (int i = 0; i < mAnimation.getRepeat(); i++) {
+                for (AnimationImage image : mAnimation.getImages()) {
+                    displayFrame(image.getImage());
+                    SystemClock.sleep((long) (mAnimation.getInterval() * image.getDuration()));
+                    if(!mIsDoingAnimation.get()) break;
+                }
+                if(!mIsDoingAnimation.get()) break;
+            }
+            if (!mIsDynamicAnimation) reset();
+            // No longer doing an animation.
+            mIsDoingAnimation.set(false);
+        }
+
+        private void reset() {
+            mUiHandler.post(new Runnable(){
+                @Override
+                public void run() {
+                    mNounours.reset();
+                }
+            });
+        }
+
+        private void displayFrame(final Image image) {
+            mUiHandler.post(new Runnable(){
+                @Override
+                public void run() {
+                    mNounours.setImage(image);
+                }
+            });
+        }
     }
 
 

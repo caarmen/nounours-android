@@ -40,7 +40,6 @@ import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
-import ca.rmen.nounours.nounours.cache.AnimationCache;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.util.ThemeUtil;
@@ -64,7 +63,6 @@ public class AndroidNounours extends Nounours {
     private final ImageView mImageView;
     private final AndroidNounoursListener mListener;
     private final ImageCache mImageCache = new ImageCache();
-    private final AnimationCache mAnimationCache = new AnimationCache(mImageCache);
     private final SoundHandler mSoundHandler;
 
     private ProgressDialog mProgressDialog;
@@ -86,7 +84,7 @@ public class AndroidNounours extends Nounours {
         StreamLoader streamLoader = new AssetStreamLoader(context);
 
         String themeId = NounoursSettings.getThemeId(context);
-        AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
+        AnimationHandler animationHandler = new AnimationHandler(this);
         mSoundHandler = new SoundHandler(context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
@@ -105,8 +103,7 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected boolean cacheResources() {
-        boolean result = mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener)
-                && mAnimationCache.cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
+        boolean result = mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener);
         mSoundHandler.cacheSounds(getCurrentTheme());
         return result;
     }
@@ -125,7 +122,6 @@ public class AndroidNounours extends Nounours {
         // MEMORY
         mImageView.setImageResource(R.drawable.defaultimg_sm);
         mImageCache.clearImageCache();
-        mAnimationCache.clearAnimationCache();
         Runnable themeLoader = new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -273,7 +269,6 @@ public class AndroidNounours extends Nounours {
     public void onDestroy() {
         debug("destroy");
         mImageCache.clearImageCache();
-        mAnimationCache.clearAnimationCache();
     }
 
     @Override
