@@ -124,7 +124,7 @@ public class AndroidNounours extends Nounours {
         CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, theme);
 
         // MEMORY
-        mImageView.setImageDrawable(null);
+        mImageView.setImageResource(R.drawable.defaultimg_sm);
         mImageCache.clearImageCache();
         mAnimationCache.clearAnimationCache();
         Runnable themeLoader = new Runnable() {
