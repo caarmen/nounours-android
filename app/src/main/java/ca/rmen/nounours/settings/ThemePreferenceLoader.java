@@ -31,11 +31,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import ca.rmen.nounours.Constants;
-import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.ThemeReader;
-import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.ThemeUtil;
 
 public final class ThemePreferenceLoader {
@@ -54,22 +52,19 @@ public final class ThemePreferenceLoader {
     static void load(final Context context, final ListPreference listPreference) {
 
         listPreference.setEnabled(false);
-        if (!FileUtil.isSdPresent()) return;
 
         new AsyncTask<Void, Void, ThemePreferenceData>() {
             @Override
             protected ThemePreferenceData doInBackground(Void... params) {
-                InputStream themeFile = context.getResources().openRawResource(R.raw.imageset);
+                InputStream themeFile = context.getResources().openRawResource(R.raw.themes);
                 try {
                     ThemeReader themeReader = new ThemeReader(themeFile);
                     Map<String, Theme> themes = themeReader.getThemes();
                     SortedSet<String> sortedThemeList = new TreeSet<>();
                     sortedThemeList.addAll(themes.keySet());
-                    CharSequence[] entries = new CharSequence[themes.size() + 1];
-                    CharSequence[] entryValues = new CharSequence[themes.size() + 1];
-                    entryValues[0] = Nounours.DEFAULT_THEME_ID;
-                    entries[0] = context.getString(R.string.defaultTheme);
-                    int index = 1;
+                    CharSequence[] entries = new CharSequence[themes.size()];
+                    CharSequence[] entryValues = new CharSequence[themes.size()];
+                    int index = 0;
                     for (String themeId : sortedThemeList) {
                         Theme theme = themes.get(themeId);
                         entries[index] = ThemeUtil.getThemeLabel(context, theme);

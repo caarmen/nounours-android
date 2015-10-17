@@ -306,13 +306,7 @@ public class MainActivity extends Activity {
                 && mNounours.getCurrentTheme().getId().equals(themeId)) {
             return false;
         }
-        final Theme theme;
-        if (AndroidNounours.DEFAULT_THEME_ID.equals(themeId)) {
-            theme = mNounours.getDefaultTheme();
-        } else {
-            final Map<String, Theme> themes = mNounours.getThemes();
-            theme = themes.get(themeId);
-        }
+        final Theme theme = mNounours.getThemes().get(themeId);
         if (theme != null) {
             mNounours.stopAnimation();
             final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);

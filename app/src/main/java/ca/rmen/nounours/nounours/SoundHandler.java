@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import ca.rmen.nounours.Constants;
-import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.data.Sound;
 import ca.rmen.nounours.data.Theme;
@@ -71,20 +70,13 @@ class SoundHandler implements NounoursSoundHandler {
             public void run() {
                 for (Sound sound : theme.getSounds().values()) {
                     final int soundPoolId;
-                    if(theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
-                        final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
-                        final int soundResId = mContext.getResources().getIdentifier(resourceSoundFileName, "raw",
-                                mContext.getClass().getPackage().getName());
-                        soundPoolId = mSoundPool.load(mContext, soundResId, 0);
-                    } else {
-                        String assetPath = "themes/" + theme.getId() + "/" + sound.getFilename();
-                        try {
-                            AssetFileDescriptor assetFd = mContext.getAssets().openFd(assetPath);
-                            soundPoolId = mSoundPool.load(assetFd, 0);
-                        } catch (IOException e) {
-                            Log.v(TAG, "couldn't load sound " + sound, e);
-                            continue;
-                        }
+                    String assetPath = "themes/" + theme.getId() + "/" + sound.getFilename();
+                    try {
+                        AssetFileDescriptor assetFd = mContext.getAssets().openFd(assetPath);
+                        soundPoolId = mSoundPool.load(assetFd, 0);
+                    } catch (IOException e) {
+                        Log.v(TAG, "couldn't load sound " + sound, e);
+                        continue;
                     }
                     mSoundPoolIds.put(sound.getId(), soundPoolId);
                 }

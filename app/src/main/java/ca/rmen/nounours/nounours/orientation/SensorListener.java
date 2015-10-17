@@ -34,9 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ca.rmen.nounours.Constants;
-import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursRecorder;
-import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
@@ -66,8 +64,8 @@ public class SensorListener implements SensorEventListener {
                           Context context) {
         mNounours = nounours;
         mContext = context;
-        rereadOrientationFile(nounours.getCurrentTheme(), context);
         mLastMagneticField = new float[]{0, 0, -1};
+        rereadOrientationFile(mNounours.getCurrentTheme(), context);
     }
 
     public void rereadOrientationFile(final Theme theme, final Context context) {
@@ -102,16 +100,10 @@ public class SensorListener implements SensorEventListener {
      * @return a stream to read the orientation file for the given theme.
      */
     private InputStream getOrientationFile(Theme theme, Context context) {
-
-        if (theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
-            return context.getResources()
-                    .openRawResource(R.raw.orientationimage);
-        } else {
-            try {
-                return context.getAssets().open("themes/" + theme.getId()+ "/orientationimage2.csv");
-            } catch (IOException e) {
-                Log.v(TAG, "Couldn't open orientation file: " + e.getMessage(), e);
-            }
+        try {
+            return context.getAssets().open("themes/" + theme.getId()+ "/orientationimage2.csv");
+        } catch (IOException e) {
+            Log.v(TAG, "Couldn't open orientation file: " + e.getMessage(), e);
         }
 
         return null;

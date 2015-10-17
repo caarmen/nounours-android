@@ -19,12 +19,9 @@
 
 package ca.rmen.nounours.nounours;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.content.res.Resources;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.util.Log;
@@ -48,7 +45,6 @@ import ca.rmen.nounours.io.StreamLoader;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
-import ca.rmen.nounours.util.FileUtil;
 import ca.rmen.nounours.util.ThemeUtil;
 
 /**
@@ -92,26 +88,15 @@ public class AndroidNounours extends Nounours {
         StreamLoader streamLoader = new AndroidStreamLoader(context);
 
         String themeId = NounoursSettings.getThemeId(context);
-        if (!FileUtil.isSdPresent()) themeId = Nounours.DEFAULT_THEME_ID;
         AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
         mSoundHandler = new SoundHandler(context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
-        Resources resources = context.getResources();
-        final InputStream propertiesFile = resources.openRawResource(R.raw.nounours);
-        final InputStream themePropertiesFile = resources.openRawResource(R.raw.nounoursdeftheme);
-        final InputStream imageFile = resources.openRawResource(R.raw.image);
-        final InputStream imageSetFile = resources.openRawResource(R.raw.imageset);
-        final InputStream featureFile = resources.openRawResource(R.raw.feature);
-        final InputStream imageFeatureFile = resources.openRawResource(R.raw.imagefeatureassoc);
-        final InputStream adjacentImageFile = resources.openRawResource(R.raw.adjacentimage);
-        final InputStream animationFile = resources.openRawResource(R.raw.animation);
-        final InputStream flingAnimationFile = resources.openRawResource(R.raw.flinganimation);
-        final InputStream soundFile = resources.openRawResource(R.raw.sound);
+        final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
+        final InputStream themesFile = context.getResources().openRawResource(R.raw.themes);
 
         try {
-            init(streamLoader, animationHandler, mSoundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
-                    imageSetFile, featureFile, imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile,
-                    soundFile, themeId);
+            init(streamLoader, animationHandler, mSoundHandler, vibrateHandler, propertiesFile,
+                    themesFile, themeId);
             setEnableVibrate(NounoursSettings.isSoundEnabled(context));
             setEnableSound(NounoursSettings.isSoundEnabled(context));
             setIdleTimeout(NounoursSettings.getIdleTimeout(context));
@@ -132,17 +117,14 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     public boolean useTheme(final String id) {
+        Log.v(TAG, "useTheme " + id);
         int taskSize = 1;
-        Theme theme;
 
         // Get the name of this theme.
-        if (DEFAULT_THEME_ID.equals(id)) theme = getDefaultTheme();
-        else theme = getThemes().get(id);
+        Theme theme = getThemes().get(id);
         CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, theme);
 
         // Estimate the size of the theme.
-        if (!ThemeUtil.isValid(theme)) theme = getCurrentTheme();
-        if (!ThemeUtil.isValid(theme)) theme = getDefaultTheme();
         if (!theme.getSounds().isEmpty())
             taskSize = theme.getImages().size() * 2 + theme.getSounds().size();
 
@@ -155,13 +137,7 @@ public class AndroidNounours extends Nounours {
             @Override
             public void run() {
 
-                boolean loadedTheme = AndroidNounours.super.useTheme(id);
-                if (!loadedTheme) {
-                    if (!Nounours.DEFAULT_THEME_ID.equals(id)) {
-                        debug("Could not load theme " + id + ":  load default theme instead");
-                        resetToDefaultTheme();
-                    }
-                }
+                AndroidNounours.super.useTheme(id);
 
                 runTask(new Runnable() {
                     public void run() {
@@ -317,32 +293,6 @@ public class AndroidNounours extends Nounours {
     @Override
     protected int getDeviceWidth() {
         return mImageView.getWidth();
-    }
-
-    /**
-     * Something went wrong when trying to load a theme.  Reset to the default one.
-     */
-    private void resetToDefaultTheme() {
-        Log.v(TAG, "resetToDefaultTheme");
-        final OnClickListener revertToDefaultTheme = new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                NounoursSettings.setThemeId(mContext, DEFAULT_THEME_ID);
-                useTheme(Nounours.DEFAULT_THEME_ID);
-            }
-        };
-
-        Runnable showAlert = new Runnable() {
-            public void run() {
-                new AlertDialog.Builder(mContext)
-                        .setMessage(mContext.getText(R.string.themeLoadError))
-                        .setPositiveButton(mContext.getText(android.R.string.ok), revertToDefaultTheme)
-                        .create()
-                        .show();
-            }
-        };
-        runTask(showAlert);
     }
 
     @SuppressWarnings("FieldCanBeLocal")
