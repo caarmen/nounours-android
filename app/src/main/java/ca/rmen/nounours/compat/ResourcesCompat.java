@@ -20,20 +20,16 @@
 package ca.rmen.nounours.compat;
 
 import android.content.Context;
-import android.view.Display;
-import android.view.WindowManager;
+import android.os.Build;
 
-public class DisplayCompat {
+public class ResourcesCompat {
 
-    public static int getRotation(Context context) {
-        final WindowManager wm = (WindowManager) context
-                .getApplicationContext().getSystemService(
-                        Context.WINDOW_SERVICE);
-        final Display display = wm.getDefaultDisplay();
-        if (ApiHelper.getAPILevel() >= 8) {
-            return Api8Helper.getRotation(display);
+    public static int getColor(Context context, @SuppressWarnings("SameParameterValue") int id) {
+        if (ApiHelper.getAPILevel() < Build.VERSION_CODES.M) {
+            //noinspection deprecation
+            return context.getResources().getColor(id);
+        } else {
+            return Api23Helper.getColor(context, id);
         }
-        //noinspection deprecation
-        return display.getOrientation();
     }
 }

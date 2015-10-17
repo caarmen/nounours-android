@@ -69,7 +69,6 @@ public class MainActivity extends Activity {
     private AndroidNounours mNounours;
     private SensorManager mSensorManager;
     private SensorListener mSensorListener;
-    private TouchListener mTouchListener;
     private Sensor mAccelerometerSensor;
     private Sensor mMagneticFieldSensor;
     private ImageButton mRecordButton;
@@ -104,8 +103,8 @@ public class MainActivity extends Activity {
         }
 
         final GestureDetector gestureDetector = new GestureDetector(this, nounoursFlingDetector);
-        mTouchListener = new TouchListener(mNounours, gestureDetector);
-        surfaceView.setOnTouchListener(mTouchListener);
+        TouchListener touchListener = new TouchListener(mNounours, gestureDetector);
+        surfaceView.setOnTouchListener(touchListener);
         mSensorListener = new SensorListener(mNounours, this);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         /*

@@ -39,6 +39,7 @@ import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
+import ca.rmen.nounours.compat.ResourcesCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
@@ -181,7 +182,7 @@ public class AndroidNounours extends Nounours {
             float offsetY = deviceCenterY - bitmapCenterY;
 
             float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
-            c.drawColor(mContext.getResources().getColor(android.R.color.black));
+            c.drawColor(ResourcesCompat.getColor(mContext, android.R.color.black));
             Matrix m = new Matrix();
             m.postTranslate(offsetX, offsetY);
             m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
