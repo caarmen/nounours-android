@@ -24,11 +24,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.compat.BitmapCompat;
-import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 
 public class BitmapUtil {
@@ -39,12 +39,10 @@ public class BitmapUtil {
 
     public static Bitmap createBitmap(Context context, Image image) {
         final Bitmap result;
-        // This is one of the downloaded images, in the sdcard.
-        String externalFilesPath = EnvironmentCompat.getExternalFilesPath(context);
-        if (externalFilesPath != null && image.getFilename().contains(externalFilesPath)) {
-            // Load the new image
+        // This is one of the themed images, in the assets.
+        if(image.getFilename().startsWith("file:///android_asset")) {
             Log.v(TAG, "Load themed image.");
-            result = loadBitmap(context, image.getFilename());
+            result = loadBitmap(context, image.getFilename().substring("file:///android_asset/".length()));
         }
         // This is one of the default images bundled in the apk.
         else {
@@ -57,29 +55,36 @@ public class BitmapUtil {
         return result;
     }
 
-    private static Bitmap loadBitmap(Context context, String filename) {
-        return loadBitmap(context, new File(filename), 0, BITMAP_INITIAL_SUB_SAMPLE, BITMAP_LOAD_RETRIES);
+    private static Bitmap loadBitmap(Context context, String assetPath) {
+        return loadBitmap(context, assetPath, 0, BITMAP_INITIAL_SUB_SAMPLE, BITMAP_LOAD_RETRIES);
     }
 
     private static Bitmap loadBitmap(Context context, int resourceId) {
         return loadBitmap(context, null, resourceId, BITMAP_INITIAL_SUB_SAMPLE, BITMAP_LOAD_RETRIES);
     }
 
-    private static Bitmap loadBitmap(Context context, File file, int resourceId, int initialSubSample, int retries) {
+    private static Bitmap loadBitmap(Context context, String assetPath, int resourceId, int initialSubSample, int retries) {
         int inSampleSize = BITMAP_LOAD_RETRIES - retries + initialSubSample;
         BitmapFactory.Options options = BitmapCompat.createBitmapFactoryOptions(inSampleSize);
         try {
-            Log.v(TAG, "Load image " + (file == null ? "" + resourceId : file.getAbsolutePath()) + ".  "
+            Log.v(TAG, "Load image " + (assetPath == null ? "" + resourceId : assetPath) + ".  "
                     + retries + " left.  Sample size = " + options.inSampleSize);
 
-            if (file != null)
-                return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+            if (assetPath != null) {
+                InputStream assetStream = context.getAssets().open(assetPath);
+                Bitmap result = BitmapFactory.decodeStream(assetStream);
+                assetStream.close();
+                return result;
+            }
             else
                 return BitmapFactory.decodeResource(context.getResources(), resourceId, options);
         } catch (OutOfMemoryError e) {
             System.gc();
             if (retries > 0)
-                return loadBitmap(context, file, resourceId, initialSubSample, retries - 1);
+                return loadBitmap(context, assetPath, resourceId, initialSubSample, retries - 1);
+        } catch (IOException e) {
+            Log.v(TAG, "Couldn't load image: " + e.getMessage(), e);
+            return null;
         }
         return null;
     }

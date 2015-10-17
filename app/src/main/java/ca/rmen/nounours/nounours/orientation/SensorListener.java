@@ -28,12 +28,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.Surface;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,7 +37,6 @@ import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursRecorder;
 import ca.rmen.nounours.R;
-import ca.rmen.nounours.Util;
 import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
@@ -111,24 +106,14 @@ public class SensorListener implements SensorEventListener {
         if (theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
             return context.getResources()
                     .openRawResource(R.raw.orientationimage);
-        }
-        String themesDir = mNounours.getAppDir().getAbsolutePath();
-        try {
-            File orientationImageFile = new File(themesDir + File.separator
-                    + theme.getId() + File.separator + "orientationimage2.csv");
-            if (!orientationImageFile.exists()) {
-                URI remoteOrientationImageFile = new URI(theme.getLocation()
-                        + "/orientationimage2.csv");
-                Util.downloadFile(remoteOrientationImageFile,
-                        orientationImageFile);
-                if (!orientationImageFile.exists())
-                    return null;
-                return new FileInputStream(orientationImageFile);
+        } else {
+            try {
+                return context.getAssets().open("themes/" + theme.getId()+ "/orientationimage2.csv");
+            } catch (IOException e) {
+                Log.v(TAG, "Couldn't open orientation file: " + e.getMessage(), e);
             }
-            return new FileInputStream(orientationImageFile);
-        } catch (IOException | URISyntaxException e) {
-            Log.v(TAG, e.getMessage(), e);
         }
+
         return null;
 
     }

@@ -84,7 +84,6 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
         else {
             sdSoundFile = new File(appRootDirectory + File.separator + theme.getId() + File.separator
                     + sound.getFilename());
-            return sdSoundFile;
         }
         if (sdSoundFile.exists()) {
             // See if the file needs to be replaced
@@ -107,10 +106,15 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
         // We need to create the sound file. Retrieve the sound file from the
         // raw resources.
         Log.v(TAG, "Looking for " + sdSoundFile);
-        final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
-        final int soundResId = mContext.getResources().getIdentifier(resourceSoundFileName, "raw",
-                mContext.getClass().getPackage().getName());
-        final InputStream soundFileData = mContext.getResources().openRawResource(soundResId);
+        final InputStream soundFileData;
+        if(theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
+            final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
+            final int soundResId = mContext.getResources().getIdentifier(resourceSoundFileName, "raw",
+                    mContext.getClass().getPackage().getName());
+            soundFileData = mContext.getResources().openRawResource(soundResId);
+        } else {
+            soundFileData = mContext.getAssets().open("themes/" + theme.getId() + "/" + sound.getFilename());
+        }
 
         // Write the file
         final FileOutputStream writer = new FileOutputStream(sdSoundFile);

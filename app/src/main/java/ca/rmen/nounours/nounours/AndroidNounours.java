@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
@@ -45,6 +46,8 @@ import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
+import ca.rmen.nounours.io.DefaultStreamLoader;
+import ca.rmen.nounours.io.StreamLoader;
 import ca.rmen.nounours.nounours.cache.AnimationCache;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
@@ -77,7 +80,7 @@ public class AndroidNounours extends Nounours {
 
     /**
      * Open the CSV data files and call the superclass
-     * {@link Nounours#init(NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, String)}
+     * {@link Nounours#init(StreamLoader, NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, InputStream, String)}
      * method.
      *
      * @param context The android mContext.
@@ -88,10 +91,10 @@ public class AndroidNounours extends Nounours {
         mUIHandler = uiHandler;
         mImageView = imageView;
         mListener = listener;
+        StreamLoader streamLoader = new AndroidStreamLoader(context);
 
         String themeId = NounoursSettings.getThemeId(context);
-        if (!FileUtil.isSdPresent())
-            themeId = Nounours.DEFAULT_THEME_ID;
+        if (!FileUtil.isSdPresent()) themeId = Nounours.DEFAULT_THEME_ID;
         AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
         SoundHandler soundHandler = new SoundHandler(this, context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
@@ -108,7 +111,7 @@ public class AndroidNounours extends Nounours {
         final InputStream soundFile = resources.openRawResource(R.raw.sound);
 
         try {
-            init(animationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
+            init(streamLoader, animationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
                     imageSetFile, featureFile, imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile,
                     soundFile, themeId);
             setEnableVibrate(NounoursSettings.isSoundEnabled(context));
@@ -345,16 +348,6 @@ public class AndroidNounours extends Nounours {
     }
 
     @Override
-    protected boolean isThemeUpToDate(Theme theme) {
-        return true;
-    }
-
-    @Override
-    protected void setIsThemeUpToDate(Theme theme) {
-    }
-
-
-    @Override
     public File getAppDir() {
         return EnvironmentCompat.getExternalFilesDir(mContext);
     }
@@ -392,6 +385,27 @@ public class AndroidNounours extends Nounours {
             setImage(image);
             CharSequence themeName = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
             updateProgressBar(total + (progress), 2 * total, mContext.getString(R.string.loading, themeName));
+        }
+    };
+
+    private static class AndroidStreamLoader extends DefaultStreamLoader {
+        private final Context mContext;
+
+        public AndroidStreamLoader(Context context) {
+            super(EnvironmentCompat.getExternalFilesDir(context));
+            mContext = context;
+        }
+
+        @Override
+        public InputStream open(URI uri) throws IOException {
+            if(uri.getScheme().equalsIgnoreCase("file")) {
+                String path = uri.getPath();
+                if (path.startsWith("/android_asset/")) {
+                    path = path.substring("/android_asset/".length());
+                    return mContext.getAssets().open(path);
+                }
+            }
+            return super.open(uri);
         }
     };
 }

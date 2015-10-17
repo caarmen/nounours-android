@@ -1,0 +1,10 @@
+Id,Label,Interval,Repeat,Sequence,Visible,Vibrate,Sound
+1,Tap Dance,60,5,TipsyUL;TipsyLR;TipsyUR;Default;TipsyLL,true,true,
+2,Jumping Jacks,250,5,MidAir;BothUpBothLegsOut;MidAir;Default,true,false,
+3,Directing Traffic,100,5,LeftUpRightOut;BothOut;LeftDownRightOut;RightOut;LeftDownRightOut;BothOut;LeftUpRightOut,true,false
+4,DanceNoVibrate,60,5,TipsyUL;TipsyLR;TipsyUR;Default;TipsyLL,false,false,
+5,Fly,50,1,BothDown;BothOut;BothUp;BothDown;BothOut;BothUp;BothDown;BothOut;BothUp;Float1BothOut;Float1BothDown;d=2;Float1BothOut;Float1BothUp;Float1BothOut;Float1BothDown;Float1BothOut;d=3;Float2BothOut;Float2BothDown;Float2BothOut;Float2BothUp;Float2BothOut;Float2BothDown;d=4;Float2BothOut;d=3;Float2BothDown;Float2BothOut;Float2BothUp;Float2BothOut;Float2BothDown;Float1BothOut;Float1BothUp;Float1BothOut;TipsyUL;TipsyLR;BothDown,true,false
+6,Parachute,40,1,Default;Float1;Float2;d=5;Float2BothOut;Float1BothUp;Float1BothOut;BothDown,true,false,
+7,Dance,400,3,TiltRight;Default;TiltLeft;Default,true,false
+8,Sleep,1000,200,Sleep1;Sleep2,true,false,lullaby_musicbox
+9,SleepNoSound,1000,200,Sleep1;Sleep2,false,false
