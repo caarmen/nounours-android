@@ -30,7 +30,6 @@ import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
-import ca.rmen.nounours.data.Image;
 
 /**
  * Manages the Nounours animations displayed to the Android device.
@@ -43,7 +42,6 @@ class AnimationHandler implements NounoursAnimationHandler {
     private final AndroidNounours mNounours;
     private final AtomicBoolean mIsDoingAnimation = new AtomicBoolean();
     private final Handler mBackgroundHandler;
-    private final Handler mUiHandler;
     private final AnimationTask mAnimationTask;
 
     public AnimationHandler(AndroidNounours nounours) {
@@ -52,7 +50,6 @@ class AnimationHandler implements NounoursAnimationHandler {
         thread.start();
         mBackgroundHandler = new Handler(thread.getLooper());
         mAnimationTask = new AnimationTask();
-        mUiHandler = new Handler();
     }
 
     /**
@@ -115,35 +112,22 @@ class AnimationHandler implements NounoursAnimationHandler {
             // Iterate through each of the images and display them.
             for (int i = 0; i < mAnimation.getRepeat(); i++) {
                 for (AnimationImage image : mAnimation.getImages()) {
-                    displayFrame(image.getImage());
-                    SystemClock.sleep((long) (mAnimation.getInterval() * image.getDuration()));
+                    long before = System.currentTimeMillis();
+                    mNounours.setImage(image.getImage());
+                    long frameDuration = (long) (mAnimation.getInterval() * image.getDuration());
+                    // after - before: time wasted displaying the image itself.
+                    // we'll subtract it from the time to sleep for this frame.
+                    long after = System.currentTimeMillis();
+                    long frameDurationCorrection = after - before;
+                    long shorterFrameDuration = frameDuration - frameDurationCorrection;
+                    SystemClock.sleep(shorterFrameDuration);
                     if(!mIsDoingAnimation.get()) break;
                 }
                 if(!mIsDoingAnimation.get()) break;
             }
-            if (!mIsDynamicAnimation) reset();
+            if (!mIsDynamicAnimation) mNounours.reset();
             // No longer doing an animation.
             mIsDoingAnimation.set(false);
         }
-
-        private void reset() {
-            mUiHandler.post(new Runnable(){
-                @Override
-                public void run() {
-                    mNounours.reset();
-                }
-            });
-        }
-
-        private void displayFrame(final Image image) {
-            mUiHandler.post(new Runnable(){
-                @Override
-                public void run() {
-                    mNounours.setImage(image);
-                }
-            });
-        }
     }
-
-
 }
