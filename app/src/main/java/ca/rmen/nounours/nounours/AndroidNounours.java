@@ -74,6 +74,7 @@ public class AndroidNounours extends Nounours {
     private final AndroidNounoursListener mListener;
     private final ImageCache mImageCache = new ImageCache();
     private final AnimationCache mAnimationCache = new AnimationCache(mImageCache);
+    private final SoundHandler mSoundHandler;
 
     private ProgressDialog mProgressDialog;
 
@@ -96,7 +97,7 @@ public class AndroidNounours extends Nounours {
         String themeId = NounoursSettings.getThemeId(context);
         if (!FileUtil.isSdPresent()) themeId = Nounours.DEFAULT_THEME_ID;
         AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
-        SoundHandler soundHandler = new SoundHandler(this, context);
+        mSoundHandler = new SoundHandler(context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         Resources resources = context.getResources();
         final InputStream propertiesFile = resources.openRawResource(R.raw.nounours);
@@ -111,7 +112,7 @@ public class AndroidNounours extends Nounours {
         final InputStream soundFile = resources.openRawResource(R.raw.sound);
 
         try {
-            init(streamLoader, animationHandler, soundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
+            init(streamLoader, animationHandler, mSoundHandler, vibrateHandler, propertiesFile, themePropertiesFile, imageFile,
                     imageSetFile, featureFile, imageFeatureFile, adjacentImageFile, animationFile, flingAnimationFile,
                     soundFile, themeId);
             setEnableVibrate(NounoursSettings.isSoundEnabled(context));
@@ -125,6 +126,7 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected boolean cacheImages() {
+        mSoundHandler.cacheSounds(getCurrentTheme());
         return mImageCache.cacheImages(mContext, getImages().values(), mUIHandler, mImageCacheListener)
                 && mAnimationCache.cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
     }

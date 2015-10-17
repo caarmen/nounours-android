@@ -20,107 +20,77 @@
 package ca.rmen.nounours.nounours;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnErrorListener;
+import android.content.res.AssetFileDescriptor;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import ca.rmen.nounours.BuildConfig;
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.data.Sound;
 import ca.rmen.nounours.data.Theme;
-import ca.rmen.nounours.util.FileUtil;
 
 /**
  * Manages sound effects and music for Nounours on the Android device.
  *
  * @author Carmen Alvarez
  */
-class SoundHandler implements NounoursSoundHandler, OnErrorListener {
+class SoundHandler implements NounoursSoundHandler {
     private static final String TAG = Constants.TAG + SoundHandler.class.getSimpleName();
 
-    private final MediaPlayer mMediaPlayer;
-
-    private final Nounours mNounours;
     private final Context mContext;
+    private final SoundPool mSoundPool;
+    private boolean mSoundEnabled = true;
+    // We use SoundPool instead of MediaPlayer because it allows playing sounds which
+    // are not on the sdcard.  But we only play one sound at a time.
+    private int mCurrentSoundId;
+    private final Map<String, Integer> mSoundPoolIds = new ConcurrentHashMap<>();
 
 
-    public SoundHandler(Nounours nounours, Context context) {
-        mNounours = nounours;
+    public SoundHandler(Context context) {
         mContext = context;
         // Initialize the media player.
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setOnErrorListener(this);
+        mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
     }
 
-
-    /**
-     * For some reason, sounds will only play if they are on the sdcard. The
-     * first time we try to play a sound, copy it first to the sdcard.
-     *
-     * @param sound one of Nounours' sounds.
-     * @return The file for the given sound
-     * @throws IOException
-     */
-    private File getSoundFile(final Sound sound) throws IOException {
-
-        // Get the nounours directory on the sdcard
-        if (!FileUtil.isSdPresent()) return null;
-        final File appRootDirectory = mNounours.getAppDir();
-        if (!appRootDirectory.isDirectory()) return null;
-
-        // Check if the sound file exists already.
-        Theme theme = mNounours.getCurrentTheme();
-        File sdSoundFile;
-        if (theme.getId().equals(Nounours.DEFAULT_THEME_ID))
-            sdSoundFile = new File(appRootDirectory, sound.getFilename());
-        else {
-            sdSoundFile = new File(appRootDirectory + File.separator + theme.getId() + File.separator
-                    + sound.getFilename());
+    public void cacheSounds(final Theme theme) {
+        Log.v(TAG, "cacheSounds for theme " + theme);
+        // clear the existing cache
+        for (Integer soundPoolId : mSoundPoolIds.values()) {
+            mSoundPool.unload(soundPoolId);
         }
-        if (sdSoundFile.exists()) {
-            // See if the file needs to be replaced
-            final String resourcePathStr;
-            try {
-                resourcePathStr = mContext.getPackageManager().getApplicationInfo(BuildConfig.APPLICATION_ID, 0).sourceDir;
-                final File resourcePath = new File(resourcePathStr);
-                if (resourcePath.lastModified() < sdSoundFile.lastModified()) {
-                    Log.v(TAG, sound + " on sdcard is already up to date");
-                    return sdSoundFile;
+        mSoundPoolIds.clear();
+
+        new Thread(){
+            @Override
+            public void run() {
+                for (Sound sound : theme.getSounds().values()) {
+                    final int soundPoolId;
+                    if(theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
+                        final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
+                        final int soundResId = mContext.getResources().getIdentifier(resourceSoundFileName, "raw",
+                                mContext.getClass().getPackage().getName());
+                        soundPoolId = mSoundPool.load(mContext, soundResId, 0);
+                    } else {
+                        String assetPath = "themes/" + theme.getId() + "/" + sound.getFilename();
+                        try {
+                            AssetFileDescriptor assetFd = mContext.getAssets().openFd(assetPath);
+                            soundPoolId = mSoundPool.load(assetFd, 0);
+                        } catch (IOException e) {
+                            Log.v(TAG, "couldn't load sound " + sound, e);
+                            continue;
+                        }
+                    }
+                    mSoundPoolIds.put(sound.getId(), soundPoolId);
                 }
-                Log.v(TAG, "Need to update " + sound + " on sdcard");
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.v(TAG, e.getMessage(), e);
+                Log.v(TAG, "cached sounds");
             }
-        } else {
-            Log.v(TAG, "Need to create " + sound + " on sdcard");
-        }
-
-        // We need to create the sound file. Retrieve the sound file from the
-        // raw resources.
-        Log.v(TAG, "Looking for " + sdSoundFile);
-        final InputStream soundFileData;
-        if(theme.getId().equals(Nounours.DEFAULT_THEME_ID)) {
-            final String resourceSoundFileName = sound.getFilename().substring(0, sound.getFilename().lastIndexOf('.'));
-            final int soundResId = mContext.getResources().getIdentifier(resourceSoundFileName, "raw",
-                    mContext.getClass().getPackage().getName());
-            soundFileData = mContext.getResources().openRawResource(soundResId);
-        } else {
-            soundFileData = mContext.getAssets().open("themes/" + theme.getId() + "/" + sound.getFilename());
-        }
-
-        // Write the file
-        final FileOutputStream writer = new FileOutputStream(sdSoundFile);
-        FileUtil.copy(soundFileData, writer);
-        // Return the newly created sdcard file.
-        return sdSoundFile;
+        }.start();
     }
 
     /**
@@ -128,23 +98,10 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      */
     public void playSound(final String soundId) {
         Log.v(TAG, "playSound " + soundId);
-        final Sound sound = mNounours.getSound(soundId);
-
-        try {
-            // Get the sound file from the sdcard.
-            final File soundFile = getSoundFile(sound);
-            // Prepare the media player
-            mMediaPlayer.reset();
-            if (soundFile != null && soundFile.exists()) {
-                mMediaPlayer.setDataSource(soundFile.getAbsolutePath());
-                mMediaPlayer.prepare();
-            }
-
-            // Play the sound.
-            mMediaPlayer.start();
-        } catch (final Exception e) {
-            Log.v(TAG, "Error loading sound " + sound, e);
-        }
+        if (!mSoundEnabled) return;
+        int soundPoolId = mSoundPoolIds.get(soundId);
+        mCurrentSoundId = mSoundPool.play(soundPoolId, 1.0f, 1.0f, 0, 0, 1.0f);
+        Log.v(TAG, "sound play result for " + soundPoolId + ": " + mCurrentSoundId);
     }
 
     /**
@@ -153,7 +110,8 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      * @see ca.rmen.nounours.Nounours#stopSound()
      */
     public void stopSound() {
-        mMediaPlayer.stop();
+        Log.v(TAG, "stopSound");
+        mSoundPool.stop(mCurrentSoundId);
     }
 
     /**
@@ -162,24 +120,7 @@ class SoundHandler implements NounoursSoundHandler, OnErrorListener {
      * @see ca.rmen.nounours.Nounours#setEnableSound(boolean)
      */
     public void setEnableSound(final boolean enableSound) {
-        if (enableSound) {
-            mMediaPlayer.setVolume(1f, 1f);
-        } else {
-            mMediaPlayer.setVolume(0f, 0f);
-        }
-    }
-
-    /**
-     * Some error occurred using the media player
-     *
-     * @see android.media.MediaPlayer.OnErrorListener#onError(android.media.MediaPlayer,
-     * int, int)
-     */
-    @Override
-    public boolean onError(final MediaPlayer mp, final int what, final int extra) {
-        Log.v(TAG, "MediaPlayer error: MediaPlayer = " + mp + "(" + mp.getClass() + "), what=" + what
-                + ", extra = " + extra);
-        return false;
+        mSoundEnabled = enableSound;
     }
 
 }
