@@ -65,7 +65,7 @@ class SoundHandler implements NounoursSoundHandler {
         }
         mSoundPoolIds.clear();
 
-        new Thread(){
+        Thread thread = new Thread(){
             @Override
             public void run() {
                 for (Sound sound : theme.getSounds().values()) {
@@ -82,7 +82,9 @@ class SoundHandler implements NounoursSoundHandler {
                 }
                 Log.v(TAG, "cached sounds");
             }
-        }.start();
+        };
+        thread.setPriority(Thread.MIN_PRIORITY);
+        thread.start();
     }
 
     /**
@@ -104,6 +106,7 @@ class SoundHandler implements NounoursSoundHandler {
     public void stopSound() {
         Log.v(TAG, "stopSound");
         mSoundPool.stop(mCurrentSoundId);
+        Log.v(TAG, "stopSound finished");
     }
 
     /**

@@ -130,6 +130,7 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume begin");
 
         super.onResume();
         if (mSensorManager != null) {
@@ -145,6 +146,7 @@ public class MainActivity extends Activity {
         if (!themeChanged) mNounours.onResume();
         mNounours.doPing(true);
         registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
+        Log.v(TAG, "onResume end");
 
     }
 
