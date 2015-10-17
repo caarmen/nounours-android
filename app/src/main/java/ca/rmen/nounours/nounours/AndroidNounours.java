@@ -121,7 +121,7 @@ public class AndroidNounours extends Nounours {
     }
 
     @Override
-    protected boolean cacheImages() {
+    protected boolean cacheResources() {
         mSoundHandler.cacheSounds(getCurrentTheme());
         return mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener)
                 && mAnimationCache.cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
