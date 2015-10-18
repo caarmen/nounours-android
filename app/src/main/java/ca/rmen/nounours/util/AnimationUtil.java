@@ -20,8 +20,8 @@
 package ca.rmen.nounours.util;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -39,7 +39,7 @@ import java.io.InputStream;
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Animation;
-import ca.rmen.nounours.nounours.cache.AnimationCache;
+import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 
 public class AnimationUtil {
@@ -54,22 +54,23 @@ public class AnimationUtil {
         Log.v(TAG, "saveAnimation " + animation);
         if (!FileUtil.isSdPresent()) return null;
         ImageCache imageCache = new ImageCache();
-        AnimationCache animationCache = new AnimationCache(imageCache);
         try {
-            AnimationDrawable animationDrawable = animationCache.createAnimation(context, animation);
-            Log.v(TAG, "saveAnimation: created animationDrawable");
 
-            int numberOfFrames = animationDrawable.getNumberOfFrames();
             //http://stackoverflow.com/questions/16331437/how-to-create-an-animated-gif-from-jpegs-in-android-development
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             AnimatedGifEncoder encoder = new AnimatedGifEncoder();
             encoder.start(bos);
             encoder.setRepeat(0);
-            for (int i = 0; i < numberOfFrames; i++) {
-                BitmapDrawable frame = (BitmapDrawable) animationDrawable.getFrame(i);
-                int frameDuration = animationDrawable.getDuration(i);
-                encoder.setDelay(frameDuration);
-                encoder.addFrame(frame.getBitmap());
+
+            // Go through the list of images in the nounours animation, "repeat"
+            // times.
+            for (int i = 0; i < animation.getRepeat(); i++) {
+                for (final AnimationImage animationImage : animation.getImages()) {
+                    Bitmap bitmap = imageCache.getDrawableImage(context, animationImage.getImage());
+                    int frameDuration = (int) (animation.getInterval() * animationImage.getDuration());
+                    encoder.setDelay(frameDuration);
+                    encoder.addFrame(bitmap);
+                }
             }
             Log.v(TAG, "saveAnimation: finish writing gif...");
             encoder.finish();
@@ -85,7 +86,6 @@ public class AnimationUtil {
             return null;
         } finally {
             imageCache.clearImageCache();
-            animationCache.clearAnimationCache();
         }
     }
 
