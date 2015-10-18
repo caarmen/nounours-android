@@ -22,6 +22,7 @@ package ca.rmen.nounours.nounours;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Handler;
@@ -38,7 +39,6 @@ import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
-import ca.rmen.nounours.compat.ResourcesCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
@@ -73,6 +73,7 @@ public class AndroidNounours extends Nounours {
     private final ImageCache mImageCache = new ImageCache();
     private final SoundHandler mSoundHandler;
     private final Paint mPaint = new Paint();
+    private int mBackgroundColor;
     private int mViewWidth;
     private int mViewHeight;
     private final AtomicBoolean mOkToDraw = new AtomicBoolean(false);
@@ -146,6 +147,8 @@ public class AndroidNounours extends Nounours {
             public void run() {
 
                 AndroidNounours.super.useTheme(id);
+                String backgroundColor = getCurrentTheme().getProperty("background.color");
+                mBackgroundColor = Color.parseColor(backgroundColor);
 
                 runTask(new Runnable() {
                     public void run() {
@@ -187,7 +190,7 @@ public class AndroidNounours extends Nounours {
             float offsetY = deviceCenterY - bitmapCenterY;
 
             float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
-            c.drawColor(ResourcesCompat.getColor(mContext, android.R.color.black));
+            c.drawColor(mBackgroundColor);
             Matrix m = new Matrix();
             m.postTranslate(offsetX, offsetY);
             m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
