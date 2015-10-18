@@ -27,6 +27,8 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18"
         tools:ignore="UnusedAttribute" />
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="false"
+        tools:ignore="UnusedAttribute" />
 
     <application
         android:fullBackupContent="false"
