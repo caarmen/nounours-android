@@ -186,7 +186,7 @@ public class MainActivity extends Activity {
                 final int animationId = Integer.parseInt(animation.getId());
                 String animationLabel = animation.getLabel();
                 int labelIdx = getResources()
-                        .getIdentifier(animationLabel, "string", getClass().getPackage().getName());
+                        .getIdentifier(animationLabel, "string", getPackageName());
                 if (labelIdx > 0)
                     actionMenu.add(Menu.NONE, animationId, actionMenuIdx++, labelIdx);
                 else
