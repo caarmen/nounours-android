@@ -39,7 +39,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -98,40 +97,24 @@ public class MainActivity extends Activity {
         final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
         mRecordButton.setOnClickListener(mOnClickListener);
-        surfaceView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                //Remove it here unless you want to get this callback for EVERY
-                //layout pass, which can get you into infinite loops if you ever
-                //modify the layout from within this method.
-                surfaceView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 
-                //Now you can get the width and height from content
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mNounours = new AndroidNounours("APP",
-                                MainActivity.this,
-                                new Handler(),
-                                NounoursSettings.getAppSettings(MainActivity.this),
-                                surfaceView.getHolder(),
-                                surfaceView.getWidth(), surfaceView.getHeight(),
-                                mListener);
+        mNounours = new AndroidNounours("APP",
+                MainActivity.this,
+                new Handler(),
+                NounoursSettings.getAppSettings(MainActivity.this),
+                surfaceView.getHolder(),
+                mListener);
 
-                        FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
-                        if (mSensorManager != null) {
-                            mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-                            mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-                        }
+        FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
+        if (mSensorManager != null) {
+            mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+            mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        }
 
-                        final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), nounoursFlingDetector);
-                        TouchListener touchListener = new TouchListener(mNounours, gestureDetector);
-                        surfaceView.setOnTouchListener(touchListener);
-                        mSensorListener = new SensorListener(mNounours, getApplicationContext());
-                    }
-                });
-            }
-        });
+        final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), nounoursFlingDetector);
+        TouchListener touchListener = new TouchListener(mNounours, gestureDetector);
+        surfaceView.setOnTouchListener(touchListener);
+        mSensorListener = new SensorListener(mNounours, getApplicationContext());
 
         if (ApiHelper.getAPILevel() < 11) {
             Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG).show();
@@ -151,31 +134,16 @@ public class MainActivity extends Activity {
         Log.v(TAG, "onResume begin");
 
         super.onResume();
-        if (mSensorManager != null) {
-            mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            if (!mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
-                Log.v(TAG, "Could not register for magnetic field sensor");
-        }
-        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
 
         if (mNounours == null) return;
         mNounours.reloadSettings();
         mNounours.doPing(true);
         Log.v(TAG, "onResume end");
-
-    }
-
-    /**
-     * The application was stopped or exited. Stop listening for sensor events,
-     * stop pinging for idleness, and stop any sound.
-     *
-     * @see android.app.Activity#onStop()
-     */
-    @Override
-    protected void onStop() {
-        stopActivity();
-
-        super.onStop();
+        if (mSensorManager != null && mSensorListener != null) {
+            mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
     }
 
     /**
@@ -187,21 +155,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mBroadcastReceiver);
-        stopActivity();
-    }
-
-    /**
-     * Stop listening for sensor events, stop pinging for idleness, stop any
-     * sound.
-     */
-    private void stopActivity() {
         mNounours.doPing(false);
         mNounours.stopSound();
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(mSensorListener);
         }
+        unregisterReceiver(mBroadcastReceiver);
     }
+
 
     /**
      * Create menu items for the different animations.
@@ -239,17 +200,19 @@ public class MainActivity extends Activity {
      */
     public boolean onPrepareOptionsMenu(final Menu menu) {
         // Prevent changing the theme in the middle of the animation.
-        Theme theme = mNounours.getCurrentTheme();
-        boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
-        MenuItem animationMenu = menu.findItem(R.id.menu_animation);
-        if (animationMenu != null) {
-            animationMenu.setEnabled(!nounoursIsBusy);
-            animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
-            if (!nounoursIsBusy) setupAnimationMenu(animationMenu.getSubMenu());
-        }
-        MenuItem recordingMenu = menu.findItem(R.id.menu_start_recording);
-        if (recordingMenu != null) {
-            recordingMenu.setEnabled(FileUtil.isSdPresent() && !mNounours.getNounoursRecorder().isRecording());
+        if (mNounours != null) {
+            Theme theme = mNounours.getCurrentTheme();
+            boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
+            MenuItem animationMenu = menu.findItem(R.id.menu_animation);
+            if (animationMenu != null) {
+                animationMenu.setEnabled(!nounoursIsBusy);
+                animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
+                if (!nounoursIsBusy) setupAnimationMenu(animationMenu.getSubMenu());
+            }
+            MenuItem recordingMenu = menu.findItem(R.id.menu_start_recording);
+            if (recordingMenu != null) {
+                recordingMenu.setEnabled(FileUtil.isSdPresent() && !mNounours.getNounoursRecorder().isRecording());
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }

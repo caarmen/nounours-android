@@ -73,8 +73,8 @@ public class AndroidNounours extends Nounours {
     private final ImageCache mImageCache = new ImageCache();
     private final SoundHandler mSoundHandler;
     private final Paint mPaint = new Paint();
-    private final int mViewWidth;
-    private final int mViewHeight;
+    private int mViewWidth;
+    private int mViewHeight;
     private final AtomicBoolean mOkToDraw = new AtomicBoolean(false);
 
     /**
@@ -89,7 +89,6 @@ public class AndroidNounours extends Nounours {
                            Handler uiHandler,
                            NounoursSettings settings,
                            SurfaceHolder surfaceHolder,
-                           int viewWidth, int viewHeight,
                            AndroidNounoursListener listener) {
 
         mTag = "/" + tag;
@@ -97,8 +96,6 @@ public class AndroidNounours extends Nounours {
         mUIHandler = uiHandler;
         mSettings = settings;
         mSurfaceHolder = surfaceHolder;
-        mViewWidth = viewWidth;
-        mViewHeight = viewHeight;
         mListener = listener;
         StreamLoader streamLoader = new AssetStreamLoader(context);
 
@@ -176,17 +173,15 @@ public class AndroidNounours extends Nounours {
         Canvas c = mSurfaceHolder.lockCanvas();
         if (c != null) {
             c.save();
-            int deviceWidth = mViewWidth;
-            int deviceHeight = mViewHeight;
             int bitmapWidth = bitmap.getWidth();
             int bitmapHeight = bitmap.getHeight();
-            int deviceCenterX = deviceWidth / 2;
-            int deviceCenterY = deviceHeight / 2;
+            int deviceCenterX = mViewWidth / 2;
+            int deviceCenterY = mViewHeight / 2;
             int bitmapCenterX = bitmapWidth / 2;
             int bitmapCenterY = bitmapHeight / 2;
 
-            float scaleX = (float) deviceWidth / bitmapWidth;
-            float scaleY = (float) deviceHeight / bitmapHeight;
+            float scaleX = (float) mViewWidth / bitmapWidth;
+            float scaleY = (float) mViewHeight / bitmapHeight;
             float offsetX = deviceCenterX - bitmapCenterX;
             float offsetY = deviceCenterY - bitmapCenterY;
 
@@ -283,8 +278,11 @@ public class AndroidNounours extends Nounours {
         }
 
         @Override
-        public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+        public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
             Log.v(TAG + mTag, "surfaceChanged");
+            mViewWidth = width;
+            mViewHeight = height;
+            redraw();
         }
 
         @Override

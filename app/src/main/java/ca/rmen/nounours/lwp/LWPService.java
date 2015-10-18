@@ -31,7 +31,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-import ca.rmen.nounours.compat.DisplayCompat;
 import ca.rmen.nounours.nounours.AndroidNounours;
 import ca.rmen.nounours.nounours.FlingDetector;
 import ca.rmen.nounours.nounours.TouchListener;
@@ -68,8 +67,6 @@ public class LWPService extends WallpaperService {
                     new Handler(),
                     settings,
                     getSurfaceHolder(),
-                    DisplayCompat.getWidth(context),
-                    DisplayCompat.getHeight(context),
                     mListener);
             FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
             final GestureDetector gestureDetector = new GestureDetector(context, nounoursFlingDetector);
