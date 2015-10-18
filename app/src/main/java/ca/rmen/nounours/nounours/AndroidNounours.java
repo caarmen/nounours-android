@@ -65,6 +65,7 @@ public class AndroidNounours extends Nounours {
 
     private final Context mContext;
     private final Handler mUIHandler;
+    private final NounoursSettings mSettings;
     private final SurfaceHolder mSurfaceHolder;
     private final AndroidNounoursListener mListener;
     private final ImageCache mImageCache = new ImageCache();
@@ -80,17 +81,23 @@ public class AndroidNounours extends Nounours {
      *
      * @param context The android mContext.
      */
-    public AndroidNounours(final Context context, Handler uiHandler, SurfaceHolder surfaceHolder, int viewWidth, int viewHeight, AndroidNounoursListener listener) {
+    public AndroidNounours(final Context context,
+                           Handler uiHandler,
+                           NounoursSettings settings,
+                           SurfaceHolder surfaceHolder,
+                           int viewWidth, int viewHeight,
+                           AndroidNounoursListener listener) {
 
         mContext = context;
         mUIHandler = uiHandler;
+        mSettings = settings;
         mSurfaceHolder = surfaceHolder;
         mViewWidth = viewWidth;
         mViewHeight = viewHeight;
         mListener = listener;
         StreamLoader streamLoader = new AssetStreamLoader(context);
 
-        String themeId = NounoursSettings.getThemeId(context);
+        String themeId = mSettings.getThemeId();
         AnimationHandler animationHandler = new AnimationHandler(this);
         mSoundHandler = new SoundHandler(context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
@@ -100,9 +107,9 @@ public class AndroidNounours extends Nounours {
         try {
             init(streamLoader, animationHandler, mSoundHandler, vibrateHandler, propertiesFile,
                     themesFile, themeId);
-            setEnableVibrate(NounoursSettings.isSoundEnabled(context));
-            setEnableSound(NounoursSettings.isSoundEnabled(context));
-            setIdleTimeout(NounoursSettings.getIdleTimeout(context));
+            setEnableVibrate(mSettings.isSoundEnabled());
+            setEnableSound(mSettings.isSoundEnabled());
+            setIdleTimeout(mSettings.getIdleTimeout());
         } catch (final IOException e) {
             Log.e(TAG, "Error initializing nounours", e);
         }
@@ -186,7 +193,7 @@ public class AndroidNounours extends Nounours {
             c.setMatrix(m);
             c.drawBitmap(bitmap, 0, 0, mPaint);
             c.restore();
-            // TODO setting if (dim) c.drawColor(0x88000000);
+            if (mSettings.isImageDimmed()) c.drawColor(0x88000000);
             mSurfaceHolder.unlockCanvasAndPost(c);
         }
     }
@@ -237,12 +244,12 @@ public class AndroidNounours extends Nounours {
     }
 
     /**
-     * Reread the shared preferences and apply the new settings.
+     * Reread the shared preferences and apply the new app_settings.
      */
     public void reloadSettings() {
-        setEnableSound(NounoursSettings.isSoundEnabled(mContext));
-        setEnableVibrate(NounoursSettings.isSoundEnabled(mContext));
-        setIdleTimeout(NounoursSettings.getIdleTimeout(mContext));
+        setEnableSound(mSettings.isSoundEnabled());
+        setEnableVibrate(mSettings.isSoundEnabled());
+        setIdleTimeout(mSettings.getIdleTimeout());
         reloadThemeFromPreference();
     }
 
@@ -250,7 +257,7 @@ public class AndroidNounours extends Nounours {
         Log.v(TAG, "reloadThemeFromPreference");
         boolean nounoursIsBusy = isLoading();
         Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
-        String themeId = NounoursSettings.getThemeId(mContext);
+        String themeId = mSettings.getThemeId();
         if (getCurrentTheme() != null && getCurrentTheme().getId().equals(themeId)) {
             return;
         }

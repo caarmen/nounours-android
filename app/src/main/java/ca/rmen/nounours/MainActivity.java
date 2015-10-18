@@ -53,6 +53,7 @@ import ca.rmen.nounours.nounours.AndroidNounours;
 import ca.rmen.nounours.nounours.FlingDetector;
 import ca.rmen.nounours.nounours.TouchListener;
 import ca.rmen.nounours.nounours.orientation.SensorListener;
+import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
 import ca.rmen.nounours.util.AnimationUtil;
 import ca.rmen.nounours.util.FileUtil;
@@ -109,7 +110,13 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mNounours = new AndroidNounours(MainActivity.this, new Handler(), surfaceView.getHolder(), surfaceView.getWidth(), surfaceView.getHeight(), mListener);
+                        mNounours = new AndroidNounours(
+                                MainActivity.this,
+                                new Handler(),
+                                NounoursSettings.getAppSettings(MainActivity.this),
+                                surfaceView.getHolder(),
+                                surfaceView.getWidth(), surfaceView.getHeight(),
+                                mListener);
 
                         FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
                         if (mSensorManager != null) {
@@ -255,8 +262,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.menu_options) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            SettingsActivity.startAppSettingsActivity(this);
             return true;
         }
         // Show the help

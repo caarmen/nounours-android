@@ -19,11 +19,14 @@
 
 package ca.rmen.nounours.settings;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.view.MenuItem;
 
 import ca.rmen.nounours.R;
@@ -31,10 +34,10 @@ import ca.rmen.nounours.compat.ActivityCompat;
 
 
 /**
- * A {@link PreferenceActivity} that presents a set of application settings. On
- * handset devices, settings are presented as a single list. On tablets,
- * settings are split by category, with category headers shown to the left of
- * the list of settings.
+ * A {@link PreferenceActivity} that presents a set of application app_settings. On
+ * handset devices, app_settings are presented as a single list. On tablets,
+ * app_settings are split by category, with category headers shown to the left of
+ * the list of app_settings.
  * <p/>
  * See <a href="http://developer.android.com/design/patterns/settings.html">
  * Android Design: Settings</a> for design guidelines and the <a
@@ -42,6 +45,20 @@ import ca.rmen.nounours.compat.ActivityCompat;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends PreferenceActivity {
+
+    private static final String EXTRA_PREFERENCE_XML_RES_ID = "nounours_preference_xml_res_id";
+
+    public static void startAppSettingsActivity(Context context) {
+        Intent intent = new Intent(context, SettingsActivity.class);
+        intent.putExtra(EXTRA_PREFERENCE_XML_RES_ID, R.xml.app_settings);
+        context.startActivity(intent);
+    }
+
+    public static void startLwpSettingsActivity(Context context) {
+        Intent intent = new Intent(context, SettingsActivity.class);
+        intent.putExtra(EXTRA_PREFERENCE_XML_RES_ID, R.xml.lwp_settings);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +70,19 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        //noinspection deprecation
-        addPreferencesFromResource(R.xml.settings);
+        int xmlResId = getIntent().getIntExtra(EXTRA_PREFERENCE_XML_RES_ID, R.xml.lwp_settings);
 
         //noinspection deprecation
-        ListPreference themePreference = (ListPreference) findPreference(NounoursSettings.PREF_THEME);
+        addPreferencesFromResource(xmlResId);
 
         //noinspection deprecation
-        bindPreferenceSummaryToValue(findPreference(NounoursSettings.PREF_IDLE_TIMEOUT));
-        bindPreferenceSummaryToValue(themePreference);
+        PreferenceScreen preferenceScreen = getPreferenceScreen();
+        for (int i = 0; i < preferenceScreen.getPreferenceCount(); i++) {
+            Preference preference = preferenceScreen.getPreference(i);
+            if (preference instanceof ListPreference) {
+                bindPreferenceSummaryToValue(preference);
+            }
+        }
     }
 
     /**

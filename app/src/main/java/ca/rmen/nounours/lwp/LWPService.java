@@ -19,6 +19,7 @@
 package ca.rmen.nounours.lwp;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -35,6 +36,7 @@ import ca.rmen.nounours.nounours.AndroidNounours;
 import ca.rmen.nounours.nounours.FlingDetector;
 import ca.rmen.nounours.nounours.TouchListener;
 import ca.rmen.nounours.nounours.orientation.SensorListener;
+import ca.rmen.nounours.settings.NounoursSettings;
 
 @TargetApi(Build.VERSION_CODES.ECLAIR_MR1)
 public class LWPService extends WallpaperService {
@@ -58,19 +60,25 @@ public class LWPService extends WallpaperService {
         public void onCreate(SurfaceHolder surfaceHolder) {
             super.onCreate(surfaceHolder);
             setTouchEventsEnabled(true);
-            mNounours = new AndroidNounours(getBaseContext(), new Handler(), getSurfaceHolder(),
-                    DisplayCompat.getWidth(getApplicationContext()),
-                    DisplayCompat.getHeight(getApplicationContext()), mListener);
+            Context context = getApplicationContext();
+            NounoursSettings settings = NounoursSettings.getLwpSettings(context);
+            settings.setEnableSound(false);
+            mNounours = new AndroidNounours(context,
+                    new Handler(),
+                    settings,
+                    getSurfaceHolder(),
+                    DisplayCompat.getWidth(context),
+                    DisplayCompat.getHeight(context),
+                    mListener);
             FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
-            final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), nounoursFlingDetector);
+            final GestureDetector gestureDetector = new GestureDetector(context, nounoursFlingDetector);
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
             mTouchListener = new TouchListener(mNounours, gestureDetector);
             mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-            mSensorListener = new SensorListener(mNounours, getApplicationContext());
+            mSensorListener = new SensorListener(mNounours, context);
             final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(LWPService.this);
             sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-
         }
 
         @Override
@@ -103,10 +111,6 @@ public class LWPService extends WallpaperService {
             mNounours.redraw();
         }
 
-        /*
-         * Store the position of the touch event so we can use it for drawing
-         * later
-         */
         @Override
         public void onTouchEvent(MotionEvent event) {
             mTouchListener.onTouch(null, event);
@@ -115,7 +119,6 @@ public class LWPService extends WallpaperService {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (mNounours != null) mNounours.reloadSettings();
-
         }
 
         private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {

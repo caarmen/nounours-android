@@ -21,7 +21,7 @@
 
     <ListPreference
         android:icon="@drawable/ic_menu_gallery"
-        android:key="Theme"
+        android:key="app_Theme"
         android:title="@string/themes"
         android:defaultValue="0"
         android:entries="@array/themesList"
@@ -31,13 +31,13 @@
 
     <CheckBoxPreference
         android:icon="@drawable/ic_pref_sound"
-        android:key="SoundAndVibrate"
+        android:key="app_SoundAndVibrate"
         android:title="@string/enablesound"
         android:defaultValue="true" />
 
     <ListPreference
         android:icon="@drawable/ic_pref_idle_timeout"
-        android:key="IdleTimeout2"
+        android:key="app_IdleTimeout2"
         android:title="@string/idleTimeout"
         android:defaultValue="30000"
         android:entries="@array/idleTimeout"
