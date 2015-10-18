@@ -21,7 +21,7 @@
 	<string name="random">Aléatoire</string>
 	<string name="actions">Actions</string>
 	<string name="about">À propos</string>
-	<string name="themes">Thèmes</string>
+	<string name="themes">Thème</string>
 	<string name="loading">Je charge mon thème %s</string>
 	<string name="abouttext"><![CDATA[
 <h1>%1$s version %2$s</h1>

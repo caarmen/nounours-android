@@ -18,8 +18,8 @@
 -->
 <resources>
     <string name="defaultTheme">Default</string>
-    <string name="rainbow">Rainbow background</string>
-    <string name="greenshirtbluebkg">Green shirt, blue backgrd</string>
+    <string name="rainbow">Rainbow</string>
+    <string name="greenshirtbluebkg">College</string>
     <string name="halloween">Halloween</string>
     <string name="bugdroid">Bugdroid</string>
 </resources>
