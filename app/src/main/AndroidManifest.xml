@@ -46,11 +46,12 @@
             </intent-filter>
         </activity>
         <activity
+            android:exported="true"
             android:name=".settings.SettingsActivity"
             android:label="@string/options"
             android:parentActivityName=".MainActivity"
             android:theme="@style/NounoursActivityStyle"
-            tools:ignore="UnusedAttribute"/>
+            tools:ignore="UnusedAttribute" />
         <activity
             android:name=".AboutActivity"
             android:label="@string/about"
@@ -66,7 +67,18 @@
 
         <service
             android:name=".AnimationSaveService"
-            android:exported="false" >
+            android:exported="false"></service>
+        <service
+            android:name=".lwp.LWPService"
+            android:icon="@drawable/icon"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/lwp" />
         </service>
     </application>
 

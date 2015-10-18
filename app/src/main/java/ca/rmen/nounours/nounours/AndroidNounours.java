@@ -27,7 +27,6 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,11 +65,13 @@ public class AndroidNounours extends Nounours {
 
     private final Context mContext;
     private final Handler mUIHandler;
-    private final SurfaceView mSurfaceView;
+    private final SurfaceHolder mSurfaceHolder;
     private final AndroidNounoursListener mListener;
     private final ImageCache mImageCache = new ImageCache();
     private final SoundHandler mSoundHandler;
     private final Paint mPaint = new Paint();
+    private final int mViewWidth;
+    private final int mViewHeight;
 
     /**
      * Open the CSV data files and call the superclass
@@ -79,11 +80,13 @@ public class AndroidNounours extends Nounours {
      *
      * @param context The android mContext.
      */
-    public AndroidNounours(final Context context, Handler uiHandler, SurfaceView surfaceView, AndroidNounoursListener listener) {
+    public AndroidNounours(final Context context, Handler uiHandler, SurfaceHolder surfaceHolder, int viewWidth, int viewHeight, AndroidNounoursListener listener) {
 
         mContext = context;
         mUIHandler = uiHandler;
-        mSurfaceView = surfaceView;
+        mSurfaceHolder = surfaceHolder;
+        mViewWidth = viewWidth;
+        mViewHeight = viewHeight;
         mListener = listener;
         StreamLoader streamLoader = new AssetStreamLoader(context);
 
@@ -158,12 +161,11 @@ public class AndroidNounours extends Nounours {
         final Bitmap bitmap = mImageCache.getDrawableImage(mContext, image);
         if (bitmap == null)
             return;
-        SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
-        Canvas c = surfaceHolder.lockCanvas();
+        Canvas c = mSurfaceHolder.lockCanvas();
         if (c != null) {
             c.save();
-            int deviceWidth = mSurfaceView.getWidth();
-            int deviceHeight = mSurfaceView.getHeight();
+            int deviceWidth = mViewWidth;
+            int deviceHeight = mViewHeight;
             int bitmapWidth = bitmap.getWidth();
             int bitmapHeight = bitmap.getHeight();
             int deviceCenterX = deviceWidth / 2;
@@ -185,8 +187,12 @@ public class AndroidNounours extends Nounours {
             c.drawBitmap(bitmap, 0, 0, mPaint);
             c.restore();
             // TODO setting if (dim) c.drawColor(0x88000000);
-            surfaceHolder.unlockCanvasAndPost(c);
+            mSurfaceHolder.unlockCanvasAndPost(c);
         }
+    }
+
+    public void redraw() {
+        displayImage(getCurrentImage());
     }
 
     /**
@@ -222,12 +228,12 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected int getDeviceHeight() {
-        return mSurfaceView.getHeight();
+        return mViewHeight;
     }
 
     @Override
     protected int getDeviceWidth() {
-        return mSurfaceView.getWidth();
+        return mViewWidth;
     }
 
     /**

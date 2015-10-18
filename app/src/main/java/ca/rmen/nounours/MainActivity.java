@@ -39,6 +39,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -84,35 +85,46 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
-
         setContentView(R.layout.main);
 
-        final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
-        mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
-        mRecordButton.setOnClickListener(mOnClickListener);
-        mNounours = new AndroidNounours(this, new Handler(), surfaceView, mListener);
-
-        FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
+        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
         if (!isOldEmulator) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
-        if (mSensorManager != null) {
-            mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        }
 
-        final GestureDetector gestureDetector = new GestureDetector(this, nounoursFlingDetector);
-        TouchListener touchListener = new TouchListener(mNounours, gestureDetector);
-        surfaceView.setOnTouchListener(touchListener);
-        mSensorListener = new SensorListener(mNounours, this);
+
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        /*
-         * if (isOldEmulator) { Hardware.mContentResolver = getContentResolver();
-         * mSensorManager = new SensorManagerSimulator(mSensorManager);
-         * SensorManagerSimulator.connectSimulator(); }
-         */
+        final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
+        mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
+        mRecordButton.setOnClickListener(mOnClickListener);
+        surfaceView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                //Remove it here unless you want to get this callback for EVERY
+                //layout pass, which can get you into infinite loops if you ever
+                //modify the layout from within this method.
+                surfaceView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+
+                //Now you can get the width and height from content
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mNounours = new AndroidNounours(MainActivity.this, new Handler(), surfaceView.getHolder(), surfaceView.getWidth(), surfaceView.getHeight(), mListener);
+
+                        FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
+                        if (mSensorManager != null) {
+                            mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                            mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+                        }
+
+                        final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), nounoursFlingDetector);
+                        TouchListener touchListener = new TouchListener(mNounours, gestureDetector);
+                        surfaceView.setOnTouchListener(touchListener);
+                        mSensorListener = new SensorListener(mNounours, getApplicationContext());
+                    }
+                });
+            }
+        });
 
         if (ApiHelper.getAPILevel() < 11) {
             Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG).show();
@@ -137,10 +149,11 @@ public class MainActivity extends Activity {
             if (!mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
                 Log.v(TAG, "Could not register for magnetic field sensor");
         }
+        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
 
+        if (mNounours == null) return;
         mNounours.reloadSettings();
         mNounours.doPing(true);
-        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
         Log.v(TAG, "onResume end");
 
     }

@@ -25,6 +25,32 @@ import android.view.WindowManager;
 
 public class DisplayCompat {
 
+    public static int getWidth(Context context) {
+        final WindowManager wm = (WindowManager) context
+                .getSystemService(
+                        Context.WINDOW_SERVICE);
+        final Display display = wm.getDefaultDisplay();
+        if (ApiHelper.getAPILevel() >= 13) {
+            return Api13Helper.getWidth(display);
+        }
+        //noinspection deprecation
+        return display.getWidth();
+
+    }
+
+    public static int getHeight(Context context) {
+        final WindowManager wm = (WindowManager) context
+                .getSystemService(
+                        Context.WINDOW_SERVICE);
+        final Display display = wm.getDefaultDisplay();
+        if (ApiHelper.getAPILevel() >= 13) {
+            return Api13Helper.getHeight(display);
+        }
+        //noinspection deprecation
+        return display.getHeight();
+
+    }
+
     public static int getRotation(Context context) {
         final WindowManager wm = (WindowManager) context
                 .getApplicationContext().getSystemService(
