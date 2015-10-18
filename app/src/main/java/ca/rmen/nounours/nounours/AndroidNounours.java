@@ -279,6 +279,7 @@ public class AndroidNounours extends Nounours {
         public void surfaceCreated(SurfaceHolder surfaceHolder) {
             Log.v(TAG + mTag, "surfaceCreated");
             mOkToDraw.set(true);
+            redraw();
         }
 
         @Override
