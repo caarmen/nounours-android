@@ -120,7 +120,7 @@ class AnimationHandler implements NounoursAnimationHandler {
                     long after = System.currentTimeMillis();
                     long frameDurationCorrection = after - before;
                     long shorterFrameDuration = frameDuration - frameDurationCorrection;
-                    SystemClock.sleep(shorterFrameDuration);
+                    if (shorterFrameDuration > 0) SystemClock.sleep(shorterFrameDuration);
                     if(!mIsDoingAnimation.get()) break;
                 }
                 if(!mIsDoingAnimation.get()) break;
