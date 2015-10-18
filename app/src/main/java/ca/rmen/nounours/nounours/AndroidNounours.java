@@ -19,7 +19,6 @@
 
 package ca.rmen.nounours.nounours;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -41,7 +40,6 @@ import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.ResourcesCompat;
 import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
@@ -56,7 +54,11 @@ import ca.rmen.nounours.util.ThemeUtil;
 public class AndroidNounours extends Nounours {
 
     public interface AndroidNounoursListener {
-        void onThemeLoaded();
+        void onThemeLoadStart(int max, String message);
+
+        void onThemeLoadProgress(int progress, int max, String message);
+
+        void onThemeLoadComplete();
     }
 
     private static final String TAG = Constants.TAG + AndroidNounours.class.getSimpleName();
@@ -68,9 +70,6 @@ public class AndroidNounours extends Nounours {
     private final ImageCache mImageCache = new ImageCache();
     private final SoundHandler mSoundHandler;
     private final Paint mPaint = new Paint();
-
-    private ProgressDialog mProgressDialog;
-
 
     /**
      * Open the CSV data files and call the superclass
@@ -125,7 +124,8 @@ public class AndroidNounours extends Nounours {
 
         // MEMORY
         mImageCache.clearImageCache();
-        Runnable themeLoader = new Runnable() {
+        
+        Thread themeLoader = new Thread() {
             @SuppressWarnings("synthetic-access")
             @Override
             public void run() {
@@ -134,19 +134,13 @@ public class AndroidNounours extends Nounours {
 
                 runTask(new Runnable() {
                     public void run() {
-                        themeLoaded();
+                        mListener.onThemeLoadComplete();
                     }
                 });
-
             }
         };
-        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.loading, themeLabel), theme.getImages().size());
-    }
-
-    private void themeLoaded() {
-        Log.v(TAG, "themeLoaded");
-        mProgressDialog.dismiss();
-        mListener.onThemeLoaded();
+        mListener.onThemeLoadStart(theme.getImages().size(), mContext.getString(R.string.loading, themeLabel));
+        themeLoader.start();
     }
 
     /**
@@ -218,68 +212,10 @@ public class AndroidNounours extends Nounours {
     }
 
     /**
-     * Run a task, showing the progress bar while the task runs.
-     */
-    private void runTaskWithProgressBar(final Runnable task, String message, int max) {
-        if (mProgressDialog != null)
-            mProgressDialog.dismiss();
-        createProgressDialog(max, message);
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                task.run();
-                mProgressDialog.dismiss();
-                Log.v(TAG, "runTaskWithProgressBar complete");
-            }
-        };
-        new Thread(runnable).start();
-    }
-
-    /**
-     * Update the currently showing progress bar.
-     */
-    private void updateProgressBar(final int progress, final int max, final String message) {
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                // show the progress bar if it is not already showing.
-                if (mProgressDialog == null || !mProgressDialog.isShowing())
-                    createProgressDialog(max, message);
-                // Update the progress
-                mProgressDialog.setProgress(progress);
-                mProgressDialog.setMax(max);
-                mProgressDialog.setMessage(message);
-                debug("updateProgressBar " + progress + "/" + max + ": " + message);
-                if (progress == max) mProgressDialog.dismiss();
-
-            }
-        };
-        runTask(runnable);
-    }
-
-    /**
-     * Create a determinate progress dialog with the given size and text.
-     */
-    private void createProgressDialog(int max, String message) {
-        mProgressDialog = new ProgressDialog(mContext);
-        mProgressDialog.setTitle("");
-        mProgressDialog.setMessage(message);
-        mProgressDialog.setIndeterminate(max < 0);
-        mProgressDialog.setMax(max);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        mProgressDialog.setProgress(0);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.show();
-        debug("createProgressDialog " + max + ": " + message);
-    }
-
-    /**
      * Cleanup.
      */
     public void onDestroy() {
-        debug("destroy");
+        Log.v(TAG, "destroy");
         mImageCache.clearImageCache();
     }
 
@@ -300,7 +236,7 @@ public class AndroidNounours extends Nounours {
             Log.v(TAG, "onImageLoaded: " + progress + "/" + total);
             setImage(image);
             CharSequence themeName = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
-            updateProgressBar(progress, total, mContext.getString(R.string.loading, themeName));
+            mListener.onThemeLoadProgress(progress, total, mContext.getString(R.string.loading, themeName));
         }
     };
 }

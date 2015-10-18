@@ -21,6 +21,7 @@ package ca.rmen.nounours;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -72,6 +73,7 @@ public class MainActivity extends Activity {
     private Sensor mAccelerometerSensor;
     private Sensor mMagneticFieldSensor;
     private ImageButton mRecordButton;
+    private ProgressDialog mProgressDialog;
 
 
     /**
@@ -315,11 +317,47 @@ public class MainActivity extends Activity {
         return true;
     }
 
+
     private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
         @Override
-        public void onThemeLoaded() {
+        public void onThemeLoadStart(int max, String message) {
+            createProgressDialog(max, message);
+        }
+
+        @Override
+        public void onThemeLoadProgress(int progress, int max, String message) {
+            // show the progress bar if it is not already showing.
+            if (mProgressDialog == null || !mProgressDialog.isShowing())
+                createProgressDialog(max, message);
+            // Update the progress
+            mProgressDialog.setProgress(progress);
+            mProgressDialog.setMax(max);
+            mProgressDialog.setMessage(message);
+            Log.v(TAG, "updateProgressBar " + progress + "/" + max + ": " + message);
+            if (progress == max) mProgressDialog.dismiss();
+        }
+
+        @Override
+        public void onThemeLoadComplete() {
             mSensorListener.rereadOrientationFile(MainActivity.this);
+            mProgressDialog.dismiss();
             ActivityCompat.invalidateOptionsMenu(MainActivity.this);
+        }
+
+        /**
+         * Create a determinate progress dialog with the given size and text.
+         */
+        private void createProgressDialog(int max, String message) {
+            mProgressDialog = new ProgressDialog(MainActivity.this);
+            mProgressDialog.setTitle("");
+            mProgressDialog.setMessage(message);
+            mProgressDialog.setIndeterminate(max < 0);
+            mProgressDialog.setMax(max);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mProgressDialog.setProgress(0);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
+            Log.v(TAG, "createProgressDialog " + max + ": " + message);
         }
     };
 
