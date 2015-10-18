@@ -22,6 +22,8 @@ package ca.rmen.nounours.settings;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
+import ca.rmen.nounours.R;
+
 public final class NounoursSettings {
     private static final String PREF_THEME = "Theme";
     private static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
@@ -66,7 +68,7 @@ public final class NounoursSettings {
     }
 
     public String getThemeId() {
-        return PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_THEME, "0");
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_THEME, mContext.getString(R.string.DEFAULT_THEME_ID));
     }
 
 }

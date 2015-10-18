@@ -17,16 +17,16 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string-array name="idleTimeout">
-        <item>15 seconds</item>
-        <item>30 seconds</item>
-        <item>1 minute</item>
-        <item>2 minutes</item>
+    <string-array name="themesList" translatable="false">
+        <item>@string/defaultTheme</item>
+        <item>@string/rainbow</item>
+        <item>@string/greenshirtbluebkg</item>
+        <item>@string/halloween</item>
     </string-array>
-    <string-array name="idleTimeoutValues" translatable="false">
-        <item>15000</item>
-        <item>30000</item>
-        <item>60000</item>
-        <item>120000</item>
+    <string-array name="themeListValues" translatable="false">
+        <item>0</item>
+        <item>5000</item>
+        <item>5001</item>
+        <item>5002</item>
     </string-array>
 </resources>

@@ -80,6 +80,10 @@ public class SettingsActivity extends PreferenceActivity {
         for (int i = 0; i < preferenceScreen.getPreferenceCount(); i++) {
             Preference preference = preferenceScreen.getPreference(i);
             if (preference instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) preference;
+                if (listPreference.getEntries().length == 1) {
+                    preferenceScreen.removePreference(listPreference);
+                }
                 bindPreferenceSummaryToValue(preference);
             }
         }

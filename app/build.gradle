@@ -5,7 +5,6 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "ca.rmen.nounours"
         minSdkVersion 3
         targetSdkVersion 23
     }
@@ -14,6 +13,23 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    productFlavors {
+        full {
+            applicationId "ca.rmen.nounours"
+            resValue "string", "DEFAULT_THEME_ID", "0"
+        }
+
+        bugdroid {
+            applicationId "ca.rmen.nounours.lwp.robot"
+            resValue "string", "DEFAULT_THEME_ID", "5004"
+        }
+
+        nounours {
+            applicationId "ca.rmen.nounours.lwp.rainbow"
+            resValue "string", "DEFAULT_THEME_ID", "5000"
         }
     }
 
@@ -34,6 +50,7 @@ android {
     } else  {
         android.buildTypes.release.signingConfig = null
     }
+
 }
 
 dependencies {
