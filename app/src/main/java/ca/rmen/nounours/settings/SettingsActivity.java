@@ -21,6 +21,7 @@ package ca.rmen.nounours.settings;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -29,8 +30,12 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.ActivityCompat;
+import ca.rmen.nounours.compat.ApiHelper;
 
 
 /**
@@ -47,6 +52,7 @@ import ca.rmen.nounours.compat.ActivityCompat;
 public class SettingsActivity extends PreferenceActivity {
 
     private static final String EXTRA_PREFERENCE_XML_RES_ID = "nounours_preference_xml_res_id";
+    private static final String PREF_LAUNCH_WALLPAPER_SETTINGS = "launch_wallpaper_settings";
 
     public static void startAppSettingsActivity(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
@@ -75,17 +81,29 @@ public class SettingsActivity extends PreferenceActivity {
         //noinspection deprecation
         addPreferencesFromResource(xmlResId);
 
+        List<Preference> preferencesToHide = new ArrayList<>();
+        // Some preferences are not relevant, and we must remove them.
         //noinspection deprecation
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         for (int i = 0; i < preferenceScreen.getPreferenceCount(); i++) {
             Preference preference = preferenceScreen.getPreference(i);
             if (preference instanceof ListPreference) {
+                // If we have only one theme, there's no point in showing the theme preference.
                 ListPreference listPreference = (ListPreference) preference;
                 if (listPreference.getEntries().length == 1) {
-                    preferenceScreen.removePreference(listPreference);
+                    preferencesToHide.add(preference);
                 }
                 bindPreferenceSummaryToValue(preference);
             }
+            // The wallpaper feature isn't available on older devices.
+            else if (PREF_LAUNCH_WALLPAPER_SETTINGS.equals(preference.getKey())) {
+                if (ApiHelper.getAPILevel() < Build.VERSION_CODES.ECLAIR_MR1) {
+                    preferencesToHide.add(preference);
+                }
+            }
+        }
+        for (Preference preference : preferencesToHide) {
+            preferenceScreen.removePreference(preference);
         }
     }
 
@@ -142,7 +160,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);

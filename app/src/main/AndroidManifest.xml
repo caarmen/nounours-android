@@ -53,6 +53,7 @@
             android:theme="@style/NounoursActivityStyle"
             tools:ignore="UnusedAttribute" />
         <activity
+            android:exported="false"
             android:name=".AboutActivity"
             android:label="@string/about"
             android:parentActivityName=".settings.SettingsActivity"
@@ -67,7 +68,7 @@
 
         <service
             android:name=".AnimationSaveService"
-            android:exported="false"></service>
+            android:exported="false"/>
         <service
             android:name=".lwp.LWPService"
             android:icon="@drawable/icon"
