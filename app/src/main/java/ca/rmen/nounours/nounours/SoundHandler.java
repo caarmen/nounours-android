@@ -110,6 +110,7 @@ class SoundHandler implements NounoursSoundHandler {
      */
     public void stopSound() {
         Log.v(TAG, "stopSound");
+        if (!mSoundEnabled) return;
         mSoundPool.stop(mCurrentSoundId);
         Log.v(TAG, "stopSound finished");
     }

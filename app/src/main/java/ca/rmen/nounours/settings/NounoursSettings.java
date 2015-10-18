@@ -52,7 +52,7 @@ public final class NounoursSettings {
     }
 
     public boolean isSoundEnabled() {
-        return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_SOUND_AND_VIBRATE, true);
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_SOUND_AND_VIBRATE, mContext.getResources().getBoolean(R.bool.sound_enabled_default));
     }
 
     @SuppressWarnings("SameParameterValue")

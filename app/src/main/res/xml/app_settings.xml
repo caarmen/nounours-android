@@ -33,7 +33,7 @@
         android:icon="@drawable/ic_pref_sound"
         android:key="app_SoundAndVibrate"
         android:title="@string/enablesound"
-        android:defaultValue="true" />
+        android:defaultValue="@bool/sound_enabled_default" />
 
     <ListPreference
         android:icon="@drawable/ic_pref_idle_timeout"
