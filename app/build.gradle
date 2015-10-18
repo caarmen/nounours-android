@@ -33,6 +33,12 @@ android {
         }
     }
 
+    sourceSets {
+        full {
+            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
+        }
+    }
+
     File signFile = rootProject.file('signing.properties')
     if (signFile.exists()) {
         Properties p = new Properties();
