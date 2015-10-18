@@ -43,7 +43,7 @@ public class AboutActivity extends Activity {
         } catch (PackageManager.NameNotFoundException e) {
             versionName = "?";
         }
-        aboutText.setText(Html.fromHtml(getString(R.string.abouttext, versionName)));
+        aboutText.setText(Html.fromHtml(getString(R.string.abouttext, getString(R.string.app_name), versionName)));
         aboutText.setMovementMethod(LinkMovementMethod.getInstance());
     }
     

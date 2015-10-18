@@ -59,11 +59,6 @@
             android:parentActivityName=".settings.SettingsActivity"
             android:theme="@style/NounoursActivityStyle"
             tools:ignore="UnusedAttribute">
-            <intent-filter>
-                <action android:name="ca.rmen.nounours.AboutActivity" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
 
         <service
