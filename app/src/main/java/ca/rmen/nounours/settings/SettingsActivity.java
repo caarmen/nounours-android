@@ -60,6 +60,7 @@ public class SettingsActivity extends PreferenceActivity {
         context.startActivity(intent);
     }
 
+    @SuppressWarnings("unused")
     public static void startLwpSettingsActivity(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         intent.putExtra(EXTRA_PREFERENCE_XML_RES_ID, R.xml.lwp_settings);

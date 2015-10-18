@@ -51,7 +51,7 @@
             android:label="@string/options"
             android:parentActivityName=".MainActivity"
             android:theme="@style/NounoursActivityStyle"
-            tools:ignore="UnusedAttribute" />
+            tools:ignore="ExportedPreferenceActivity,UnusedAttribute" />
         <activity
             android:exported="false"
             android:name=".AboutActivity"

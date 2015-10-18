@@ -269,6 +269,7 @@ public class AndroidNounours extends Nounours {
         onResume();
     }
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final SurfaceHolder.Callback mSurfaceHolderCallback = new SurfaceHolder.Callback() {
         @Override
         public void surfaceCreated(SurfaceHolder surfaceHolder) {

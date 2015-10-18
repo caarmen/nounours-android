@@ -55,6 +55,7 @@ public final class NounoursSettings {
         return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_SOUND_AND_VIBRATE, true);
     }
 
+    @SuppressWarnings("SameParameterValue")
     public void setEnableSound(boolean enabled) {
         PreferenceManager.getDefaultSharedPreferences(mContext).edit().putBoolean(mPreferencePrefix + PREF_SOUND_AND_VIBRATE, enabled).commit();
     }

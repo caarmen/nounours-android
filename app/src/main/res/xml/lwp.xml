@@ -18,5 +18,7 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:settingsActivity="ca.rmen.nounours.settings.SettingsActivity"
-    android:thumbnail="@drawable/icon" />
+    android:thumbnail="@drawable/icon"
+    tools:ignore="UnusedAttribute" />
