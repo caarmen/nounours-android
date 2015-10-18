@@ -121,7 +121,7 @@ public class AndroidNounours extends Nounours {
     @Override
     protected boolean cacheResources() {
         boolean result = mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener);
-        mSoundHandler.cacheSounds(getCurrentTheme());
+        if(mSettings.isSoundEnabled()) mSoundHandler.cacheSounds(getCurrentTheme());
         return result;
     }
 
@@ -138,6 +138,7 @@ public class AndroidNounours extends Nounours {
 
         // MEMORY
         mImageCache.clearImageCache();
+        mSoundHandler.clearSoundCache();
 
         Thread themeLoader = new Thread() {
             @SuppressWarnings("synthetic-access")
@@ -231,6 +232,7 @@ public class AndroidNounours extends Nounours {
     public void onDestroy() {
         Log.v(TAG + mTag, "destroy");
         mImageCache.clearImageCache();
+        mSoundHandler.clearSoundCache();
     }
 
     @Override
@@ -247,6 +249,12 @@ public class AndroidNounours extends Nounours {
      * Reread the shared preferences and apply the new app_settings.
      */
     public void reloadSettings() {
+        if(mSettings.isSoundEnabled() && !isSoundEnabled()) {
+            mSoundHandler.cacheSounds(getCurrentTheme());
+        } else if (!mSettings.isSoundEnabled() && isSoundEnabled()) {
+            mSoundHandler.clearSoundCache();
+        }
+
         setEnableSound(mSettings.isSoundEnabled());
         setEnableVibrate(mSettings.isSoundEnabled());
         setIdleTimeout(mSettings.getIdleTimeout());
@@ -266,7 +274,6 @@ public class AndroidNounours extends Nounours {
             stopAnimation();
             useTheme(theme.getId());
         }
-        onResume();
     }
 
     @SuppressWarnings("FieldCanBeLocal")

@@ -80,10 +80,19 @@ public class LWPService extends WallpaperService {
         }
 
         @Override
+        public void onDestroy() {
+            super.onDestroy();
+            mNounours.onDestroy();
+        }
+
+
+        @Override
         public void onVisibilityChanged(boolean visible) {
             if (visible) {
-                mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-                mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                if(!mNounours.isLoading()) {
+                    mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                    mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                }
                 mNounours.reloadSettings();
                 if (mWasPaused) {
                     mNounours.onResume();
@@ -131,6 +140,8 @@ public class LWPService extends WallpaperService {
             @Override
             public void onThemeLoadComplete() {
                 mSensorListener.rereadOrientationFile(getApplicationContext());
+                mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
             }
         };
 

@@ -58,6 +58,7 @@ public class SensorListener implements SensorEventListener {
 
     private float[] mLastAcceleration = null;
     private float[] mLastMagneticField = null;
+    private long mLastAnalysisTimestamp = 0;
 
     public SensorListener(AndroidNounours nounours,
                           Context context) {
@@ -116,7 +117,6 @@ public class SensorListener implements SensorEventListener {
      */
     @Override
     public void onSensorChanged(SensorEvent event) {
-
         // Don't do anything if we're shaking.
         if (mNounours.isShaking() || mNounours.isLoading()) {
             mXAccel = Float.MAX_VALUE;
@@ -138,7 +138,6 @@ public class SensorListener implements SensorEventListener {
      * Display a shake animation if the user shook the device.
      */
     private void onAccelerationChanged(SensorEvent event) {
-
         float[] values = event.values;
         float eventAccelX = values[0];
         float eventAccelY = values[1];
@@ -170,8 +169,12 @@ public class SensorListener implements SensorEventListener {
      * Display a special image if the device is in a given orientation.
      */
     private void onOrientationChanged() {
+        long now = System.currentTimeMillis();
+        if (now - mLastAnalysisTimestamp < 500) return;
         float[] inR = new float[16];
         float[] I = new float[16];
+
+        mLastAnalysisTimestamp = now;
 
         // We need to have recorded acceleration and magnetic field at least once.
         if (mLastAcceleration == null

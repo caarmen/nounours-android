@@ -59,11 +59,6 @@ class SoundHandler implements NounoursSoundHandler {
 
     public void cacheSounds(final Theme theme) {
         Log.v(TAG, "cacheSounds for theme " + theme);
-        // clear the existing cache
-        for (Integer soundPoolId : mSoundPoolIds.values()) {
-            mSoundPool.unload(soundPoolId);
-        }
-        mSoundPoolIds.clear();
 
         Thread thread = new Thread(){
             @Override
@@ -87,13 +82,23 @@ class SoundHandler implements NounoursSoundHandler {
         thread.start();
     }
 
+    public void clearSoundCache() {
+        Log.v(TAG, "clearSoundCache");
+        // clear the existing cache
+        for (Integer soundPoolId : mSoundPoolIds.values()) {
+            mSoundPool.unload(soundPoolId);
+        }
+        mSoundPoolIds.clear();
+    }
+
     /**
      * Play a sound.
      */
     public void playSound(final String soundId) {
         Log.v(TAG, "playSound " + soundId);
         if (!mSoundEnabled) return;
-        int soundPoolId = mSoundPoolIds.get(soundId);
+        Integer soundPoolId = mSoundPoolIds.get(soundId);
+        if (soundPoolId == null) return;
         mCurrentSoundId = mSoundPool.play(soundPoolId, 1.0f, 1.0f, 0, 0, 1.0f);
         Log.v(TAG, "sound play result for " + soundPoolId + ": " + mCurrentSoundId);
     }
