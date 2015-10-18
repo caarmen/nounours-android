@@ -63,7 +63,8 @@ public class LWPService extends WallpaperService {
             Context context = getApplicationContext();
             NounoursSettings settings = NounoursSettings.getLwpSettings(context);
             settings.setEnableSound(false);
-            mNounours = new AndroidNounours(context,
+            mNounours = new AndroidNounours("LWP",
+                    context,
                     new Handler(),
                     settings,
                     getSurfaceHolder(),

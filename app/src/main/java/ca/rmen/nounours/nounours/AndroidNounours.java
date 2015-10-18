@@ -30,6 +30,7 @@ import android.view.SurfaceHolder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
@@ -63,6 +64,7 @@ public class AndroidNounours extends Nounours {
 
     private static final String TAG = Constants.TAG + AndroidNounours.class.getSimpleName();
 
+    private final String mTag;
     private final Context mContext;
     private final Handler mUIHandler;
     private final NounoursSettings mSettings;
@@ -73,21 +75,24 @@ public class AndroidNounours extends Nounours {
     private final Paint mPaint = new Paint();
     private final int mViewWidth;
     private final int mViewHeight;
+    private final AtomicBoolean mOkToDraw = new AtomicBoolean(false);
 
     /**
      * Open the CSV data files and call the superclass
      * {@link Nounours#init(StreamLoader, NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, String)}
      * method.
-     *
+     * @param tag used for logging, to distinguish between the lwp and app instances
      * @param context The android mContext.
      */
-    public AndroidNounours(final Context context,
+    public AndroidNounours(String tag,
+                           Context context,
                            Handler uiHandler,
                            NounoursSettings settings,
                            SurfaceHolder surfaceHolder,
                            int viewWidth, int viewHeight,
                            AndroidNounoursListener listener) {
 
+        mTag = "/" + tag;
         mContext = context;
         mUIHandler = uiHandler;
         mSettings = settings;
@@ -103,6 +108,7 @@ public class AndroidNounours extends Nounours {
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
         final InputStream themesFile = context.getResources().openRawResource(R.raw.themes);
+        mSurfaceHolder.addCallback(mSurfaceHolderCallback);
 
         try {
             init(streamLoader, animationHandler, mSoundHandler, vibrateHandler, propertiesFile,
@@ -111,7 +117,7 @@ public class AndroidNounours extends Nounours {
             setEnableSound(mSettings.isSoundEnabled());
             setIdleTimeout(mSettings.getIdleTimeout());
         } catch (final IOException e) {
-            Log.e(TAG, "Error initializing nounours", e);
+            Log.e(TAG + mTag, "Error initializing nounours", e);
         }
     }
 
@@ -127,7 +133,7 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     public void useTheme(final String id) {
-        Log.v(TAG, "useTheme " + id);
+        Log.v(TAG + mTag, "useTheme " + id);
 
         // Get the name of this theme.
         Theme theme = getThemes().get(id);
@@ -161,13 +167,12 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void displayImage(final Image image) {
-        Log.v(TAG, "displayImage " + image);
-        if (image == null) {
-            return;
-        }
+        Log.v(TAG + mTag, "displayImage " + image);
+        if (image == null) return;
+        if (!mOkToDraw.get()) return;
         final Bitmap bitmap = mImageCache.getDrawableImage(mContext, image);
-        if (bitmap == null)
-            return;
+        if (bitmap == null) return;
+
         Canvas c = mSurfaceHolder.lockCanvas();
         if (c != null) {
             c.save();
@@ -209,9 +214,9 @@ public class AndroidNounours extends Nounours {
     protected void debug(final Object o) {
         if (o instanceof Throwable) {
             Throwable t = (Throwable) o;
-            Log.w(TAG, t.getMessage(), t);
+            Log.w(TAG + mTag, t.getMessage(), t);
         } else {
-            Log.v(TAG, "" + o);
+            Log.v(TAG + mTag, "" + o);
         }
     }
 
@@ -229,7 +234,7 @@ public class AndroidNounours extends Nounours {
      * Cleanup.
      */
     public void onDestroy() {
-        Log.v(TAG, "destroy");
+        Log.v(TAG + mTag, "destroy");
         mImageCache.clearImageCache();
     }
 
@@ -254,9 +259,9 @@ public class AndroidNounours extends Nounours {
     }
 
     private void reloadThemeFromPreference() {
-        Log.v(TAG, "reloadThemeFromPreference");
+        Log.v(TAG + mTag, "reloadThemeFromPreference");
         boolean nounoursIsBusy = isLoading();
-        Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
+        Log.v(TAG + mTag, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
         String themeId = mSettings.getThemeId();
         if (getCurrentTheme() != null && getCurrentTheme().getId().equals(themeId)) {
             return;
@@ -269,13 +274,30 @@ public class AndroidNounours extends Nounours {
         onResume();
     }
 
+    private final SurfaceHolder.Callback mSurfaceHolderCallback = new SurfaceHolder.Callback() {
+        @Override
+        public void surfaceCreated(SurfaceHolder surfaceHolder) {
+            Log.v(TAG + mTag, "surfaceCreated");
+            mOkToDraw.set(true);
+        }
 
+        @Override
+        public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+            Log.v(TAG + mTag, "surfaceChanged");
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+            Log.v(TAG + mTag, "surfaceDestroyed");
+            mOkToDraw.set(false);
+        }
+    };
 
     @SuppressWarnings("FieldCanBeLocal")
     private final ImageCache.ImageCacheListener mImageCacheListener = new ImageCache.ImageCacheListener() {
         @Override
         public void onImageLoaded(final Image image, int progress, int total) {
-            Log.v(TAG, "onImageLoaded: " + progress + "/" + total);
+            Log.v(TAG + mTag, "onImageLoaded: " + progress + "/" + total);
             setImage(image);
             CharSequence themeName = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
             mListener.onThemeLoadProgress(progress, total, mContext.getString(R.string.loading, themeName));

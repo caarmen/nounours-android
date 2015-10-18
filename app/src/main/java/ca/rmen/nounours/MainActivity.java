@@ -110,7 +110,7 @@ public class MainActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mNounours = new AndroidNounours(
+                        mNounours = new AndroidNounours("APP",
                                 MainActivity.this,
                                 new Handler(),
                                 NounoursSettings.getAppSettings(MainActivity.this),
