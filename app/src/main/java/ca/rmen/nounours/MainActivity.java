@@ -52,7 +52,6 @@ import ca.rmen.nounours.nounours.AndroidNounours;
 import ca.rmen.nounours.nounours.FlingDetector;
 import ca.rmen.nounours.nounours.TouchListener;
 import ca.rmen.nounours.nounours.orientation.SensorListener;
-import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
 import ca.rmen.nounours.util.AnimationUtil;
 import ca.rmen.nounours.util.FileUtil;
@@ -139,11 +138,7 @@ public class MainActivity extends Activity {
                 Log.v(TAG, "Could not register for magnetic field sensor");
         }
 
-        mNounours.setEnableSound(NounoursSettings.isSoundEnabled(this));
-        mNounours.setEnableVibrate(NounoursSettings.isSoundEnabled(this));
-        mNounours.setIdleTimeout(NounoursSettings.getIdleTimeout(this));
-        boolean themeChanged = reloadThemeFromPreference();
-        if (!themeChanged) mNounours.onResume();
+        mNounours.reloadSettings();
         mNounours.doPing(true);
         registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
         Log.v(TAG, "onResume end");
@@ -299,24 +294,6 @@ public class MainActivity extends Activity {
         Animation animation = mNounours.getNounoursRecorder().stop();
         AnimationSaveService.startActionSaveAnimation(this, animation);
     }
-
-    private boolean reloadThemeFromPreference() {
-        Log.v(TAG, "reloadThemeFromPreference");
-        boolean nounoursIsBusy = mNounours.isLoading();
-        Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
-        String themeId = NounoursSettings.getThemeId(this);
-        if (mNounours.getCurrentTheme() != null
-                && mNounours.getCurrentTheme().getId().equals(themeId)) {
-            return false;
-        }
-        final Theme theme = mNounours.getThemes().get(themeId);
-        if (theme != null) {
-            mNounours.stopAnimation();
-            mNounours.useTheme(theme.getId());
-        }
-        return true;
-    }
-
 
     private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
         @Override

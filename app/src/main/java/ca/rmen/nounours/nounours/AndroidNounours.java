@@ -40,6 +40,7 @@ import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.ResourcesCompat;
 import ca.rmen.nounours.data.Image;
+import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
@@ -124,7 +125,7 @@ public class AndroidNounours extends Nounours {
 
         // MEMORY
         mImageCache.clearImageCache();
-        
+
         Thread themeLoader = new Thread() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -228,6 +229,34 @@ public class AndroidNounours extends Nounours {
     protected int getDeviceWidth() {
         return mSurfaceView.getWidth();
     }
+
+    /**
+     * Reread the shared preferences and apply the new settings.
+     */
+    public void reloadSettings() {
+        setEnableSound(NounoursSettings.isSoundEnabled(mContext));
+        setEnableVibrate(NounoursSettings.isSoundEnabled(mContext));
+        setIdleTimeout(NounoursSettings.getIdleTimeout(mContext));
+        reloadThemeFromPreference();
+    }
+
+    private void reloadThemeFromPreference() {
+        Log.v(TAG, "reloadThemeFromPreference");
+        boolean nounoursIsBusy = isLoading();
+        Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
+        String themeId = NounoursSettings.getThemeId(mContext);
+        if (getCurrentTheme() != null && getCurrentTheme().getId().equals(themeId)) {
+            return;
+        }
+        final Theme theme = getThemes().get(themeId);
+        if (theme != null) {
+            stopAnimation();
+            useTheme(theme.getId());
+        }
+        onResume();
+    }
+
+
 
     @SuppressWarnings("FieldCanBeLocal")
     private final ImageCache.ImageCacheListener mImageCacheListener = new ImageCache.ImageCacheListener() {
