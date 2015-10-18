@@ -30,7 +30,7 @@
         android:positiveButtonText="@null" />
 
     <CheckBoxPreference
-        android:icon="@drawable/ic_pref_sound"
+        android:icon="@drawable/ic_pref_dim"
         android:key="lwp_nounourslwp_dim"
         android:title="@string/dimTitle"
         android:summary="@string/dimSummary"
