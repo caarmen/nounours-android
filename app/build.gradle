@@ -37,6 +37,13 @@ android {
         }
     }
 
+    // https://code.google.com/p/android/issues/detail?id=152198
+    // lint will complain about the resValue strings not being translated.
+    lintOptions {
+        // Set this issue to 'error' severity instead of 'fatal' severity.
+        error 'MissingTranslation'
+    }
+
     sourceSets {
         full {
             assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
