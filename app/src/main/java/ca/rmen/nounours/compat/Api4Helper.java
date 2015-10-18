@@ -20,19 +20,12 @@
 package ca.rmen.nounours.compat;
 
 import android.annotation.TargetApi;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 
 @TargetApi(4)
 class Api4Helper {
     private Api4Helper() {
         // prevent instantiation
-    }
-
-    static BitmapDrawable createBitmapDrawable(Resources resources, Bitmap bitmap) {
-        return new BitmapDrawable(resources, bitmap);
     }
 
     static void setBitmapFactoryOptions(BitmapFactory.Options options) {

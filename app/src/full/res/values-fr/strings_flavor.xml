@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
     Copyright (c) 2009 - 2015 Carmen Alvarez
 
     This file is part of Nounours for Android.
@@ -17,9 +18,5 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string name="defaultTheme">Standard</string>
-    <string name="rainbow">Fond arc-en-ciel</string>
-    <string name="greenshirtbluebkg">Pull vert, fond bleu</string>
-    <string name="halloween">Halloween</string>
-    <string name="bugdroid">Bugdroid</string>
+	<string name="app_name">Nounours et ses amis</string>
 </resources>

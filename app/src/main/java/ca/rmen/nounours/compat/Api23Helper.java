@@ -20,25 +20,16 @@
 package ca.rmen.nounours.compat;
 
 import android.annotation.TargetApi;
-import android.graphics.Point;
-import android.view.Display;
+import android.content.Context;
 
-@TargetApi(13)
-class Api13Helper {
-    private Api13Helper() {
-        // Prevent instantiation
+@TargetApi(23)
+class Api23Helper {
+    private Api23Helper() {
+        // prevent instantiation
     }
 
-    static int getWidth(Display display) {
-        Point point = new Point();
-        display.getSize(point);
-        return point.x;
-    }
-
-    static int getHeight(Display display) {
-        Point point = new Point();
-        display.getSize(point);
-        return point.y;
+    static int getColor(Context context, int id) {
+        return context.getResources().getColor(id, null);
     }
 
 }

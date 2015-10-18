@@ -19,18 +19,17 @@
 
 package ca.rmen.nounours.compat;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Context;
+import android.os.Build;
 
-public class BitmapCompat {
+public class ResourcesCompat {
 
-    public static BitmapFactory.Options createBitmapFactoryOptions(int sampleSize) {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = sampleSize;
-        options.inPreferredConfig = Bitmap.Config.RGB_565;
-        if (ApiHelper.getAPILevel() >= 4) {
-            Api4Helper.setBitmapFactoryOptions(options);
+    public static int getColor(Context context, @SuppressWarnings("SameParameterValue") int id) {
+        if (ApiHelper.getAPILevel() < Build.VERSION_CODES.M) {
+            //noinspection deprecation
+            return context.getResources().getColor(id);
+        } else {
+            return Api23Helper.getColor(context, id);
         }
-        return options;
     }
 }

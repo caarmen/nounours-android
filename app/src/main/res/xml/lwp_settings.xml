@@ -21,23 +21,24 @@
 
     <ListPreference
         android:icon="@drawable/ic_menu_gallery"
-        android:key="Theme"
+        android:key="lwp_Theme"
         android:title="@string/themes"
-        android:defaultValue="0"
+        android:defaultValue="@string/DEFAULT_THEME_ID"
         android:entries="@array/themesList"
         android:entryValues="@array/themeListValues"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
     <CheckBoxPreference
-        android:icon="@drawable/ic_pref_sound"
-        android:key="SoundAndVibrate"
-        android:title="@string/enablesound"
-        android:defaultValue="true" />
+        android:icon="@drawable/ic_pref_dim"
+        android:key="lwp_nounourslwp_dim"
+        android:title="@string/dimTitle"
+        android:summary="@string/dimSummary"
+        android:defaultValue="false" />
 
     <ListPreference
         android:icon="@drawable/ic_pref_idle_timeout"
-        android:key="IdleTimeout2"
+        android:key="lwp_IdleTimeout2"
         android:title="@string/idleTimeout"
         android:defaultValue="30000"
         android:entries="@array/idleTimeout"
@@ -48,7 +49,9 @@
     <Preference
         android:icon="@drawable/ic_menu_info_details"
         android:title="@string/about">
-        <intent android:action="ca.rmen.nounours.AboutActivity" />
+        <intent
+            android:targetPackage="@string/APPLICATION_ID"
+            android:targetClass="ca.rmen.nounours.AboutActivity" />
     </Preference>
 
 </PreferenceScreen>

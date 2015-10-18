@@ -22,15 +22,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/ImageView01"
-
+    <SurfaceView
+        android:id="@+id/surface_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:contentDescription="@string/app_name"
-        android:src="@drawable/defaultimg_sm"
-        tools:ignore="UnusedAttribute" />
+        android:layout_gravity="center" />
 
     <ImageButton
         android:id="@+id/btn_stop_recording"

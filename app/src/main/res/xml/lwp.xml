@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-    Copyright (c) 2009 - 2015 Carmen Alvarez
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2015 Carmen Alvarez
 
     This file is part of Nounours for Android.
 
@@ -16,17 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources>
-    <string-array name="idleTimeout">
-        <item>15 seconds</item>
-        <item>30 seconds</item>
-        <item>1 minute</item>
-        <item>2 minutes</item>
-    </string-array>
-    <string-array name="idleTimeoutValues" translatable="false">
-        <item>15000</item>
-        <item>30000</item>
-        <item>60000</item>
-        <item>120000</item>
-    </string-array>
-</resources>
+<wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:settingsActivity="ca.rmen.nounours.settings.SettingsActivity"
+    android:thumbnail="@drawable/icon"
+    tools:ignore="UnusedAttribute" />

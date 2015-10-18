@@ -22,27 +22,54 @@ package ca.rmen.nounours.settings;
 import android.content.Context;
 import android.preference.PreferenceManager;
 
+import ca.rmen.nounours.R;
+
 public final class NounoursSettings {
-    static final String PREF_THEME = "Theme";
+    private static final String PREF_THEME = "Theme";
     private static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
+    private static final String PREF_DIM = "nounourslwp_dim";
+    private static final String PREFIX_APP = "app_";
+    private static final String PREFIX_LWP = "lwp_";
     // IdleTimeout changed from 1.3.5 to 2.0.0 from a Long to a String
     // We just rename the preference here and don't care about migrating this setting.
-    static final String PREF_IDLE_TIMEOUT = "IdleTimeout2";
+    private static final String PREF_IDLE_TIMEOUT = "IdleTimeout2";
 
-    private NounoursSettings() {
-        // Prevent instantiation
+    private final Context mContext;
+    // To have different app_settings for the app vs lwp, we prefix the app_settings:
+    private final String mPreferencePrefix;
+
+    public static NounoursSettings getAppSettings(Context context) {
+        return new NounoursSettings(context, PREFIX_APP);
     }
 
-    public static boolean isSoundEnabled(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_SOUND_AND_VIBRATE, true);
+    public static NounoursSettings getLwpSettings(Context context) {
+        return new NounoursSettings(context, PREFIX_LWP);
     }
 
-    public static long getIdleTimeout(Context context) {
-        return Long.valueOf(PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_IDLE_TIMEOUT, "30000"));
+    private NounoursSettings(Context context, String preferencePrefix) {
+        mContext = context;
+        mPreferencePrefix = preferencePrefix;
     }
 
-    public static String getThemeId(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_THEME, "0");
+    public boolean isSoundEnabled() {
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_SOUND_AND_VIBRATE, true);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    public void setEnableSound(boolean enabled) {
+        PreferenceManager.getDefaultSharedPreferences(mContext).edit().putBoolean(mPreferencePrefix + PREF_SOUND_AND_VIBRATE, enabled).commit();
+    }
+
+    public boolean isImageDimmed() {
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_DIM, false);
+    }
+
+    public long getIdleTimeout() {
+        return Long.valueOf(PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_IDLE_TIMEOUT, "30000"));
+    }
+
+    public String getThemeId() {
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_THEME, mContext.getString(R.string.DEFAULT_THEME_ID));
     }
 
 }

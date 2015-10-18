@@ -5,7 +5,6 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "ca.rmen.nounours"
         minSdkVersion 3
         targetSdkVersion 23
     }
@@ -14,6 +13,40 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    productFlavors {
+        full {
+            applicationId "ca.rmen.nounours"
+            resValue "string", "DEFAULT_THEME_ID", "0"
+        }
+
+        bugdroid {
+            applicationId "ca.rmen.nounours.lwp.robot"
+            resValue "string", "DEFAULT_THEME_ID", "5004"
+        }
+
+        nounours {
+            applicationId "ca.rmen.nounours.lwp.rainbow"
+            resValue "string", "DEFAULT_THEME_ID", "5000"
+        }
+
+        all {
+            resValue "string", "APPLICATION_ID", applicationId
+        }
+    }
+
+    // https://code.google.com/p/android/issues/detail?id=152198
+    // lint will complain about the resValue strings not being translated.
+    lintOptions {
+        // Set this issue to 'error' severity instead of 'fatal' severity.
+        error 'MissingTranslation'
+    }
+
+    sourceSets {
+        full {
+            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
         }
     }
 
@@ -34,8 +67,9 @@ android {
     } else  {
         android.buildTypes.release.signingConfig = null
     }
+
 }
 
 dependencies {
-    compile "ca.rmen:libnounours:2.0.0"
+    compile "ca.rmen:libnounours:2.0.1-SNAPSHOT"
 }

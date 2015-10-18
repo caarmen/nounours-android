@@ -17,16 +17,10 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string-array name="idleTimeout">
-        <item>15 seconds</item>
-        <item>30 seconds</item>
-        <item>1 minute</item>
-        <item>2 minutes</item>
+    <string-array name="themesList" translatable="false">
+        <item>@string/bugdroid</item>
     </string-array>
-    <string-array name="idleTimeoutValues" translatable="false">
-        <item>15000</item>
-        <item>30000</item>
-        <item>60000</item>
-        <item>120000</item>
+    <string-array name="themeListValues" translatable="false">
+        <item>5004</item>
     </string-array>
 </resources>

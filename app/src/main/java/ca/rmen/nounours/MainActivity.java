@@ -21,6 +21,7 @@ package ca.rmen.nounours;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -36,9 +37,9 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -69,10 +70,10 @@ public class MainActivity extends Activity {
     private AndroidNounours mNounours;
     private SensorManager mSensorManager;
     private SensorListener mSensorListener;
-    private TouchListener mTouchListener;
     private Sensor mAccelerometerSensor;
     private Sensor mMagneticFieldSensor;
     private ImageButton mRecordButton;
+    private ProgressDialog mProgressDialog;
 
 
     /**
@@ -84,36 +85,36 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
-
         setContentView(R.layout.main);
 
-        final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-        mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
-        mRecordButton.setOnClickListener(mOnClickListener);
-        mNounours = new AndroidNounours(this, new Handler(), imageView, mListener);
-
-        FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
-        imageView.setOnTouchListener(mTouchListener);
+        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
         if (!isOldEmulator) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
+
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
+        mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
+        mRecordButton.setOnClickListener(mOnClickListener);
+
+        mNounours = new AndroidNounours("APP",
+                MainActivity.this,
+                new Handler(),
+                NounoursSettings.getAppSettings(MainActivity.this),
+                surfaceView.getHolder(),
+                mListener);
+
+        FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
         if (mSensorManager != null) {
             mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
             mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         }
 
-        final GestureDetector gestureDetector = new GestureDetector(this, nounoursFlingDetector);
-        mTouchListener = new TouchListener(mNounours, gestureDetector);
-        mSensorListener = new SensorListener(mNounours, this);
-        imageView.setOnTouchListener(mTouchListener);
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        /*
-         * if (isOldEmulator) { Hardware.mContentResolver = getContentResolver();
-         * mSensorManager = new SensorManagerSimulator(mSensorManager);
-         * SensorManagerSimulator.connectSimulator(); }
-         */
+        final GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), nounoursFlingDetector);
+        TouchListener touchListener = new TouchListener(mNounours, gestureDetector);
+        surfaceView.setOnTouchListener(touchListener);
+        mSensorListener = new SensorListener(mNounours, getApplicationContext());
 
         if (ApiHelper.getAPILevel() < 11) {
             Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG).show();
@@ -133,34 +134,16 @@ public class MainActivity extends Activity {
         Log.v(TAG, "onResume begin");
 
         super.onResume();
-        if (mSensorManager != null) {
-            mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            if (!mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL))
-                Log.v(TAG, "Could not register for magnetic field sensor");
-        }
 
-        mNounours.setEnableSound(NounoursSettings.isSoundEnabled(this));
-        mNounours.setEnableVibrate(NounoursSettings.isSoundEnabled(this));
-        mNounours.setIdleTimeout(NounoursSettings.getIdleTimeout(this));
-        boolean themeChanged = reloadThemeFromPreference();
-        if (!themeChanged) mNounours.onResume();
+        if (mNounours == null) return;
+        mNounours.reloadSettings();
         mNounours.doPing(true);
-        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
         Log.v(TAG, "onResume end");
-
-    }
-
-    /**
-     * The application was stopped or exited. Stop listening for sensor events,
-     * stop pinging for idleness, and stop any sound.
-     *
-     * @see android.app.Activity#onStop()
-     */
-    @Override
-    protected void onStop() {
-        stopActivity();
-
-        super.onStop();
+        if (mSensorManager != null && mSensorListener != null) {
+            mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
     }
 
     /**
@@ -172,21 +155,14 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(mBroadcastReceiver);
-        stopActivity();
-    }
-
-    /**
-     * Stop listening for sensor events, stop pinging for idleness, stop any
-     * sound.
-     */
-    private void stopActivity() {
         mNounours.doPing(false);
         mNounours.stopSound();
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(mSensorListener);
         }
+        unregisterReceiver(mBroadcastReceiver);
     }
+
 
     /**
      * Create menu items for the different animations.
@@ -224,17 +200,19 @@ public class MainActivity extends Activity {
      */
     public boolean onPrepareOptionsMenu(final Menu menu) {
         // Prevent changing the theme in the middle of the animation.
-        Theme theme = mNounours.getCurrentTheme();
-        boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
-        MenuItem animationMenu = menu.findItem(R.id.menu_animation);
-        if (animationMenu != null) {
-            animationMenu.setEnabled(!nounoursIsBusy);
-            animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
-            setupAnimationMenu(animationMenu.getSubMenu());
-        }
-        MenuItem recordingMenu = menu.findItem(R.id.menu_start_recording);
-        if (recordingMenu != null) {
-            recordingMenu.setEnabled(FileUtil.isSdPresent() && !mNounours.getNounoursRecorder().isRecording());
+        if (mNounours != null) {
+            Theme theme = mNounours.getCurrentTheme();
+            boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
+            MenuItem animationMenu = menu.findItem(R.id.menu_animation);
+            if (animationMenu != null) {
+                animationMenu.setEnabled(!nounoursIsBusy);
+                animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
+                if (!nounoursIsBusy) setupAnimationMenu(animationMenu.getSubMenu());
+            }
+            MenuItem recordingMenu = menu.findItem(R.id.menu_start_recording);
+            if (recordingMenu != null) {
+                recordingMenu.setEnabled(FileUtil.isSdPresent() && !mNounours.getNounoursRecorder().isRecording());
+            }
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -247,8 +225,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.menu_options) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            SettingsActivity.startAppSettingsActivity(this);
             return true;
         }
         // Show the help
@@ -300,30 +277,50 @@ public class MainActivity extends Activity {
         AnimationSaveService.startActionSaveAnimation(this, animation);
     }
 
-    private boolean reloadThemeFromPreference() {
-        Log.v(TAG, "reloadThemeFromPreference");
-        boolean nounoursIsBusy = mNounours.isLoading();
-        Log.v(TAG, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
-        String themeId = NounoursSettings.getThemeId(this);
-        if (mNounours.getCurrentTheme() != null
-                && mNounours.getCurrentTheme().getId().equals(themeId)) {
-            return false;
-        }
-        final Theme theme = mNounours.getThemes().get(themeId);
-        if (theme != null) {
-            mNounours.stopAnimation();
-            final ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-            imageView.setImageBitmap(null);
-            mNounours.useTheme(theme.getId());
-        }
-        return true;
-    }
-
     private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
         @Override
-        public void onThemeLoaded() {
+        public void onThemeLoadStart(int max, String message) {
+            Log.v(TAG, "onThemeLoadStart: max=" + max + ", message = " + message);
+            createProgressDialog(max, message);
+        }
+
+        @Override
+        public void onThemeLoadProgress(int progress, int max, String message) {
+            Log.v(TAG, "onThemeLoadProgress: progress=" + progress + ", max=" + max + ", message=" + message);
+            // show the progress bar if it is not already showing.
+            if (mProgressDialog == null || !mProgressDialog.isShowing())
+                createProgressDialog(max, message);
+            // Update the progress
+            mProgressDialog.setProgress(progress);
+            mProgressDialog.setMax(max);
+            mProgressDialog.setMessage(message);
+            if (progress == max) mProgressDialog.dismiss();
+        }
+
+        @Override
+        public void onThemeLoadComplete() {
+            Log.v(TAG, "onThemeLoadComplete");
             mSensorListener.rereadOrientationFile(MainActivity.this);
+            mProgressDialog.dismiss();
             ActivityCompat.invalidateOptionsMenu(MainActivity.this);
+        }
+
+        /**
+         * Create a determinate progress dialog with the given size and text.
+         */
+        private void createProgressDialog(int max, String message) {
+            if (mProgressDialog == null) {
+                mProgressDialog = new ProgressDialog(MainActivity.this);
+                mProgressDialog.setTitle("");
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                mProgressDialog.setProgress(0);
+                mProgressDialog.setCancelable(false);
+            }
+            mProgressDialog.setMessage(message);
+            mProgressDialog.setIndeterminate(max < 0);
+            mProgressDialog.setMax(max);
+            mProgressDialog.show();
+            Log.v(TAG, "createProgressDialog " + max + ": " + message);
         }
     };
 

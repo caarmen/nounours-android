@@ -19,16 +19,18 @@
 
 package ca.rmen.nounours.nounours;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.os.Handler;
 import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.view.SurfaceHolder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import ca.rmen.nounours.Constants;
 import ca.rmen.nounours.Nounours;
@@ -36,11 +38,10 @@ import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
-import ca.rmen.nounours.compat.DisplayCompat;
+import ca.rmen.nounours.compat.ResourcesCompat;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
-import ca.rmen.nounours.nounours.cache.AnimationCache;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.util.ThemeUtil;
@@ -54,60 +55,73 @@ import ca.rmen.nounours.util.ThemeUtil;
 public class AndroidNounours extends Nounours {
 
     public interface AndroidNounoursListener {
-        void onThemeLoaded();
+        void onThemeLoadStart(int max, String message);
+
+        void onThemeLoadProgress(int progress, int max, String message);
+
+        void onThemeLoadComplete();
     }
 
     private static final String TAG = Constants.TAG + AndroidNounours.class.getSimpleName();
 
+    private final String mTag;
     private final Context mContext;
     private final Handler mUIHandler;
-    private final ImageView mImageView;
+    private final NounoursSettings mSettings;
+    private final SurfaceHolder mSurfaceHolder;
     private final AndroidNounoursListener mListener;
     private final ImageCache mImageCache = new ImageCache();
-    private final AnimationCache mAnimationCache = new AnimationCache(mImageCache);
     private final SoundHandler mSoundHandler;
-
-    private ProgressDialog mProgressDialog;
-
+    private final Paint mPaint = new Paint();
+    private int mViewWidth;
+    private int mViewHeight;
+    private final AtomicBoolean mOkToDraw = new AtomicBoolean(false);
 
     /**
      * Open the CSV data files and call the superclass
      * {@link Nounours#init(StreamLoader, NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, String)}
      * method.
-     *
+     * @param tag used for logging, to distinguish between the lwp and app instances
      * @param context The android mContext.
      */
-    public AndroidNounours(final Context context, Handler uiHandler, ImageView imageView, AndroidNounoursListener listener) {
+    public AndroidNounours(String tag,
+                           Context context,
+                           Handler uiHandler,
+                           NounoursSettings settings,
+                           SurfaceHolder surfaceHolder,
+                           AndroidNounoursListener listener) {
 
+        mTag = "/" + tag;
         mContext = context;
         mUIHandler = uiHandler;
-        mImageView = imageView;
+        mSettings = settings;
+        mSurfaceHolder = surfaceHolder;
         mListener = listener;
         StreamLoader streamLoader = new AssetStreamLoader(context);
 
-        String themeId = NounoursSettings.getThemeId(context);
-        AnimationHandler animationHandler = new AnimationHandler(mContext, this, imageView, mAnimationCache);
+        String themeId = mSettings.getThemeId();
+        AnimationHandler animationHandler = new AnimationHandler(this);
         mSoundHandler = new SoundHandler(context);
         VibrateHandler vibrateHandler = new VibrateHandler(context);
         final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
         final InputStream themesFile = context.getResources().openRawResource(R.raw.themes);
+        mSurfaceHolder.addCallback(mSurfaceHolderCallback);
 
         try {
             init(streamLoader, animationHandler, mSoundHandler, vibrateHandler, propertiesFile,
                     themesFile, themeId);
-            setEnableVibrate(NounoursSettings.isSoundEnabled(context));
-            setEnableSound(NounoursSettings.isSoundEnabled(context));
-            setIdleTimeout(NounoursSettings.getIdleTimeout(context));
+            setEnableVibrate(mSettings.isSoundEnabled());
+            setEnableSound(mSettings.isSoundEnabled());
+            setIdleTimeout(mSettings.getIdleTimeout());
         } catch (final IOException e) {
-            Log.e(TAG, "Error initializing nounours", e);
+            Log.e(TAG + mTag, "Error initializing nounours", e);
         }
     }
 
     @Override
     protected boolean cacheResources() {
-        boolean result = mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener)
-                && mAnimationCache.cacheAnimations(mContext, getAnimations().values(), getDefaultImage());
-        mSoundHandler.cacheSounds(getCurrentTheme());
+        boolean result = mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener);
+        if(mSettings.isSoundEnabled()) mSoundHandler.cacheSounds(getCurrentTheme());
         return result;
     }
 
@@ -116,17 +130,17 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     public void useTheme(final String id) {
-        Log.v(TAG, "useTheme " + id);
+        Log.v(TAG + mTag, "useTheme " + id);
 
         // Get the name of this theme.
         Theme theme = getThemes().get(id);
         CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, theme);
 
         // MEMORY
-        mImageView.setImageResource(R.drawable.defaultimg_sm);
         mImageCache.clearImageCache();
-        mAnimationCache.clearAnimationCache();
-        Runnable themeLoader = new Runnable() {
+        mSoundHandler.clearSoundCache();
+
+        Thread themeLoader = new Thread() {
             @SuppressWarnings("synthetic-access")
             @Override
             public void run() {
@@ -135,38 +149,13 @@ public class AndroidNounours extends Nounours {
 
                 runTask(new Runnable() {
                     public void run() {
-                        themeLoaded();
+                        mListener.onThemeLoadComplete();
                     }
                 });
-
             }
         };
-        runTaskWithProgressBar(themeLoader, mContext.getString(R.string.loading, themeLabel), theme.getImages().size());
-    }
-
-    private void themeLoaded() {
-        Log.v(TAG, "themeLoaded");
-        resizeView();
-        mProgressDialog.dismiss();
-        mListener.onThemeLoaded();
-    }
-
-    private void resizeView() {
-        Theme theme = getCurrentTheme();
-        if (theme == null)
-            return;
-        ViewGroup.LayoutParams layoutParams = mImageView.getLayoutParams();
-
-        float widthRatio = (float) DisplayCompat.getWidth(mContext) / theme.getWidth();
-        float heightRatio = (float) DisplayCompat.getHeight(mContext) / theme.getHeight();
-        Log.v(TAG, widthRatio + ": " + heightRatio);
-        float ratioToUse = widthRatio > heightRatio ? heightRatio : widthRatio;
-
-        layoutParams.height = (int) (ratioToUse * theme.getHeight());
-        layoutParams.width = (int) (ratioToUse * theme.getWidth());
-        Log.v(TAG, "Scaling view to " + layoutParams.width + "x" + layoutParams.height);
-        mImageView.setLayoutParams(layoutParams);
-
+        mListener.onThemeLoadStart(theme.getImages().size(), mContext.getString(R.string.loading, themeLabel));
+        themeLoader.start();
     }
 
     /**
@@ -176,14 +165,42 @@ public class AndroidNounours extends Nounours {
      */
     @Override
     protected void displayImage(final Image image) {
-        Log.v(TAG, "displayImage " + image);
-        if (image == null) {
-            return;
-        }
+        Log.v(TAG + mTag, "displayImage " + image);
+        if (image == null) return;
+        if (!mOkToDraw.get()) return;
         final Bitmap bitmap = mImageCache.getDrawableImage(mContext, image);
-        if (bitmap == null)
-            return;
-        mImageView.setImageBitmap(bitmap);
+        if (bitmap == null) return;
+
+        Canvas c = mSurfaceHolder.lockCanvas();
+        if (c != null) {
+            c.save();
+            int bitmapWidth = bitmap.getWidth();
+            int bitmapHeight = bitmap.getHeight();
+            int deviceCenterX = mViewWidth / 2;
+            int deviceCenterY = mViewHeight / 2;
+            int bitmapCenterX = bitmapWidth / 2;
+            int bitmapCenterY = bitmapHeight / 2;
+
+            float scaleX = (float) mViewWidth / bitmapWidth;
+            float scaleY = (float) mViewHeight / bitmapHeight;
+            float offsetX = deviceCenterX - bitmapCenterX;
+            float offsetY = deviceCenterY - bitmapCenterY;
+
+            float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
+            c.drawColor(ResourcesCompat.getColor(mContext, android.R.color.black));
+            Matrix m = new Matrix();
+            m.postTranslate(offsetX, offsetY);
+            m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
+            c.setMatrix(m);
+            c.drawBitmap(bitmap, 0, 0, mPaint);
+            c.restore();
+            if (mSettings.isImageDimmed()) c.drawColor(0x88000000);
+            mSurfaceHolder.unlockCanvasAndPost(c);
+        }
+    }
+
+    public void redraw() {
+        displayImage(getCurrentImage());
     }
 
     /**
@@ -193,9 +210,9 @@ public class AndroidNounours extends Nounours {
     protected void debug(final Object o) {
         if (o instanceof Throwable) {
             Throwable t = (Throwable) o;
-            Log.w(TAG, t.getMessage(), t);
+            Log.w(TAG + mTag, t.getMessage(), t);
         } else {
-            Log.v(TAG, "" + o);
+            Log.v(TAG + mTag, "" + o);
         }
     }
 
@@ -210,90 +227,87 @@ public class AndroidNounours extends Nounours {
     }
 
     /**
-     * Run a task, showing the progress bar while the task runs.
-     */
-    private void runTaskWithProgressBar(final Runnable task, String message, int max) {
-        if (mProgressDialog != null)
-            mProgressDialog.dismiss();
-        createProgressDialog(max, message);
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                task.run();
-                mProgressDialog.dismiss();
-                Log.v(TAG, "runTaskWithProgressBar complete");
-            }
-        };
-        new Thread(runnable).start();
-    }
-
-    /**
-     * Update the currently showing progress bar.
-     */
-    private void updateProgressBar(final int progress, final int max, final String message) {
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                // show the progress bar if it is not already showing.
-                if (mProgressDialog == null || !mProgressDialog.isShowing())
-                    createProgressDialog(max, message);
-                // Update the progress
-                mProgressDialog.setProgress(progress);
-                mProgressDialog.setMax(max);
-                mProgressDialog.setMessage(message);
-                debug("updateProgressBar " + progress + "/" + max + ": " + message);
-                if (progress == max) mProgressDialog.dismiss();
-
-            }
-        };
-        runTask(runnable);
-    }
-
-    /**
-     * Create a determinate progress dialog with the given size and text.
-     */
-    private void createProgressDialog(int max, String message) {
-        mProgressDialog = new ProgressDialog(mContext);
-        mProgressDialog.setTitle("");
-        mProgressDialog.setMessage(message);
-        mProgressDialog.setIndeterminate(max < 0);
-        mProgressDialog.setMax(max);
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        mProgressDialog.setProgress(0);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.show();
-        debug("createProgressDialog " + max + ": " + message);
-    }
-
-    /**
      * Cleanup.
      */
     public void onDestroy() {
-        debug("destroy");
+        Log.v(TAG + mTag, "destroy");
         mImageCache.clearImageCache();
-        mAnimationCache.clearAnimationCache();
+        mSoundHandler.clearSoundCache();
     }
 
     @Override
     protected int getDeviceHeight() {
-        return mImageView.getHeight();
+        return mViewHeight;
     }
 
     @Override
     protected int getDeviceWidth() {
-        return mImageView.getWidth();
+        return mViewWidth;
     }
+
+    /**
+     * Reread the shared preferences and apply the new app_settings.
+     */
+    public void reloadSettings() {
+        if(mSettings.isSoundEnabled() && !isSoundEnabled()) {
+            mSoundHandler.cacheSounds(getCurrentTheme());
+        } else if (!mSettings.isSoundEnabled() && isSoundEnabled()) {
+            mSoundHandler.clearSoundCache();
+        }
+
+        setEnableSound(mSettings.isSoundEnabled());
+        setEnableVibrate(mSettings.isSoundEnabled());
+        setIdleTimeout(mSettings.getIdleTimeout());
+        reloadThemeFromPreference();
+    }
+
+    private void reloadThemeFromPreference() {
+        Log.v(TAG + mTag, "reloadThemeFromPreference");
+        boolean nounoursIsBusy = isLoading();
+        Log.v(TAG + mTag, "reloadThemeFromPreference, nounoursIsBusy = " + nounoursIsBusy);
+        String themeId = mSettings.getThemeId();
+        if (getCurrentTheme() != null && getCurrentTheme().getId().equals(themeId)) {
+            return;
+        }
+        final Theme theme = getThemes().get(themeId);
+        if (theme != null) {
+            stopAnimation();
+            useTheme(theme.getId());
+        }
+    }
+
+    @SuppressWarnings("FieldCanBeLocal")
+    private final SurfaceHolder.Callback mSurfaceHolderCallback = new SurfaceHolder.Callback() {
+        @Override
+        public void surfaceCreated(SurfaceHolder surfaceHolder) {
+            Log.v(TAG + mTag, "surfaceCreated");
+            mOkToDraw.set(true);
+            redraw();
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width, int height) {
+            Log.v(TAG + mTag, "surfaceChanged");
+            mViewWidth = width;
+            mViewHeight = height;
+            redraw();
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+            Log.v(TAG + mTag, "surfaceDestroyed");
+            mOkToDraw.set(false);
+        }
+    };
 
     @SuppressWarnings("FieldCanBeLocal")
     private final ImageCache.ImageCacheListener mImageCacheListener = new ImageCache.ImageCacheListener() {
         @Override
         public void onImageLoaded(final Image image, int progress, int total) {
-            Log.v(TAG, "onImageLoaded: " + progress + "/" + total);
+            Log.v(TAG + mTag, "onImageLoaded: " + progress + "/" + total);
             setImage(image);
             CharSequence themeName = ThemeUtil.getThemeLabel(mContext, getCurrentTheme());
-            updateProgressBar(progress, total, mContext.getString(R.string.loading, themeName));
+            mListener.onThemeLoadProgress(progress, total, mContext.getString(R.string.loading, themeName));
         }
     };
 }

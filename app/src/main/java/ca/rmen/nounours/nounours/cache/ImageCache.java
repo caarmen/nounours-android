@@ -70,6 +70,7 @@ public class ImageCache {
     }
 
     public void clearImageCache() {
+        Log.v(TAG, "clearImageCache");
 
         for (Bitmap bitmap : mImageCache.values()) {
             if (!bitmap.isRecycled()) bitmap.recycle();
