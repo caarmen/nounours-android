@@ -72,4 +72,5 @@ android {
 
 dependencies {
     compile "ca.rmen:libnounours:2.0.1"
+    compile 'com.robbypond:android-ColorPickerPreference:1.11.1'
 }

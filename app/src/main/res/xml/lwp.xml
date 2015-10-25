@@ -20,5 +20,5 @@
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:settingsActivity="ca.rmen.nounours.settings.SettingsActivity"
-    android:thumbnail="@drawable/icon"
+    android:thumbnail="@drawable/app_icon"
     tools:ignore="UnusedAttribute" />

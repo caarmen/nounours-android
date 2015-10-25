@@ -22,6 +22,7 @@
 	<string name="actions">Actions</string>
 	<string name="about">About</string>
 	<string name="themes">Theme</string>
+	<string name="backgroundColor">Background color</string>
 	<string name="loading">Loading my %s theme</string>
 	<string name="abouttext"><![CDATA[
 <h1>%1$s version %2$s</h1>

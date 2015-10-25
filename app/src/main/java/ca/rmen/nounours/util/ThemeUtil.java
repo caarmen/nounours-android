@@ -39,4 +39,12 @@ public final class ThemeUtil {
         return themeLabel;
     }
 
+    public static boolean isThemeTransparent(Context context, String themeId) {
+        String[] transparentThemes = context.getResources().getStringArray(R.array.transparentThemes);
+        for(String transparentTheme : transparentThemes) {
+            if(themeId.equals(transparentTheme)) return true;
+        }
+        return false;
+    }
+
 }

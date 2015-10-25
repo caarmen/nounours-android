@@ -25,7 +25,8 @@ import android.preference.PreferenceManager;
 import ca.rmen.nounours.R;
 
 public final class NounoursSettings {
-    private static final String PREF_THEME = "Theme";
+    static final String PREF_THEME = "Theme";
+    static final String PREF_BACKGROUND_COLOR = "BackgroundColor";
     private static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
     private static final String PREF_DIM = "nounourslwp_dim";
     private static final String PREFIX_APP = "app_";
@@ -70,6 +71,10 @@ public final class NounoursSettings {
 
     public String getThemeId() {
         return PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_THEME, mContext.getString(R.string.DEFAULT_THEME_ID));
+    }
+
+    public int getBackgroundColor() {
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt(mPreferencePrefix + PREF_BACKGROUND_COLOR, -1);
     }
 
 }
