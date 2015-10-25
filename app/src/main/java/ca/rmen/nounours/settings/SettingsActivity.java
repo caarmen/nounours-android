@@ -109,12 +109,8 @@ public class SettingsActivity extends PreferenceActivity {
                     preferencesToHide.add(preference);
                 }
             } else if (preference.getKey().endsWith(NounoursSettings.PREF_BACKGROUND_COLOR)) {
-                // The background color feature isn't available on older devices.
-                if (ApiHelper.getAPILevel() < Build.VERSION_CODES.ECLAIR_MR1) {
-                    preferencesToHide.add(preference);
-                }
                 // If we have no transparent themes, it doesn't make sense to have this setting.
-                else if (getResources().getStringArray(R.array.transparentThemes).length == 0) {
+                if (getResources().getStringArray(R.array.transparentThemes).length == 0) {
                     preferencesToHide.add(preference);
                 } else {
                     backgroundColorPreference = preference;

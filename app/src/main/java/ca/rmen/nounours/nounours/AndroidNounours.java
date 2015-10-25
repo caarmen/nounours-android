@@ -25,7 +25,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -40,7 +39,6 @@ import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
-import ca.rmen.nounours.compat.ApiHelper;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
@@ -271,12 +269,10 @@ public class AndroidNounours extends Nounours {
         if (theme == null) return;
         String themeDefaultBackgroundColor = theme.getProperty("background.color");
         mBackgroundColor = Color.parseColor(themeDefaultBackgroundColor);
-        if (ApiHelper.getAPILevel() >= Build.VERSION_CODES.ECLAIR_MR1) {
             if (ThemeUtil.isThemeTransparent(mContext, theme.getId())) {
                 int settingBackgroundColor = mSettings.getBackgroundColor();
                 if (settingBackgroundColor != -1) mBackgroundColor = settingBackgroundColor;
             }
-        }
     }
 
     private void reloadThemeFromPreference() {
