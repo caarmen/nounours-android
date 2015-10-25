@@ -23,6 +23,7 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 import ca.rmen.nounours.R;
+import ca.rmen.nounours.compat.ResourcesCompat;
 
 public final class NounoursSettings {
     static final String PREF_THEME = "Theme";
@@ -74,7 +75,7 @@ public final class NounoursSettings {
     }
 
     public int getBackgroundColor() {
-        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt(mPreferencePrefix + PREF_BACKGROUND_COLOR, -1);
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getInt(mPreferencePrefix + PREF_BACKGROUND_COLOR, ResourcesCompat.getColor(mContext, android.R.color.black));
     }
 
 }

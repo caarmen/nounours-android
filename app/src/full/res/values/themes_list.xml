@@ -32,6 +32,7 @@
         <item>5004</item>
     </string-array>
     <string-array name="transparentThemes" translatable="false">
+        <item>5001</item>
         <item>5004</item>
     </string-array>
 </resources>

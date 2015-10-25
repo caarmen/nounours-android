@@ -30,7 +30,7 @@
         android:positiveButtonText="@null" />
 
     <net.margaritov.preference.colorpicker.ColorPickerPreference
-        android:defaultValue="@android:color/white"
+        android:defaultValue="@android:color/black"
         android:icon="@drawable/ic_pref_background_color"
         android:key="lwp_BackgroundColor"
         android:title="@string/backgroundColor" />

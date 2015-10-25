@@ -22,7 +22,6 @@ package ca.rmen.nounours.nounours;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Handler;
@@ -149,8 +148,6 @@ public class AndroidNounours extends Nounours {
 
                 AndroidNounours.super.useTheme(id);
 
-                resetBackgroundColor();
-
                 runTask(new Runnable() {
                     public void run() {
                         mListener.onThemeLoadComplete();
@@ -262,20 +259,8 @@ public class AndroidNounours extends Nounours {
         setEnableSound(mSettings.isSoundEnabled());
         setEnableVibrate(mSettings.isSoundEnabled());
         setIdleTimeout(mSettings.getIdleTimeout());
-        resetBackgroundColor();
+        mBackgroundColor = mSettings.getBackgroundColor();
         reloadThemeFromPreference();
-    }
-
-    private void resetBackgroundColor() {
-        if (isLoading()) return;
-        Theme theme = getCurrentTheme();
-        if (theme == null) return;
-        String themeDefaultBackgroundColor = theme.getProperty("background.color");
-        mBackgroundColor = Color.parseColor(themeDefaultBackgroundColor);
-        if (ThemeUtil.isThemeTransparent(mContext, theme.getId())) {
-            int settingBackgroundColor = mSettings.getBackgroundColor();
-            if (settingBackgroundColor != -1) mBackgroundColor = settingBackgroundColor;
-        }
     }
 
     private void reloadThemeFromPreference() {
