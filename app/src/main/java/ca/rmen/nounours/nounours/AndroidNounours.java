@@ -82,7 +82,8 @@ public class AndroidNounours extends Nounours {
      * Open the CSV data files and call the superclass
      * {@link Nounours#init(StreamLoader, NounoursAnimationHandler, NounoursSoundHandler, NounoursVibrateHandler, InputStream, InputStream, String)}
      * method.
-     * @param tag used for logging, to distinguish between the lwp and app instances
+     *
+     * @param tag     used for logging, to distinguish between the lwp and app instances
      * @param context The android mContext.
      */
     public AndroidNounours(String tag,
@@ -122,7 +123,7 @@ public class AndroidNounours extends Nounours {
     @Override
     protected boolean cacheResources() {
         boolean result = mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener);
-        if(mSettings.isSoundEnabled()) mSoundHandler.cacheSounds(getCurrentTheme());
+        if (mSettings.isSoundEnabled()) mSoundHandler.cacheSounds(getCurrentTheme());
         return result;
     }
 
@@ -252,7 +253,7 @@ public class AndroidNounours extends Nounours {
      * Reread the shared preferences and apply the new app_settings.
      */
     public void reloadSettings() {
-        if(mSettings.isSoundEnabled() && !isSoundEnabled()) {
+        if (mSettings.isSoundEnabled() && !isSoundEnabled()) {
             mSoundHandler.cacheSounds(getCurrentTheme());
         } else if (!mSettings.isSoundEnabled() && isSoundEnabled()) {
             mSoundHandler.clearSoundCache();
@@ -264,15 +265,17 @@ public class AndroidNounours extends Nounours {
         resetBackgroundColor();
         reloadThemeFromPreference();
     }
+
     private void resetBackgroundColor() {
+        if (isLoading()) return;
         Theme theme = getCurrentTheme();
         if (theme == null) return;
         String themeDefaultBackgroundColor = theme.getProperty("background.color");
         mBackgroundColor = Color.parseColor(themeDefaultBackgroundColor);
-            if (ThemeUtil.isThemeTransparent(mContext, theme.getId())) {
-                int settingBackgroundColor = mSettings.getBackgroundColor();
-                if (settingBackgroundColor != -1) mBackgroundColor = settingBackgroundColor;
-            }
+        if (ThemeUtil.isThemeTransparent(mContext, theme.getId())) {
+            int settingBackgroundColor = mSettings.getBackgroundColor();
+            if (settingBackgroundColor != -1) mBackgroundColor = settingBackgroundColor;
+        }
     }
 
     private void reloadThemeFromPreference() {
