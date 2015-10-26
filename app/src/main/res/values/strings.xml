@@ -28,7 +28,8 @@
 <h1>%1$s version %2$s</h1>
 By Carmen Alvarez (<a href="mailto:c@rmen.ca">c@rmen.ca</a>)<br>
 Source code on <a href="https://github.com/caarmen/nounours-android">Github</a><br><br>
-<b>Credits:</b><br>
+<b>Credits:</b><br><br>
+Sergey Margaritov: <a href="https://github.com/attenzione/android-ColorPickerPreference">android-ColorPickerPreference</a><br><br>
 B-Roll (Macarenours music): <a href="http://incompetech.com">Kevin MacLeod</a><br><br>
 <a href="https://github.com/nbadal/android-gif-encoder">Nick Badal</a> and <a href="http://www.jappit.com/blog/2008/12/04/j2me-animated-gif-encoder/">Alessandro La Rosa</a>, for the animated gif encoder.<br><br>
 The Android(TM) Robot is created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.]]></string>
