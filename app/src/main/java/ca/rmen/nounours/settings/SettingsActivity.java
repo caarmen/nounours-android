@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.view.MenuItem;
 
@@ -36,6 +35,7 @@ import java.util.List;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.ActivityCompat;
 import ca.rmen.nounours.compat.ApiHelper;
+import ca.rmen.nounours.util.ThemeUtil;
 
 
 /**
@@ -82,81 +82,56 @@ public class SettingsActivity extends PreferenceActivity {
         //noinspection deprecation
         addPreferencesFromResource(xmlResId);
 
+        ListPreference themePreference = null;
+        Preference backgroundColorPreference = null;
+
         List<Preference> preferencesToHide = new ArrayList<>();
-        // Some preferences are not relevant, and we must remove them.
+
         //noinspection deprecation
         PreferenceScreen preferenceScreen = getPreferenceScreen();
+
+        // Hide preferences which are not relevant.
         for (int i = 0; i < preferenceScreen.getPreferenceCount(); i++) {
             Preference preference = preferenceScreen.getPreference(i);
-            if (preference instanceof ListPreference) {
+            // Only care about preferences with keys
+            if (preference.getKey() == null) continue;
+
+            if (preference.getKey().endsWith(NounoursSettings.PREF_THEME)) {
                 // If we have only one theme, there's no point in showing the theme preference.
-                ListPreference listPreference = (ListPreference) preference;
-                if (listPreference.getEntries().length == 1) {
+                themePreference = (ListPreference) preference;
+                if (themePreference.getEntries().length == 1) {
                     preferencesToHide.add(preference);
                 }
-                bindPreferenceSummaryToValue(preference);
             }
             // The wallpaper feature isn't available on older devices.
             else if (PREF_LAUNCH_WALLPAPER_SETTINGS.equals(preference.getKey())) {
                 if (ApiHelper.getAPILevel() < Build.VERSION_CODES.ECLAIR_MR1) {
                     preferencesToHide.add(preference);
                 }
+            } else if (preference.getKey().endsWith(NounoursSettings.PREF_BACKGROUND_COLOR)) {
+                // If we have no transparent themes, it doesn't make sense to have this setting.
+                if (getResources().getStringArray(R.array.transparentThemes).length == 0) {
+                    preferencesToHide.add(preference);
+                } else {
+                    backgroundColorPreference = preference;
+                }
             }
         }
         for (Preference preference : preferencesToHide) {
             preferenceScreen.removePreference(preference);
         }
+
+        if (themePreference != null) {
+            ThemeChangedListener themeChangedListener = new ThemeChangedListener(this, backgroundColorPreference);
+            themePreference.setOnPreferenceChangeListener(themeChangedListener);
+            themeChangedListener.onPreferenceChange(themePreference, themePreference.getValue());
+        }
     }
 
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its new value.
-     */
-    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-
-            if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
-
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
-
-            } else {
-                // For all other preferences, set the summary to the value's
-                // simple string representation.
-                preference.setSummary(stringValue);
-            }
-            return true;
-        }
-    };
-
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+    private static void updateListPreferenceSummary(ListPreference listPreference, String newValue) {
+        int index = listPreference.findIndexOfValue(newValue);
+        // Set the summary to reflect the new value.
+        listPreference.setSummary(listPreference.getEntries()[index]);
     }
 
     @Override
@@ -165,5 +140,29 @@ public class SettingsActivity extends PreferenceActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * When the theme changes, we need to update its summary, and enable or disable the background
+     * color setting, as not all themes support this setting.
+     */
+    private static class ThemeChangedListener implements Preference.OnPreferenceChangeListener {
+
+        private final Context mContext;
+        private final Preference mBackgroundColorPreference;
+
+        ThemeChangedListener(Context context, Preference backgroundColorPreference) {
+            mContext = context;
+            mBackgroundColorPreference = backgroundColorPreference;
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            String themeId = (String) newValue;
+            if (mBackgroundColorPreference != null)
+                mBackgroundColorPreference.setEnabled(ThemeUtil.isThemeTransparent(mContext, themeId));
+            updateListPreferenceSummary((ListPreference) preference, themeId);
+            return true;
+        }
     }
 }

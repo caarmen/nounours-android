@@ -21,6 +21,8 @@ package ca.rmen.nounours.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.AnimationDrawable;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +43,7 @@ import ca.rmen.nounours.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.nounours.cache.ImageCache;
+import ca.rmen.nounours.settings.NounoursSettings;
 
 public class AnimationUtil {
     private static final String TAG = Constants.TAG + AnimationUtil.class.getSimpleName();
@@ -61,15 +64,23 @@ public class AnimationUtil {
             AnimatedGifEncoder encoder = new AnimatedGifEncoder();
             encoder.start(bos);
             encoder.setRepeat(0);
+            NounoursSettings settings = NounoursSettings.getAppSettings(context);
+            int backgroundColor = settings.getBackgroundColor();
 
+            Paint paint = new Paint();
             // Go through the list of images in the nounours animation, "repeat"
             // times.
             for (int i = 0; i < animation.getRepeat(); i++) {
                 for (final AnimationImage animationImage : animation.getImages()) {
                     Bitmap bitmap = imageCache.getDrawableImage(context, animationImage.getImage());
+                    Bitmap bitmapTemp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+                    Canvas canvas = new Canvas(bitmapTemp);
+                    canvas.drawColor(backgroundColor);
+                    canvas.drawBitmap(bitmap, 0, 0, paint);
                     int frameDuration = (int) (animation.getInterval() * animationImage.getDuration());
                     encoder.setDelay(frameDuration);
-                    encoder.addFrame(bitmap);
+                    encoder.addFrame(bitmapTemp);
+                    bitmapTemp.recycle();
                 }
             }
             Log.v(TAG, "saveAnimation: finish writing gif...");
