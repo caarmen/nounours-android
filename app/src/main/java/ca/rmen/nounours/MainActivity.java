@@ -206,8 +206,9 @@ public class MainActivity extends Activity {
             MenuItem animationMenu = menu.findItem(R.id.menu_animation);
             if (animationMenu != null) {
                 animationMenu.setEnabled(!nounoursIsBusy);
-                animationMenu.setVisible(theme != null && !theme.getAnimations().isEmpty());
-                setupAnimationMenu(animationMenu.getSubMenu());
+                boolean hasAnimations = theme != null && !theme.getAnimations().isEmpty();
+                animationMenu.setVisible(hasAnimations);
+                if (hasAnimations) setupAnimationMenu(animationMenu.getSubMenu());
             }
             MenuItem recordingMenu = menu.findItem(R.id.menu_start_recording);
             if (recordingMenu != null) {
