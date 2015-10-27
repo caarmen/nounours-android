@@ -73,7 +73,7 @@ public class AnimationUtil {
             for (int i = 0; i < animation.getRepeat(); i++) {
                 for (final AnimationImage animationImage : animation.getImages()) {
                     Bitmap bitmap = imageCache.getDrawableImage(context, animationImage.getImage());
-                    Bitmap bitmapTemp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+                    Bitmap bitmapTemp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.RGB_565);
                     Canvas canvas = new Canvas(bitmapTemp);
                     canvas.drawColor(backgroundColor);
                     canvas.drawBitmap(bitmap, 0, 0, paint);

@@ -28,3 +28,5 @@
     private void readObject(java.io.ObjectInputStream);
 }
 -dontwarn org.apache.http.**
+
+-dontobfuscate
