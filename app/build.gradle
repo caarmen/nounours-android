@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 3
         targetSdkVersion 23
-        versionName "2.3.2"
-        versionCode 232
+        versionName "2.3.3"
+        versionCode 233
         archivesBaseName += "-" + versionName
     }
 
