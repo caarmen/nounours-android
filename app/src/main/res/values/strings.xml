@@ -47,6 +47,7 @@ The Android(TM) Robot is created and shared by Google and used according to term
 	<string name="notif_save_animation_in_progress_content">Saving the Nounours animation&#8230;</string>
 	<string name="notif_save_animation_done">Animation saved</string>
 	<string name="notif_save_animation_failed">Couldn\'t save the animation</string>
+	<string name="share">Share</string>
 	<string name="share_app_chooser_title">Share via</string>
 
 </resources>

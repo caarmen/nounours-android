@@ -38,6 +38,10 @@ public final class NotificationCompat {
     }
 
     public static Notification createNotification(Context context, int iconId, int tickerTextResId, int contentTextResId, PendingIntent pendingIntent) {
+        return createNotification(context, iconId, tickerTextResId, contentTextResId, 0, null, pendingIntent);
+    }
+
+    public static Notification createNotification(Context context, int iconId, int tickerTextResId, int contentTextResId, int actionIconId, CharSequence actionText, PendingIntent pendingIntent) {
         String tickerText = context.getString(tickerTextResId);
         String contentText = context.getString(contentTextResId);
         if (ApiHelper.getAPILevel() < 11) {
@@ -62,8 +66,10 @@ public final class NotificationCompat {
             return notification;
         } else if (ApiHelper.getAPILevel() < 16) {
             return Api11Helper.createNotification(context, iconId, tickerText, contentText, pendingIntent);
+        } else if (ApiHelper.getAPILevel() < 23){
+            return Api16Helper.createNotification(context, iconId, tickerText, contentText, actionIconId, actionText, pendingIntent);
         } else {
-            return Api16Helper.createNotification(context, iconId, tickerText, contentText, pendingIntent);
+            return Api23Helper.createNotification(context, iconId, tickerText, contentText, actionIconId, actionText, pendingIntent);
         }
     }
 

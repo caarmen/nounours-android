@@ -30,13 +30,18 @@ class Api16Helper {
         // prevent instantiation
     }
 
-    static Notification createNotification(Context context, int iconId, String tickerText, String contentText, PendingIntent pendingIntent) {
-        return new Notification.Builder(context)
+    static Notification createNotification(Context context, int iconId, String tickerText, String contentText, int actionIconId, CharSequence actionText, PendingIntent pendingIntent) {
+        Notification.Builder builder = new Notification.Builder(context)
                 .setContentTitle(tickerText)
                 .setContentText(contentText)
                 .setSmallIcon(iconId)
-                .setContentIntent(pendingIntent)
-                .build();
+                .setContentIntent(pendingIntent);
+
+        if (actionIconId > 0) {
+            //noinspection deprecation
+            builder.addAction(actionIconId, actionText, pendingIntent);
+        }
+        return builder.build();
     }
 
 }

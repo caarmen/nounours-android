@@ -47,6 +47,7 @@ Le robot Android(TM) est crée et partagé par Google et utilisé selon les cond
 	<string name="notif_save_animation_in_progress_content">Enregistrement de l\'animation de Nounours&#8230;</string>
 	<string name="notif_save_animation_done">Animation enregistré</string>
 	<string name="notif_save_animation_failed">Erreur d\'enregistrement de l\'animation</string>
+	<string name="share">Partager</string>
 	<string name="share_app_chooser_title">Partager via</string>
 
 </resources>

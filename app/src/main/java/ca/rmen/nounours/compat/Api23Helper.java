@@ -20,6 +20,8 @@
 package ca.rmen.nounours.compat;
 
 import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 
 @TargetApi(23)
@@ -30,6 +32,20 @@ class Api23Helper {
 
     static int getColor(Context context, int id) {
         return context.getResources().getColor(id, null);
+    }
+
+    static Notification createNotification(Context context, int iconId, String tickerText, String contentText, int actionIconId, CharSequence actionText, PendingIntent pendingIntent) {
+        Notification.Builder builder = new Notification.Builder(context)
+                .setContentTitle(tickerText)
+                .setContentText(contentText)
+                .setSmallIcon(iconId)
+                .setContentIntent(pendingIntent);
+
+        if (actionIconId > 0) {
+            Notification.Action action = new Notification.Action.Builder(actionIconId, actionText, pendingIntent).build();
+            builder.addAction(action);
+        }
+        return builder.build();
     }
 
 }

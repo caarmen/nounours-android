@@ -102,7 +102,14 @@ public class AnimationSaveService extends IntentService {
             // Notify that the save is done.
             Intent shareIntent = getShareIntent(file);
             PendingIntent pendingShareIntent = PendingIntent.getActivity(this, 0, shareIntent, 0);
-            notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_done, R.string.notif_save_animation_done, pendingShareIntent);
+            notification = NotificationCompat.createNotification(
+                    this,
+                    iconId,
+                    R.string.notif_save_animation_done,
+                    R.string.notif_save_animation_done,
+                    R.drawable.ic_action_share,
+                    getString(R.string.share),
+                    pendingShareIntent);
             notification.flags = Notification.FLAG_AUTO_CANCEL;
             notificationManager.notify(NOTIFICATION_ID, notification);
             // Also broadcast that the save is done.
