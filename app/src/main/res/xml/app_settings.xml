@@ -58,12 +58,4 @@
         <intent android:action="android.service.wallpaper.LIVE_WALLPAPER_CHOOSER" />
     </Preference>
 
-    <Preference
-        android:icon="@drawable/ic_menu_info_details"
-        android:title="@string/about">
-        <intent
-            android:targetPackage="@string/APPLICATION_ID"
-            android:targetClass="ca.rmen.nounours.AboutActivity" />
-    </Preference>
-
 </PreferenceScreen>

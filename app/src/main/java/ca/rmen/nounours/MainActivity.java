@@ -242,6 +242,10 @@ public class MainActivity extends Activity {
             startRecording();
             ActivityCompat.invalidateOptionsMenu(this);
             return true;
+        } else if (menuItem.getItemId() == R.id.menu_about) {
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
+            return true;
         }
         // Show an animation or change the theme.
         else {

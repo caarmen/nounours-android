@@ -49,4 +49,11 @@
         android:icon="@drawable/ic_menu_help"
         android:title="@string/help"
         tools:ignore="UnusedAttribute" />
+
+    <item
+        android:id="@+id/menu_about"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_menu_info_details"
+        android:title="@string/about"
+        tools:ignore="UnusedAttribute" />
 </menu>
