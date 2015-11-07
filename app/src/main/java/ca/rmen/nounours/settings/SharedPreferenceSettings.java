@@ -25,7 +25,7 @@ import android.preference.PreferenceManager;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.compat.ResourcesCompat;
 
-public final class NounoursSettings {
+public final class SharedPreferenceSettings implements NounoursSettings {
     static final String PREF_THEME = "Theme";
     static final String PREF_BACKGROUND_COLOR = "BackgroundColor";
     private static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
@@ -41,39 +41,45 @@ public final class NounoursSettings {
     private final String mPreferencePrefix;
 
     public static NounoursSettings getAppSettings(Context context) {
-        return new NounoursSettings(context, PREFIX_APP);
+        return new SharedPreferenceSettings(context, PREFIX_APP);
     }
 
     public static NounoursSettings getLwpSettings(Context context) {
-        return new NounoursSettings(context, PREFIX_LWP);
+        return new SharedPreferenceSettings(context, PREFIX_LWP);
     }
 
-    private NounoursSettings(Context context, String preferencePrefix) {
+    private SharedPreferenceSettings(Context context, String preferencePrefix) {
         mContext = context;
         mPreferencePrefix = preferencePrefix;
     }
 
+    @Override
     public boolean isSoundEnabled() {
         return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_SOUND_AND_VIBRATE, true);
     }
 
+    @Override
     @SuppressWarnings("SameParameterValue")
     public void setEnableSound(boolean enabled) {
         PreferenceManager.getDefaultSharedPreferences(mContext).edit().putBoolean(mPreferencePrefix + PREF_SOUND_AND_VIBRATE, enabled).commit();
     }
 
+    @Override
     public boolean isImageDimmed() {
         return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_DIM, false);
     }
 
+    @Override
     public long getIdleTimeout() {
         return Long.valueOf(PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_IDLE_TIMEOUT, "30000"));
     }
 
+    @Override
     public String getThemeId() {
         return PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_THEME, mContext.getString(R.string.DEFAULT_THEME_ID));
     }
 
+    @Override
     public int getBackgroundColor() {
         return PreferenceManager.getDefaultSharedPreferences(mContext).getInt(mPreferencePrefix + PREF_BACKGROUND_COLOR, ResourcesCompat.getColor(mContext, android.R.color.black));
     }

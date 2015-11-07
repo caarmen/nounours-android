@@ -36,6 +36,7 @@ import ca.rmen.nounours.nounours.FlingDetector;
 import ca.rmen.nounours.nounours.TouchListener;
 import ca.rmen.nounours.nounours.orientation.SensorListener;
 import ca.rmen.nounours.settings.NounoursSettings;
+import ca.rmen.nounours.settings.SharedPreferenceSettings;
 
 @TargetApi(Build.VERSION_CODES.ECLAIR_MR1)
 public class LWPService extends WallpaperService {
@@ -60,7 +61,7 @@ public class LWPService extends WallpaperService {
             super.onCreate(surfaceHolder);
             setTouchEventsEnabled(true);
             Context context = getApplicationContext();
-            NounoursSettings settings = NounoursSettings.getLwpSettings(context);
+            NounoursSettings settings = SharedPreferenceSettings.getLwpSettings(context);
             settings.setEnableSound(false);
             mNounours = new AndroidNounours("LWP",
                     context,

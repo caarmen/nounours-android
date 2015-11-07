@@ -52,8 +52,8 @@ import ca.rmen.nounours.nounours.AndroidNounours;
 import ca.rmen.nounours.nounours.FlingDetector;
 import ca.rmen.nounours.nounours.TouchListener;
 import ca.rmen.nounours.nounours.orientation.SensorListener;
-import ca.rmen.nounours.settings.NounoursSettings;
 import ca.rmen.nounours.settings.SettingsActivity;
+import ca.rmen.nounours.settings.SharedPreferenceSettings;
 import ca.rmen.nounours.util.AnimationUtil;
 import ca.rmen.nounours.util.FileUtil;
 
@@ -101,7 +101,7 @@ public class MainActivity extends Activity {
         mNounours = new AndroidNounours("APP",
                 MainActivity.this,
                 new Handler(),
-                NounoursSettings.getAppSettings(MainActivity.this),
+                SharedPreferenceSettings.getAppSettings(MainActivity.this),
                 surfaceView.getHolder(),
                 mListener);
 

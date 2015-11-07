@@ -44,6 +44,7 @@ import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.nounours.cache.ImageCache;
 import ca.rmen.nounours.settings.NounoursSettings;
+import ca.rmen.nounours.settings.SharedPreferenceSettings;
 
 public class AnimationUtil {
     private static final String TAG = Constants.TAG + AnimationUtil.class.getSimpleName();
@@ -64,7 +65,7 @@ public class AnimationUtil {
             AnimatedGifEncoder encoder = new AnimatedGifEncoder();
             encoder.start(bos);
             encoder.setRepeat(0);
-            NounoursSettings settings = NounoursSettings.getAppSettings(context);
+            NounoursSettings settings = SharedPreferenceSettings.getAppSettings(context);
             int backgroundColor = settings.getBackgroundColor();
 
             Paint paint = new Paint();

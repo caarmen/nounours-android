@@ -96,7 +96,7 @@ public class SettingsActivity extends PreferenceActivity {
             // Only care about preferences with keys
             if (preference.getKey() == null) continue;
 
-            if (preference.getKey().endsWith(NounoursSettings.PREF_THEME)) {
+            if (preference.getKey().endsWith(SharedPreferenceSettings.PREF_THEME)) {
                 // If we have only one theme, there's no point in showing the theme preference.
                 themePreference = (ListPreference) preference;
                 if (themePreference.getEntries().length == 1) {
@@ -108,7 +108,7 @@ public class SettingsActivity extends PreferenceActivity {
                 if (ApiHelper.getAPILevel() < Build.VERSION_CODES.ECLAIR_MR1) {
                     preferencesToHide.add(preference);
                 }
-            } else if (preference.getKey().endsWith(NounoursSettings.PREF_BACKGROUND_COLOR)) {
+            } else if (preference.getKey().endsWith(SharedPreferenceSettings.PREF_BACKGROUND_COLOR)) {
                 // If we have no transparent themes, it doesn't make sense to have this setting.
                 if (getResources().getStringArray(R.array.transparentThemes).length == 0) {
                     preferencesToHide.add(preference);
