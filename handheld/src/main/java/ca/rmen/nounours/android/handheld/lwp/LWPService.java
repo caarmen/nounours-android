@@ -31,11 +31,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-import ca.rmen.nounours.android.handheld.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.FlingDetector;
 import ca.rmen.nounours.android.common.nounours.TouchListener;
-import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
+import ca.rmen.nounours.android.common.nounours.AndroidNounours;
+import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
+import ca.rmen.nounours.android.common.nounours.EmptyVibrateHandler;
+import ca.rmen.nounours.android.handheld.nounours.cache.HandheldNounoursResourceCache;
+import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
 
 @TargetApi(Build.VERSION_CODES.ECLAIR_MR1)
@@ -68,6 +71,9 @@ public class LWPService extends WallpaperService {
                     new Handler(),
                     settings,
                     getSurfaceHolder(),
+                    new HandheldNounoursResourceCache(context, settings),
+                    new EmptySoundHandler(),
+                    new EmptyVibrateHandler(),
                     mListener);
             FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
             final GestureDetector gestureDetector = new GestureDetector(context, nounoursFlingDetector);

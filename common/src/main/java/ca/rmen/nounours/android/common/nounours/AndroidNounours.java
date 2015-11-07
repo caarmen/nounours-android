@@ -17,7 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.nounours;
+package ca.rmen.nounours.android.common.nounours;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -36,13 +36,12 @@ import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.NounoursVibrateHandler;
-import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
-import ca.rmen.nounours.android.common.nounours.AnimationHandler;
-import ca.rmen.nounours.android.common.nounours.AssetStreamLoader;
 import ca.rmen.nounours.android.common.nounours.cache.ImageCache;
+import ca.rmen.nounours.android.common.nounours.cache.NounoursResourceCache;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.common.util.ThemeUtil;
+import ca.rmen.nounours.common.R;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
@@ -71,12 +70,12 @@ public class AndroidNounours extends Nounours {
     private final NounoursSettings mSettings;
     private final SurfaceHolder mSurfaceHolder;
     private final AndroidNounoursListener mListener;
-    private final ImageCache mImageCache = new ImageCache();
-    private final SoundHandler mSoundHandler;
+    private final NounoursSoundHandler mSoundHandler;
     private final Paint mPaint = new Paint();
     private int mBackgroundColor;
     private int mViewWidth;
     private int mViewHeight;
+    private final NounoursResourceCache mNounoursResourceCache;
     private final AtomicBoolean mOkToDraw = new AtomicBoolean(false);
 
     /**
@@ -92,6 +91,9 @@ public class AndroidNounours extends Nounours {
                            Handler uiHandler,
                            NounoursSettings settings,
                            SurfaceHolder surfaceHolder,
+                           NounoursResourceCache nounoursResourceCache,
+                           NounoursSoundHandler soundHandler,
+                           NounoursVibrateHandler vibrateHandler,
                            AndroidNounoursListener listener) {
 
         mTag = "/" + tag;
@@ -100,12 +102,12 @@ public class AndroidNounours extends Nounours {
         mSettings = settings;
         mSurfaceHolder = surfaceHolder;
         mListener = listener;
+        mNounoursResourceCache = nounoursResourceCache;
         StreamLoader streamLoader = new AssetStreamLoader(context);
 
         String themeId = mSettings.getThemeId();
         AnimationHandler animationHandler = new AnimationHandler(this);
-        mSoundHandler = new SoundHandler(context);
-        VibrateHandler vibrateHandler = new VibrateHandler(context);
+        mSoundHandler = soundHandler;
         final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
         final InputStream themesFile = context.getResources().openRawResource(R.raw.themes);
         mSurfaceHolder.addCallback(mSurfaceHolderCallback);
@@ -123,9 +125,9 @@ public class AndroidNounours extends Nounours {
 
     @Override
     protected boolean cacheResources() {
-        boolean result = mImageCache.cacheImages(mContext, getCurrentTheme().getImages().values(), mUIHandler, mImageCacheListener);
-        if (mSettings.isSoundEnabled()) mSoundHandler.cacheSounds(getCurrentTheme());
-        return result;
+        Theme theme = getCurrentTheme();
+        return mNounoursResourceCache.loadImages(theme, mImageCacheListener)
+                && mNounoursResourceCache.loadSounds(theme);
     }
 
     /**
@@ -140,8 +142,8 @@ public class AndroidNounours extends Nounours {
         CharSequence themeLabel = ThemeUtil.getThemeLabel(mContext, theme);
 
         // MEMORY
-        mImageCache.clearImageCache();
-        mSoundHandler.clearSoundCache();
+        mNounoursResourceCache.freeImages();
+        mNounoursResourceCache.freeSounds();
 
         Thread themeLoader = new Thread() {
             @SuppressWarnings("synthetic-access")
@@ -171,7 +173,7 @@ public class AndroidNounours extends Nounours {
         Log.v(TAG + mTag, "displayImage " + image);
         if (image == null) return;
         if (!mOkToDraw.get()) return;
-        final Bitmap bitmap = mImageCache.getDrawableImage(mContext, image);
+        final Bitmap bitmap = mNounoursResourceCache.getDrawableImage(mContext, image);
         if (bitmap == null) return;
 
         Canvas c = mSurfaceHolder.lockCanvas();
@@ -234,8 +236,8 @@ public class AndroidNounours extends Nounours {
      */
     public void onDestroy() {
         Log.v(TAG + mTag, "destroy");
-        mImageCache.clearImageCache();
-        mSoundHandler.clearSoundCache();
+        mNounoursResourceCache.freeImages();
+        mNounoursResourceCache.freeSounds();
     }
 
     @Override
@@ -253,9 +255,9 @@ public class AndroidNounours extends Nounours {
      */
     public void reloadSettings() {
         if (mSettings.isSoundEnabled() && !isSoundEnabled()) {
-            mSoundHandler.cacheSounds(getCurrentTheme());
+            mNounoursResourceCache.loadSounds(getCurrentTheme());
         } else if (!mSettings.isSoundEnabled() && isSoundEnabled()) {
-            mSoundHandler.clearSoundCache();
+            mNounoursResourceCache.freeSounds();
         }
 
         setEnableSound(mSettings.isSoundEnabled());

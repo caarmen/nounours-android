@@ -29,6 +29,7 @@ import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,18 +47,24 @@ import java.util.Map;
 
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
-import ca.rmen.nounours.android.handheld.compat.ActivityCompat;
 import ca.rmen.nounours.android.common.compat.ApiHelper;
-import ca.rmen.nounours.data.Animation;
-import ca.rmen.nounours.data.Theme;
-import ca.rmen.nounours.android.handheld.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.FlingDetector;
 import ca.rmen.nounours.android.common.nounours.TouchListener;
+import ca.rmen.nounours.android.common.settings.NounoursSettings;
+import ca.rmen.nounours.android.handheld.compat.ActivityCompat;
+import ca.rmen.nounours.android.handheld.compat.SoundPoolCompat;
+import ca.rmen.nounours.android.common.nounours.AndroidNounours;
+import ca.rmen.nounours.android.handheld.nounours.cache.SoundCache;
+import ca.rmen.nounours.android.handheld.nounours.cache.HandheldNounoursResourceCache;
+import ca.rmen.nounours.android.handheld.nounours.SoundHandler;
+import ca.rmen.nounours.android.handheld.nounours.VibrateHandler;
 import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.handheld.settings.SettingsActivity;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
 import ca.rmen.nounours.android.handheld.util.AnimationUtil;
 import ca.rmen.nounours.android.handheld.util.FileUtil;
+import ca.rmen.nounours.data.Animation;
+import ca.rmen.nounours.data.Theme;
 
 /**
  * Android activity class which delegates Nounours-specific logic to the
@@ -99,12 +106,21 @@ public class MainActivity extends Activity {
         final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
         mRecordButton.setOnClickListener(mOnClickListener);
+        SoundPool soundPool = SoundPoolCompat.create();
+        SoundCache soundCache = new SoundCache(this, soundPool);
+        SoundHandler soundHandler = new SoundHandler(soundCache, soundPool);
+        VibrateHandler vibrateHandler = new VibrateHandler(this);
+        NounoursSettings settings = SharedPreferenceSettings.getAppSettings(this);
+        HandheldNounoursResourceCache nounoursResources = new HandheldNounoursResourceCache(this, settings, soundCache);
 
         mNounours = new AndroidNounours("APP",
                 MainActivity.this,
                 new Handler(),
-                SharedPreferenceSettings.getAppSettings(MainActivity.this),
+                settings,
                 surfaceView.getHolder(),
+                nounoursResources,
+                soundHandler,
+                vibrateHandler,
                 mListener);
 
         FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);

@@ -37,7 +37,7 @@ import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.NounoursRecorder;
 import ca.rmen.nounours.android.handheld.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.android.handheld.nounours.AndroidNounours;
+import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 
 /**
  * Manages shaking and tilting events for Nounours on the Android device.

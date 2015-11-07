@@ -17,10 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.nounours;
-
-import android.content.Context;
-import android.os.Vibrator;
+package ca.rmen.nounours.android.common.nounours;
 
 import ca.rmen.nounours.NounoursVibrateHandler;
 
@@ -29,28 +26,17 @@ import ca.rmen.nounours.NounoursVibrateHandler;
  *
  * @author Carmen Alvarez
  */
-public class VibrateHandler implements NounoursVibrateHandler {
+public class EmptyVibrateHandler implements NounoursVibrateHandler {
 
-    private final Context mContext;
-
-    public VibrateHandler(Context context) {
-        this.mContext = context;
+    public EmptyVibrateHandler() {
     }
 
     @Override
     public void doVibrate(final long duration) {
-        final Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(duration);
     }
 
     @Override
     public void doVibrate(final long duration, final long interval) {
-        final Vibrator vibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-        final long[] pattern = new long[(int) (duration / interval)];
-        for (int i = 0; i < pattern.length; i++) {
-            pattern[i] = interval;
-        }
-        vibrator.vibrate(pattern, -1);
     }
 
 }

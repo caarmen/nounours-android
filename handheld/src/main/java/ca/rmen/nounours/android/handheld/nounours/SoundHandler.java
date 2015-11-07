@@ -19,76 +19,32 @@
 
 package ca.rmen.nounours.android.handheld.nounours;
 
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.media.SoundPool;
 import android.util.Log;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.NounoursSoundHandler;
-import ca.rmen.nounours.android.handheld.compat.SoundPoolCompat;
-import ca.rmen.nounours.data.Sound;
-import ca.rmen.nounours.data.Theme;
+import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.android.handheld.nounours.cache.SoundCache;
 
 /**
  * Manages sound effects and music for Nounours on the Android device.
  *
  * @author Carmen Alvarez
  */
-class SoundHandler implements NounoursSoundHandler {
+public class SoundHandler implements NounoursSoundHandler {
     private static final String TAG = Constants.TAG + SoundHandler.class.getSimpleName();
 
-    private final Context mContext;
+    private final SoundCache mSoundCache;
     private final SoundPool mSoundPool;
     private boolean mSoundEnabled = true;
     // We use SoundPool instead of MediaPlayer because it allows playing sounds which
     // are not on the sdcard.  But we only play one sound at a time.
     private int mCurrentSoundId;
-    private final Map<String, Integer> mSoundPoolIds = new ConcurrentHashMap<>();
 
 
-    public SoundHandler(Context context) {
-        mContext = context;
-        // Initialize the media player.
-        mSoundPool = SoundPoolCompat.create();
-    }
-
-    public void cacheSounds(final Theme theme) {
-        Log.v(TAG, "cacheSounds for theme " + theme);
-
-        Thread thread = new Thread(){
-            @Override
-            public void run() {
-                for (Sound sound : theme.getSounds().values()) {
-                    final int soundPoolId;
-                    String assetPath = "themes/" + theme.getId() + "/" + sound.getFilename();
-                    try {
-                        AssetFileDescriptor assetFd = mContext.getAssets().openFd(assetPath);
-                        soundPoolId = mSoundPool.load(assetFd, 0);
-                    } catch (IOException e) {
-                        Log.v(TAG, "couldn't load sound " + sound, e);
-                        continue;
-                    }
-                    mSoundPoolIds.put(sound.getId(), soundPoolId);
-                }
-                Log.v(TAG, "cached sounds");
-            }
-        };
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
-    }
-
-    public void clearSoundCache() {
-        Log.v(TAG, "clearSoundCache");
-        // clear the existing cache
-        for (Integer soundPoolId : mSoundPoolIds.values()) {
-            mSoundPool.unload(soundPoolId);
-        }
-        mSoundPoolIds.clear();
+    public SoundHandler(SoundCache soundCache, SoundPool soundPool) {
+        mSoundCache = soundCache;
+        mSoundPool = soundPool;
     }
 
     /**
@@ -98,7 +54,7 @@ class SoundHandler implements NounoursSoundHandler {
     public void playSound(final String soundId) {
         Log.v(TAG, "playSound " + soundId);
         if (!mSoundEnabled) return;
-        Integer soundPoolId = mSoundPoolIds.get(soundId);
+        Integer soundPoolId = mSoundCache.getSoundPoolId(soundId);
         if (soundPoolId == null) return;
         mCurrentSoundId = mSoundPool.play(soundPoolId, 1.0f, 1.0f, 0, 0, 1.0f);
         Log.v(TAG, "sound play result for " + soundPoolId + ": " + mCurrentSoundId);

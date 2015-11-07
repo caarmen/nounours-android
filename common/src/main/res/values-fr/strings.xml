@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">common</string>
-    <string name="loading">Loading my %s theme</string>
+    <string name="loading">Je charge mon thème %s</string>
 </resources>
