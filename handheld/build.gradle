@@ -48,8 +48,14 @@ android {
     }
 
     sourceSets {
+        bugdroid {
+            assets.srcDirs = ['../common/src/bugdroid/assets']
+        }
+        nounours {
+            assets.srcDirs = ['../common/src/nounours/assets']
+        }
         full {
-            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
+            assets.srcDirs = ['../common/src/bugdroid/assets', '../common/src/nounours/assets']
         }
     }
 
