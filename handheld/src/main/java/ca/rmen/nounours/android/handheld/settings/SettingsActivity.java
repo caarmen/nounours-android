@@ -35,7 +35,7 @@ import java.util.List;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.handheld.compat.ActivityCompat;
 import ca.rmen.nounours.android.common.compat.ApiHelper;
-import ca.rmen.nounours.android.handheld.util.ThemeUtil;
+import ca.rmen.nounours.android.common.util.ThemeUtil;
 
 
 /**

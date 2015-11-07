@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-    Copyright (c) 2009 - 2015 Carmen Alvarez
+    Copyright (c) 2015 Carmen Alvarez
 
     This file is part of Nounours for Android.
 
@@ -17,10 +17,8 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string-array name="themesList" translatable="false">
-        <item>@string/bugdroid</item>
-    </string-array>
-    <string-array name="themeListValues" translatable="false">
+    <string-array name="transparentThemes" translatable="false">
+        <item>5001</item>
         <item>5004</item>
     </string-array>
 </resources>

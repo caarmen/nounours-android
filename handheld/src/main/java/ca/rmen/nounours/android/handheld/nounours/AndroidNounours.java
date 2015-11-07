@@ -44,7 +44,7 @@ import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
 import ca.rmen.nounours.android.common.nounours.cache.ImageCache;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
-import ca.rmen.nounours.android.handheld.util.ThemeUtil;
+import ca.rmen.nounours.android.common.util.ThemeUtil;
 
 /**
  * Implementation of the abstract Nounours class, containing logic specific to

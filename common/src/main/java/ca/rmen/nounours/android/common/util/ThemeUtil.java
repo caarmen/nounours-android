@@ -17,12 +17,12 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.util;
+package ca.rmen.nounours.android.common.util;
 
 import android.content.Context;
 
-import ca.rmen.nounours.R;
 import ca.rmen.nounours.data.Theme;
+import ca.rmen.nounours.common.R;
 
 public final class ThemeUtil {
 
