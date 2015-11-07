@@ -49,6 +49,7 @@ import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.common.compat.ApiHelper;
 import ca.rmen.nounours.android.common.nounours.FlingDetector;
+import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.nounours.TouchListener;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.handheld.compat.ActivityCompat;
@@ -118,6 +119,7 @@ public class MainActivity extends Activity {
                 new Handler(),
                 settings,
                 surfaceView.getHolder(),
+                new NounoursRenderer(),
                 nounoursResources,
                 soundHandler,
                 vibrateHandler,

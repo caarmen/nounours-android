@@ -32,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 import ca.rmen.nounours.android.common.nounours.FlingDetector;
+import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.nounours.TouchListener;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
@@ -71,6 +72,7 @@ public class LWPService extends WallpaperService {
                     new Handler(),
                     settings,
                     getSurfaceHolder(),
+                    new NounoursRenderer(),
                     new HandheldNounoursResourceCache(context, settings),
                     new EmptySoundHandler(),
                     new EmptyVibrateHandler(),

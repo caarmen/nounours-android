@@ -21,8 +21,6 @@ package ca.rmen.nounours.android.common.nounours;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.Log;
@@ -77,6 +75,7 @@ public class AndroidNounours extends Nounours {
     private int mViewHeight;
     private final NounoursResourceCache mNounoursResourceCache;
     private final AtomicBoolean mOkToDraw = new AtomicBoolean(false);
+    private final NounoursRenderer mRenderer;
 
     /**
      * Open the CSV data files and call the superclass
@@ -91,6 +90,7 @@ public class AndroidNounours extends Nounours {
                            Handler uiHandler,
                            NounoursSettings settings,
                            SurfaceHolder surfaceHolder,
+                           NounoursRenderer renderer,
                            NounoursResourceCache nounoursResourceCache,
                            NounoursSoundHandler soundHandler,
                            NounoursVibrateHandler vibrateHandler,
@@ -103,6 +103,7 @@ public class AndroidNounours extends Nounours {
         mSurfaceHolder = surfaceHolder;
         mListener = listener;
         mNounoursResourceCache = nounoursResourceCache;
+        mRenderer = renderer;
         StreamLoader streamLoader = new AssetStreamLoader(context);
 
         String themeId = mSettings.getThemeId();
@@ -176,32 +177,7 @@ public class AndroidNounours extends Nounours {
         final Bitmap bitmap = mNounoursResourceCache.getDrawableImage(mContext, image);
         if (bitmap == null) return;
 
-        Canvas c = mSurfaceHolder.lockCanvas();
-        if (c != null) {
-            c.save();
-            int bitmapWidth = bitmap.getWidth();
-            int bitmapHeight = bitmap.getHeight();
-            int deviceCenterX = mViewWidth / 2;
-            int deviceCenterY = mViewHeight / 2;
-            int bitmapCenterX = bitmapWidth / 2;
-            int bitmapCenterY = bitmapHeight / 2;
-
-            float scaleX = (float) mViewWidth / bitmapWidth;
-            float scaleY = (float) mViewHeight / bitmapHeight;
-            float offsetX = deviceCenterX - bitmapCenterX;
-            float offsetY = deviceCenterY - bitmapCenterY;
-
-            float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
-            c.drawColor(mBackgroundColor);
-            Matrix m = new Matrix();
-            m.postTranslate(offsetX, offsetY);
-            m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
-            c.setMatrix(m);
-            c.drawBitmap(bitmap, 0, 0, mPaint);
-            c.restore();
-            if (mSettings.isImageDimmed()) c.drawColor(0x88000000);
-            mSurfaceHolder.unlockCanvasAndPost(c);
-        }
+        mRenderer.render(mSettings, bitmap, mSurfaceHolder, mViewWidth, mViewHeight, mBackgroundColor, mPaint);
     }
 
     public void redraw() {
