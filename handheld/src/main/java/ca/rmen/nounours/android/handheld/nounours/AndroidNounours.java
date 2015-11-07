@@ -42,7 +42,7 @@ import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.io.StreamLoader;
 import ca.rmen.nounours.android.handheld.nounours.cache.ImageCache;
-import ca.rmen.nounours.settings.NounoursSettings;
+import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.handheld.util.ThemeUtil;
 
 /**

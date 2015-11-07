@@ -43,7 +43,7 @@ import ca.rmen.nounours.android.handheld.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.android.handheld.nounours.cache.ImageCache;
-import ca.rmen.nounours.settings.NounoursSettings;
+import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
 
 public class AnimationUtil {

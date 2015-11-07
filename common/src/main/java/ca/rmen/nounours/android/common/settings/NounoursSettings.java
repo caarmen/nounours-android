@@ -16,7 +16,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.rmen.nounours.settings;
+package ca.rmen.nounours.android.common.settings;
 
 public interface NounoursSettings {
     boolean isSoundEnabled();

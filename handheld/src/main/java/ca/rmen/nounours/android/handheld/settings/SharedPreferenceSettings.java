@@ -24,7 +24,7 @@ import android.preference.PreferenceManager;
 
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.handheld.compat.ResourcesCompat;
-import ca.rmen.nounours.settings.NounoursSettings;
+import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
 public final class SharedPreferenceSettings implements NounoursSettings {
     static final String PREF_THEME = "Theme";
