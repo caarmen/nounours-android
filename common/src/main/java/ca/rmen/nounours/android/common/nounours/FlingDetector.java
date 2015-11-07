@@ -17,7 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.nounours;
+package ca.rmen.nounours.android.common.nounours;
 
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;

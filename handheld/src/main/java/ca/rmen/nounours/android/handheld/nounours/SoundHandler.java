@@ -94,6 +94,7 @@ class SoundHandler implements NounoursSoundHandler {
     /**
      * Play a sound.
      */
+    @Override
     public void playSound(final String soundId) {
         Log.v(TAG, "playSound " + soundId);
         if (!mSoundEnabled) return;
@@ -108,6 +109,7 @@ class SoundHandler implements NounoursSoundHandler {
      *
      * @see ca.rmen.nounours.Nounours#stopSound()
      */
+    @Override
     public void stopSound() {
         Log.v(TAG, "stopSound");
         mSoundPool.stop(mCurrentSoundId);
@@ -119,6 +121,7 @@ class SoundHandler implements NounoursSoundHandler {
      *
      * @see ca.rmen.nounours.Nounours#setEnableSound(boolean)
      */
+    @Override
     public void setEnableSound(final boolean enableSound) {
         mSoundEnabled = enableSound;
     }

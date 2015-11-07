@@ -32,19 +32,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import ca.rmen.nounours.android.common.nounours.AssetStreamLoader;
-import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursAnimationHandler;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.NounoursVibrateHandler;
 import ca.rmen.nounours.R;
-import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.data.Theme;
-import ca.rmen.nounours.io.StreamLoader;
+import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.android.common.nounours.AnimationHandler;
+import ca.rmen.nounours.android.common.nounours.AssetStreamLoader;
 import ca.rmen.nounours.android.common.nounours.cache.ImageCache;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.common.util.ThemeUtil;
+import ca.rmen.nounours.data.Image;
+import ca.rmen.nounours.data.Theme;
+import ca.rmen.nounours.io.StreamLoader;
 
 /**
  * Implementation of the abstract Nounours class, containing logic specific to

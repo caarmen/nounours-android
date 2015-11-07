@@ -32,8 +32,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 import ca.rmen.nounours.android.handheld.nounours.AndroidNounours;
-import ca.rmen.nounours.android.handheld.nounours.FlingDetector;
-import ca.rmen.nounours.android.handheld.nounours.TouchListener;
+import ca.rmen.nounours.android.common.nounours.FlingDetector;
+import ca.rmen.nounours.android.common.nounours.TouchListener;
 import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;

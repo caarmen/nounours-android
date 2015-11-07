@@ -17,7 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.nounours;
+package ca.rmen.nounours.android.common.nounours;
 
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -26,8 +26,9 @@ import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.Nounours;
 import ca.rmen.nounours.NounoursAnimationHandler;
+import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 
@@ -36,15 +37,15 @@ import ca.rmen.nounours.data.AnimationImage;
  *
  * @author Carmen Alvarez
  */
-class AnimationHandler implements NounoursAnimationHandler {
+public class AnimationHandler implements NounoursAnimationHandler {
     private static final String TAG = Constants.TAG + AnimationHandler.class.getSimpleName();
 
-    private final AndroidNounours mNounours;
+    private final Nounours mNounours;
     private final AtomicBoolean mIsDoingAnimation = new AtomicBoolean();
     private final Handler mBackgroundHandler;
     private final AnimationTask mAnimationTask;
 
-    public AnimationHandler(AndroidNounours nounours) {
+    public AnimationHandler(Nounours nounours) {
         mNounours = nounours;
         HandlerThread thread = new HandlerThread(TAG);
         thread.start();
