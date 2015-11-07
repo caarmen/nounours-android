@@ -57,7 +57,7 @@
         android:title="@string/about">
         <intent
             android:targetPackage="@string/APPLICATION_ID"
-            android:targetClass="ca.rmen.nounours.AboutActivity" />
+            android:targetClass="ca.rmen.nounours.android.handheld.AboutActivity" />
     </Preference>
 
 </PreferenceScreen>

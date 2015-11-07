@@ -19,6 +19,6 @@
 -->
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:settingsActivity="ca.rmen.nounours.settings.SettingsActivity"
+    android:settingsActivity="ca.rmen.nounours.android.handheld.settings.SettingsActivity"
     android:thumbnail="@drawable/app_icon"
     tools:ignore="UnusedAttribute" />

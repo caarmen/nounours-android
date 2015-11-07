@@ -35,7 +35,7 @@
         android:label="@string/app_name"
         tools:ignore="UnusedAttribute">
         <activity
-            android:name=".MainActivity"
+            android:name=".android.handheld.MainActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
@@ -48,25 +48,25 @@
         </activity>
         <activity
             android:exported="true"
-            android:name=".settings.SettingsActivity"
+            android:name=".android.handheld.settings.SettingsActivity"
             android:label="@string/options"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".android.handheld.MainActivity"
             android:theme="@style/NounoursActivityStyle"
             tools:ignore="ExportedPreferenceActivity,UnusedAttribute" />
         <activity
             android:exported="false"
-            android:name=".AboutActivity"
+            android:name=".android.handheld.AboutActivity"
             android:label="@string/about"
-            android:parentActivityName=".settings.SettingsActivity"
+            android:parentActivityName=".android.handheld.settings.SettingsActivity"
             android:theme="@style/NounoursActivityStyle"
             tools:ignore="UnusedAttribute">
         </activity>
 
         <service
-            android:name=".AnimationSaveService"
+            android:name=".android.handheld.AnimationSaveService"
             android:exported="false"/>
         <service
-            android:name=".lwp.LWPService"
+            android:name=".android.handheld.lwp.LWPService"
             android:icon="@drawable/app_icon"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_WALLPAPER">
