@@ -33,7 +33,7 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import ca.rmen.nounours.android.handheld.Constants;
+import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.NounoursRecorder;
 import ca.rmen.nounours.android.handheld.compat.DisplayCompat;
 import ca.rmen.nounours.data.Image;

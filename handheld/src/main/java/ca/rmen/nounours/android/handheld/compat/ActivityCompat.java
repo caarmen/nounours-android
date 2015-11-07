@@ -21,6 +21,8 @@ package ca.rmen.nounours.android.handheld.compat;
 
 import android.app.Activity;
 
+import ca.rmen.nounours.android.common.compat.ApiHelper;
+
 public class ActivityCompat {
 
     public static void invalidateOptionsMenu(Activity activity) {

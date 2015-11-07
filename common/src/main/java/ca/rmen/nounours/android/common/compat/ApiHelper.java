@@ -17,22 +17,22 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.compat;
+package ca.rmen.nounours.android.common.compat;
 
-import android.annotation.TargetApi;
-import android.graphics.BitmapFactory;
+import android.os.Build;
 
-@TargetApi(4)
-class Api4Helper {
-    private Api4Helper() {
+public class ApiHelper {
+    private ApiHelper() {
         // prevent instantiation
     }
 
-    static void setBitmapFactoryOptions(BitmapFactory.Options options) {
+    /**
+     * On API Level 3, we need to read the SDK field, not the SDK_INT field.
+     * This is isolated here to prevent many code inspection warnings about
+     * "code maturity".
+     */
+    public static int getAPILevel() {
         //noinspection deprecation
-        options.inPurgeable = true;
-        //noinspection deprecation
-        options.inInputShareable = true;
-        options.inScaled = false;
+        return Integer.parseInt(Build.VERSION.SDK);
     }
 }

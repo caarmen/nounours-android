@@ -17,12 +17,22 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld;
+package ca.rmen.nounours.android.common.compat;
 
-public final class Constants {
-    private Constants() {
+import android.annotation.TargetApi;
+import android.graphics.BitmapFactory;
+
+@TargetApi(4)
+public class Api4Helper {
+    private Api4Helper() {
         // prevent instantiation
     }
 
-    public static final String TAG = "Nounours/";
+    public static void setBitmapFactoryOptions(BitmapFactory.Options options) {
+        //noinspection deprecation
+        options.inPurgeable = true;
+        //noinspection deprecation
+        options.inInputShareable = true;
+        options.inScaled = false;
+    }
 }

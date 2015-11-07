@@ -27,7 +27,8 @@ import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import ca.rmen.nounours.android.handheld.Constants;
+import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.android.common.compat.ApiHelper;
 
 public final class NotificationCompat {
 

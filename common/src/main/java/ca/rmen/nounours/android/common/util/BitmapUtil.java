@@ -17,7 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.util;
+package ca.rmen.nounours.android.common.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,8 +27,8 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ca.rmen.nounours.android.handheld.Constants;
-import ca.rmen.nounours.android.handheld.compat.BitmapCompat;
+import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.android.common.compat.BitmapCompat;
 import ca.rmen.nounours.data.Image;
 
 public class BitmapUtil {

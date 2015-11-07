@@ -45,8 +45,9 @@ import android.widget.Toast;
 import java.util.Map;
 
 import ca.rmen.nounours.R;
+import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.handheld.compat.ActivityCompat;
-import ca.rmen.nounours.android.handheld.compat.ApiHelper;
+import ca.rmen.nounours.android.common.compat.ApiHelper;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
 import ca.rmen.nounours.android.handheld.nounours.AndroidNounours;

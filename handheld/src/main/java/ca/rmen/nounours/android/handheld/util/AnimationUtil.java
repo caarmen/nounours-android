@@ -38,11 +38,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ca.rmen.nounours.android.handheld.Constants;
+import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.handheld.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
-import ca.rmen.nounours.android.handheld.nounours.cache.ImageCache;
+import ca.rmen.nounours.android.common.nounours.cache.ImageCache;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
 

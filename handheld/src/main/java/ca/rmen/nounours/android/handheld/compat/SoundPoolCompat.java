@@ -23,6 +23,8 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Build;
 
+import ca.rmen.nounours.android.common.compat.ApiHelper;
+
 public class SoundPoolCompat {
 
     public static SoundPool create() {

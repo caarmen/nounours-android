@@ -17,7 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.nounours;
+package ca.rmen.nounours.android.common.nounours;
 
 import android.content.Context;
 
@@ -30,7 +30,7 @@ import ca.rmen.nounours.io.StreamLoader;
 /**
  * Allows Nounours to read Android asset files.
  */
-class AssetStreamLoader implements StreamLoader {
+public class AssetStreamLoader implements StreamLoader {
     private static final String ANDROID_ASSET = "/android_asset/";
     private final Context mContext;
 

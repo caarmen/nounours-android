@@ -16,7 +16,7 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.rmen.nounours.android.handheld.nounours.cache;
+package ca.rmen.nounours.android.common.nounours.cache;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,9 +27,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import ca.rmen.nounours.android.handheld.Constants;
+import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.data.Image;
-import ca.rmen.nounours.android.handheld.util.BitmapUtil;
+import ca.rmen.nounours.android.common.util.BitmapUtil;
 
 public class ImageCache {
 

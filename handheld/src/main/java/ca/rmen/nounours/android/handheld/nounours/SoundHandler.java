@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import ca.rmen.nounours.android.handheld.Constants;
+import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.android.handheld.compat.SoundPoolCompat;
 import ca.rmen.nounours.data.Sound;

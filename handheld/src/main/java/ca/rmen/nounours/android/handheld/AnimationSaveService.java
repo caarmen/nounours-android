@@ -31,6 +31,7 @@ import android.util.Log;
 import java.io.File;
 
 import ca.rmen.nounours.R;
+import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.handheld.compat.NotificationCompat;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.android.handheld.util.AnimationUtil;

@@ -23,6 +23,8 @@ import android.content.Context;
 import android.view.Display;
 import android.view.WindowManager;
 
+import ca.rmen.nounours.android.common.compat.ApiHelper;
+
 public class DisplayCompat {
 
     public static int getRotation(Context context) {

@@ -21,6 +21,8 @@ package ca.rmen.nounours.android.handheld.compat;
 
 import android.content.Context;
 
+import ca.rmen.nounours.android.common.compat.ApiHelper;
+
 public class ResourcesCompat {
 
     public static int getColor(Context context, int color) {

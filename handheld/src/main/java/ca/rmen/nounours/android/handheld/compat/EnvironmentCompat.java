@@ -25,7 +25,8 @@ import android.util.Log;
 
 import java.io.File;
 
-import ca.rmen.nounours.android.handheld.Constants;
+import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.android.common.compat.ApiHelper;
 
 public class EnvironmentCompat {
 

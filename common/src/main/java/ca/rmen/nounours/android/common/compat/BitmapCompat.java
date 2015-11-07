@@ -17,7 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.compat;
+package ca.rmen.nounours.android.common.compat;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

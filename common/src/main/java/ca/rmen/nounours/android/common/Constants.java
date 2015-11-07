@@ -17,22 +17,12 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.compat;
+package ca.rmen.nounours.android.common;
 
-import android.os.Build;
-
-public class ApiHelper {
-    private ApiHelper() {
+public final class Constants {
+    private Constants() {
         // prevent instantiation
     }
 
-    /**
-     * On API Level 3, we need to read the SDK field, not the SDK_INT field.
-     * This is isolated here to prevent many code inspection warnings about
-     * "code maturity".
-     */
-    public static int getAPILevel() {
-        //noinspection deprecation
-        return Integer.parseInt(Build.VERSION.SDK);
-    }
+    public static final String TAG = "Nounours/";
 }
