@@ -48,17 +48,18 @@ import java.util.Map;
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.common.compat.ApiHelper;
-import ca.rmen.nounours.android.handheld.nounours.FlingDetector;
+import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
-import ca.rmen.nounours.android.handheld.nounours.TouchListener;
+import ca.rmen.nounours.android.common.nounours.ThemeLoadListener;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.handheld.compat.ActivityCompat;
 import ca.rmen.nounours.android.handheld.compat.SoundPoolCompat;
-import ca.rmen.nounours.android.common.nounours.AndroidNounours;
-import ca.rmen.nounours.android.handheld.nounours.cache.SoundCache;
-import ca.rmen.nounours.android.handheld.nounours.cache.HandheldNounoursResourceCache;
+import ca.rmen.nounours.android.handheld.nounours.FlingDetector;
 import ca.rmen.nounours.android.handheld.nounours.SoundHandler;
+import ca.rmen.nounours.android.handheld.nounours.TouchListener;
 import ca.rmen.nounours.android.handheld.nounours.VibrateHandler;
+import ca.rmen.nounours.android.handheld.nounours.cache.HandheldNounoursResourceCache;
+import ca.rmen.nounours.android.handheld.nounours.cache.SoundCache;
 import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.handheld.settings.SettingsActivity;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
@@ -302,7 +303,7 @@ public class MainActivity extends Activity {
         AnimationSaveService.startActionSaveAnimation(this, animation);
     }
 
-    private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
+    private final ThemeLoadListener mListener = new ThemeLoadListener() {
         @Override
         public void onThemeLoadStart(int max, String message) {
             Log.v(TAG, "onThemeLoadStart: max=" + max + ", message = " + message);

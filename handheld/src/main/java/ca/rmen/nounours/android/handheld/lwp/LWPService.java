@@ -31,13 +31,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-import ca.rmen.nounours.android.handheld.nounours.FlingDetector;
-import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
-import ca.rmen.nounours.android.handheld.nounours.TouchListener;
-import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
 import ca.rmen.nounours.android.common.nounours.EmptyVibrateHandler;
+import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
+import ca.rmen.nounours.android.common.nounours.ThemeLoadListener;
+import ca.rmen.nounours.android.common.settings.NounoursSettings;
+import ca.rmen.nounours.android.handheld.nounours.FlingDetector;
+import ca.rmen.nounours.android.handheld.nounours.TouchListener;
 import ca.rmen.nounours.android.handheld.nounours.cache.HandheldNounoursResourceCache;
 import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
@@ -137,7 +138,7 @@ public class LWPService extends WallpaperService {
             if (mNounours != null) mNounours.reloadSettings();
         }
 
-        private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
+        private final ThemeLoadListener mListener = new ThemeLoadListener() {
             @Override
             public void onThemeLoadStart(int max, String message) {
             }

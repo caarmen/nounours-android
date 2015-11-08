@@ -38,11 +38,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -55,18 +51,14 @@ import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
 import java.lang.ref.WeakReference;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
-import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
+import ca.rmen.nounours.android.common.nounours.EmptyThemeLoadListener;
 import ca.rmen.nounours.android.common.nounours.EmptyVibrateHandler;
-import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.data.Image;
 
@@ -76,8 +68,6 @@ import ca.rmen.nounours.data.Image;
  */
 public abstract class NounoursWatchFace extends CanvasWatchFaceService {
     private static final String TAG = Constants.TAG + NounoursWatchFace.class.getSimpleName();
-    private static final Typeface NORMAL_TYPEFACE =
-            Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
 
     /**
      * Update rate in milliseconds for interactive mode. We update once a second since seconds are
@@ -100,25 +90,16 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
     private class Engine extends CanvasWatchFaceService.Engine {
         final Handler mUpdateTimeHandler = new EngineHandler(this);
 
-        private Paint mBackgroundPaint;
-        private Paint mTextPaint;
-
         private boolean mAmbient;
-
-        private Calendar mTime;
-
-        private float mXOffset;
-        private float mYOffset;
-        private Bitmap mAmbientBitmap;
 
         /**
          * Whether the display supports fewer bits for each color in ambient mode. When true, we
          * disable anti-aliasing in ambient mode.
          */
-        private boolean mLowBitAmbient;
         private AndroidNounours mNounours;
         private NounoursSettings mSettings;
         private WearNounoursResourceCache mCache;
+        private NounoursWatchFaceRenderer mRenderer;
 
         @Override
         public void onCreate(SurfaceHolder holder) {
@@ -134,22 +115,9 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                     .setStatusBarGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM)
                     .setAcceptsTapEvents(true)
                     .build());
-            Resources resources = NounoursWatchFace.this.getResources();
-            mYOffset = resources.getDimension(R.dimen.digital_y_offset);
 
             mSettings = getSettings();
-            int ambientBitmapId = context.getResources().getIdentifier("ambient_" + mSettings.getThemeId(), "drawable", context.getPackageName());
-            mAmbientBitmap = ((BitmapDrawable)context.getResources().getDrawable(ambientBitmapId, null)).getBitmap();
-            mBackgroundPaint = new Paint();
-            mBackgroundPaint.setColor(mSettings.getBackgroundColor());
-
-            mTextPaint = new Paint();
-            mTextPaint.setColor(ResourcesCompat.getColor(context, R.color.digital_text));
-            mTextPaint.setTypeface(NORMAL_TYPEFACE);
-            mTextPaint.setAntiAlias(true);
-
-            mTime = Calendar.getInstance(Locale.getDefault());
-            mSettings.setEnableSound(false);
+            mRenderer = new NounoursWatchFaceRenderer(context, mSettings);
             mCache = new WearNounoursResourceCache(getApplicationContext());
             mNounours = new AndroidNounours("WEAR",
                     getApplicationContext(),
@@ -160,7 +128,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                     mCache,
                     new EmptySoundHandler(),
                     new EmptyVibrateHandler(),
-                    mListener);
+                    new EmptyThemeLoadListener());
         }
 
         @Override
@@ -202,18 +170,20 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             // Load resources that have alternate values for round watches.
             Resources resources = NounoursWatchFace.this.getResources();
             boolean isRound = insets.isRound();
-            mXOffset = resources.getDimension(isRound
+            float xOffset = resources.getDimension(isRound
                     ? R.dimen.digital_x_offset_round : R.dimen.digital_x_offset);
+            float yOffset = resources.getDimension(R.dimen.digital_y_offset);
+            mRenderer.setOffset(xOffset, yOffset);
             float textSize = resources.getDimension(isRound
                     ? R.dimen.digital_text_size_round : R.dimen.digital_text_size);
+            mRenderer.setTextSize(textSize);
 
-            mTextPaint.setTextSize(textSize);
         }
 
         @Override
         public void onPropertiesChanged(Bundle properties) {
             super.onPropertiesChanged(properties);
-            mLowBitAmbient = properties.getBoolean(PROPERTY_LOW_BIT_AMBIENT, false);
+            mRenderer.setIsLowBitAmbient(properties.getBoolean(PROPERTY_LOW_BIT_AMBIENT));
         }
 
         @Override
@@ -225,12 +195,10 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
         @Override
         public void onAmbientModeChanged(boolean inAmbientMode) {
             super.onAmbientModeChanged(inAmbientMode);
+            mRenderer.setIsAmbient(inAmbientMode);
+            mNounours.doPing(!mAmbient);
             if (mAmbient != inAmbientMode) {
                 mAmbient = inAmbientMode;
-                mNounours.doPing(!mAmbient);
-                if (mLowBitAmbient) {
-                    mTextPaint.setAntiAlias(!inAmbientMode);
-                }
                 invalidate();
             }
 
@@ -241,87 +209,15 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
 
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
-            canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
-            mTime.setTime(new Date(System.currentTimeMillis()));
             if (!mNounours.isLoading()) {
                 Image image = mNounours.getCurrentImage();
                 if (image != null) {
                     Bitmap bitmap = mCache.getDrawableImage(getApplicationContext(), image);
-                    renderNounours(canvas, bitmap, bounds.width(), bounds.height());
+                    mRenderer.renderNounours(mSettings, canvas, bitmap, bounds.width(), bounds.height());
                 }
-                renderTime(canvas);
+                mRenderer.renderTime(canvas);
             }
         }
-
-        private void renderNounours(Canvas canvas, Bitmap bitmap, int viewWidth, int viewHeight) {
-            if(mAmbient) renderAmbientNounours(canvas, viewWidth, viewHeight);
-            else renderNormalNounours(canvas, bitmap, viewWidth, viewHeight);
-        }
-
-        private void renderNormalNounours(Canvas c, Bitmap bitmap, int viewWidth, int viewHeight) {
-            c.drawColor(mSettings.getBackgroundColor());
-            int bitmapWidth = bitmap.getWidth();
-            int bitmapHeight = bitmap.getHeight();
-            int deviceCenterX = viewWidth / 2;
-            int deviceCenterY = viewHeight / 2;
-            int bitmapCenterX = bitmapWidth / 2;
-            int bitmapCenterY = bitmapHeight / 2;
-
-            float scaleX = (float) viewWidth / bitmapWidth;
-            float scaleY = (float) viewHeight / bitmapHeight;
-            float offsetX = deviceCenterX - bitmapCenterX;
-            float offsetY = deviceCenterY - bitmapCenterY;
-
-            float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
-            Matrix m = new Matrix();
-            m.postTranslate(offsetX, offsetY);
-            m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
-            c.setMatrix(m);
-            c.drawBitmap(bitmap, 0, 0, mBackgroundPaint);
-            if (mSettings.isImageDimmed()) c.drawColor(0x88000000);
-        }
-
-        private void renderAmbientNounours(Canvas c, int viewWidth, int viewHeight) {
-            c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
-            if(!mLowBitAmbient) {
-                Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
-                Rect viewRect = new Rect(viewWidth/3, viewHeight/3, 2*viewWidth/3, 2*viewHeight/3);
-                float minutesRotation = 360*mTime.get(Calendar.MINUTE)/60;
-                Matrix m = new Matrix();
-                m.postRotate(minutesRotation, viewWidth/2, viewHeight/2);
-                c.setMatrix(m);
-                c.drawBitmap(mAmbientBitmap, bitmapRect, viewRect, null);
-                c.setMatrix(new Matrix());
-            }
-        }
-
-        void renderTime(Canvas c) {
-
-            // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
-            String text = mAmbient
-                    ? String.format("%d:%02d",
-                    mTime.get(Calendar.HOUR),
-                    mTime.get(Calendar.MINUTE))
-                    : String.format("%d:%02d:%02d",
-                    mTime.get(Calendar.HOUR),
-                    mTime.get(Calendar.MINUTE),
-                    mTime.get(Calendar.SECOND));
-            c.drawText(text, mXOffset, mYOffset, mTextPaint);
-        }
-
-        private NounoursRenderer mRenderer = new NounoursRenderer() {
-            @Override
-            public void render(NounoursSettings settings, Bitmap bitmap,
-                               SurfaceHolder surfaceHolder, int viewWidth, int viewHeight,
-                               int backgroundColor, Paint paint) {
-                Canvas c = surfaceHolder.lockCanvas();
-                if (c != null) {
-                    renderNounours(c, bitmap, viewWidth, viewHeight);
-                    renderTime(c);
-                    surfaceHolder.unlockCanvasAndPost(c);
-                }
-            }
-        };
 
         /**
          * Starts the {@link #mUpdateTimeHandler} timer if it should be running and isn't currently
@@ -354,20 +250,6 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                 mUpdateTimeHandler.sendEmptyMessageDelayed(MSG_UPDATE_TIME, delayMs);
             }
         }
-
-        private final AndroidNounours.AndroidNounoursListener mListener = new AndroidNounours.AndroidNounoursListener() {
-            @Override
-            public void onThemeLoadStart(int max, String message) {
-            }
-
-            @Override
-            public void onThemeLoadProgress(int progress, int max, String message) {
-            }
-
-            @Override
-            public void onThemeLoadComplete() {
-            }
-        };
     }
 
     private static class EngineHandler extends Handler {

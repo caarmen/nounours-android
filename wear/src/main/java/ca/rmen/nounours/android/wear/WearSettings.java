@@ -57,4 +57,5 @@ public class WearSettings implements NounoursSettings {
     public int getBackgroundColor() {
         return mBackgroundColor;
     }
+
 }

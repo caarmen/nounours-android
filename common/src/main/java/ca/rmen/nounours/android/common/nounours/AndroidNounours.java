@@ -52,14 +52,6 @@ import ca.rmen.nounours.io.StreamLoader;
  */
 public class AndroidNounours extends Nounours {
 
-    public interface AndroidNounoursListener {
-        void onThemeLoadStart(int max, String message);
-
-        void onThemeLoadProgress(int progress, int max, String message);
-
-        void onThemeLoadComplete();
-    }
-
     private static final String TAG = Constants.TAG + AndroidNounours.class.getSimpleName();
 
     private final String mTag;
@@ -67,7 +59,7 @@ public class AndroidNounours extends Nounours {
     private final Handler mUIHandler;
     private final NounoursSettings mSettings;
     private final SurfaceHolder mSurfaceHolder;
-    private final AndroidNounoursListener mListener;
+    private final ThemeLoadListener mListener;
     private final NounoursSoundHandler mSoundHandler;
     private final Paint mPaint = new Paint();
     private int mBackgroundColor;
@@ -94,7 +86,7 @@ public class AndroidNounours extends Nounours {
                            NounoursResourceCache nounoursResourceCache,
                            NounoursSoundHandler soundHandler,
                            NounoursVibrateHandler vibrateHandler,
-                           AndroidNounoursListener listener) {
+                           ThemeLoadListener listener) {
 
         mTag = "/" + tag;
         mContext = context;
