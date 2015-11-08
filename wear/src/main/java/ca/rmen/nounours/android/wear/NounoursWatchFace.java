@@ -16,10 +16,7 @@
 
 package ca.rmen.nounours.android.wear;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -33,16 +30,18 @@ import android.os.Message;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
 import java.lang.ref.WeakReference;
-import java.util.TimeZone;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
 import ca.rmen.nounours.android.common.nounours.EmptyVibrateHandler;
@@ -78,32 +77,21 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
     private class Engine extends CanvasWatchFaceService.Engine {
         final Handler mUpdateTimeHandler = new EngineHandler(this);
 
-        final BroadcastReceiver mTimeZoneReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mTime.clear(intent.getStringExtra("time-zone"));
-                mTime.setToNow();
-            }
-        };
+        private Paint mBackgroundPaint;
+        private Paint mTextPaint;
 
-        boolean mRegisteredTimeZoneReceiver = false;
+        private boolean mAmbient;
 
-        private boolean mWasPaused = false;
-        Paint mBackgroundPaint;
-        Paint mTextPaint;
+        private Calendar mTime;
 
-        boolean mAmbient;
-
-        Time mTime;
-
-        float mXOffset;
-        float mYOffset;
+        private float mXOffset;
+        private float mYOffset;
 
         /**
          * Whether the display supports fewer bits for each color in ambient mode. When true, we
          * disable anti-aliasing in ambient mode.
          */
-        boolean mLowBitAmbient;
+        private boolean mLowBitAmbient;
         private AndroidNounours mNounours;
         private NounoursSettings mSettings;
         private WearNounoursResourceCache mCache;
@@ -113,6 +101,7 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
             super.onCreate(holder);
             Log.v(TAG, "onCreate");
 
+            Context context = getApplicationContext();
             setWatchFaceStyle(new WatchFaceStyle.Builder(NounoursWatchFace.this)
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
                     .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
@@ -123,12 +112,14 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
             mYOffset = resources.getDimension(R.dimen.digital_y_offset);
 
             mBackgroundPaint = new Paint();
-            mBackgroundPaint.setColor(resources.getColor(R.color.digital_background));
+            mBackgroundPaint.setColor(ResourcesCompat.getColor(context, R.color.digital_background));
 
             mTextPaint = new Paint();
-            mTextPaint = createTextPaint(resources.getColor(R.color.digital_text));
+            mTextPaint.setColor(ResourcesCompat.getColor(context, R.color.digital_text));
+            mTextPaint.setTypeface(NORMAL_TYPEFACE);
+            mTextPaint.setAntiAlias(true);
 
-            mTime = new Time();
+            mTime = Calendar.getInstance(Locale.getDefault());
             mSettings = new WearSettings();
             mSettings.setEnableSound(false);
             mCache = new WearNounoursResourceCache(getApplicationContext());
@@ -151,32 +142,14 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
             super.onDestroy();
         }
 
-        private Paint createTextPaint(int textColor) {
-            Paint paint = new Paint();
-            paint.setColor(textColor);
-            paint.setTypeface(NORMAL_TYPEFACE);
-            paint.setAntiAlias(true);
-            return paint;
-        }
-
         @Override
         public void onVisibilityChanged(boolean visible) {
             super.onVisibilityChanged(visible);
 
             if (visible) {
-                registerReceiver();
-
                 // Update time zone in case it changed while we weren't visible.
-                mTime.clear(TimeZone.getDefault().getID());
-                mTime.setToNow();
-                if (mWasPaused) {
-                    mNounours.onResume();
-                }
                 mNounours.doPing(true);
-                mWasPaused = false;
             } else {
-                unregisterReceiver();
-                mWasPaused = true;
                 mNounours.doPing(false);
             }
 
@@ -191,23 +164,6 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
             if (tapType == WatchFaceService.TAP_TYPE_TAP) {
                 mNounours.doRandomAnimation();
             }
-        }
-
-        private void registerReceiver() {
-            if (mRegisteredTimeZoneReceiver) {
-                return;
-            }
-            mRegisteredTimeZoneReceiver = true;
-            IntentFilter filter = new IntentFilter(Intent.ACTION_TIMEZONE_CHANGED);
-            NounoursWatchFace.this.registerReceiver(mTimeZoneReceiver, filter);
-        }
-
-        private void unregisterReceiver() {
-            if (!mRegisteredTimeZoneReceiver) {
-                return;
-            }
-            mRegisteredTimeZoneReceiver = false;
-            NounoursWatchFace.this.unregisterReceiver(mTimeZoneReceiver);
         }
 
         @Override
@@ -263,7 +219,7 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
                     Bitmap bitmap = mCache.getDrawableImage(getApplicationContext(), image);
                     renderNounours(canvas, bitmap, bounds.width(), bounds.height());
                 }
-                renderTime(canvas, bounds.width(), bounds.height());
+                renderTime(canvas);
             }
         }
 
@@ -294,12 +250,18 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
             }
         }
 
-        void renderTime(Canvas c, int width, int height) {
-            mTime.setToNow();
+        void renderTime(Canvas c) {
+            mTime.setTime(new Date(System.currentTimeMillis()));
+
             // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
             String text = mAmbient
-                    ? String.format("%d:%02d", mTime.hour, mTime.minute)
-                    : String.format("%d:%02d:%02d", mTime.hour, mTime.minute, mTime.second);
+                    ? String.format("%d:%02d",
+                    mTime.get(Calendar.HOUR),
+                    mTime.get(Calendar.MINUTE))
+                    : String.format("%d:%02d:%02d",
+                    mTime.get(Calendar.HOUR),
+                    mTime.get(Calendar.MINUTE),
+                    mTime.get(Calendar.SECOND));
             c.drawText(text, mXOffset, mYOffset, mTextPaint);
         }
 
@@ -311,7 +273,7 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
                 Canvas c = surfaceHolder.lockCanvas();
                 if (c != null) {
                     renderNounours(c, bitmap, viewWidth, viewHeight);
-                    renderTime(c, viewWidth, viewHeight);
+                    renderTime(c);
                     surfaceHolder.unlockCanvasAndPost(c);
                 }
             }

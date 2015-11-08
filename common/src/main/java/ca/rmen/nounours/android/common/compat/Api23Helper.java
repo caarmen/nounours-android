@@ -17,7 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.compat;
+package ca.rmen.nounours.android.common.compat;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -25,16 +25,16 @@ import android.app.PendingIntent;
 import android.content.Context;
 
 @TargetApi(23)
-class Api23Helper {
+public class Api23Helper {
     private Api23Helper() {
         // prevent instantiation
     }
 
-    static int getColor(Context context, int id) {
+    public static int getColor(Context context, int id) {
         return context.getResources().getColor(id, null);
     }
 
-    static Notification createNotification(Context context, int iconId, String tickerText, String contentText, int actionIconId, CharSequence actionText, PendingIntent pendingIntent) {
+    public static Notification createNotification(Context context, int iconId, String tickerText, String contentText, int actionIconId, CharSequence actionText, PendingIntent pendingIntent) {
         Notification.Builder builder = new Notification.Builder(context)
                 .setContentTitle(tickerText)
                 .setContentText(contentText)

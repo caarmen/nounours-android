@@ -23,7 +23,7 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 
 import ca.rmen.nounours.R;
-import ca.rmen.nounours.android.handheld.compat.ResourcesCompat;
+import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
 public final class SharedPreferenceSettings implements NounoursSettings {
