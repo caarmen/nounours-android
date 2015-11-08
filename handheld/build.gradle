@@ -20,7 +20,12 @@ android {
     }
 
     productFlavors {
-        full {
+        fullFoss {
+            applicationId "ca.rmen.nounours"
+            resValue "string", "DEFAULT_THEME_ID", "0"
+        }
+
+        fullWear {
             applicationId "ca.rmen.nounours"
             resValue "string", "DEFAULT_THEME_ID", "0"
         }
@@ -54,8 +59,13 @@ android {
         nounours {
             assets.srcDirs = ['../common/src/nounours/assets']
         }
-        full {
+        fullFoss {
             assets.srcDirs = ['../common/src/bugdroid/assets', '../common/src/nounours/assets']
+            res.srcDirs = ['src/full/res']
+        }
+        fullWear {
+            assets.srcDirs = ['../common/src/bugdroid/assets', '../common/src/nounours/assets']
+            res.srcDirs = ['src/full/res']
         }
     }
 
