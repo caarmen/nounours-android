@@ -22,14 +22,9 @@ android {
     }
 
     sourceSets {
-        bugdroid {
-            assets.srcDirs = ['src/bugdroid/assets']
-        }
-        nounours {
-            assets.srcDirs = ['src/nounours/assets']
-        }
         full {
             assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
+            res.srcDirs = ['src/bugdroid/res', 'src/nounours/res', 'src/main/res']
         }
     }
 

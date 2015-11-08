@@ -34,10 +34,6 @@
 
 package ca.rmen.nounours.android.wear;
 
-import android.support.wearable.watchface.CanvasWatchFaceService;
-
-import ca.rmen.nounours.R;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -46,6 +42,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -63,6 +60,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
@@ -111,6 +109,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
 
         private float mXOffset;
         private float mYOffset;
+        private Bitmap mAmbientBitmap;
 
         /**
          * Whether the display supports fewer bits for each color in ambient mode. When true, we
@@ -130,6 +129,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             setWatchFaceStyle(new WatchFaceStyle.Builder(NounoursWatchFace.this)
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
                     .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
+                    .setAmbientPeekMode(WatchFaceStyle.AMBIENT_PEEK_MODE_VISIBLE)
                     .setShowSystemUiTime(false)
                     .setStatusBarGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM)
                     .setAcceptsTapEvents(true)
@@ -138,6 +138,8 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             mYOffset = resources.getDimension(R.dimen.digital_y_offset);
 
             mSettings = getSettings();
+            int ambientBitmapId = context.getResources().getIdentifier("ambient_" + mSettings.getThemeId(), "drawable", context.getPackageName());
+            mAmbientBitmap = ((BitmapDrawable)context.getResources().getDrawable(ambientBitmapId, null)).getBitmap();
             mBackgroundPaint = new Paint();
             mBackgroundPaint.setColor(mSettings.getBackgroundColor());
 
@@ -240,6 +242,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
         @Override
         public void onDraw(Canvas canvas, Rect bounds) {
             canvas.drawRect(0, 0, bounds.width(), bounds.height(), mBackgroundPaint);
+            mTime.setTime(new Date(System.currentTimeMillis()));
             if (!mNounours.isLoading()) {
                 Image image = mNounours.getCurrentImage();
                 if (image != null) {
@@ -250,35 +253,49 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             }
         }
 
-        void renderNounours(Canvas c, Bitmap bitmap, int viewWidth, int viewHeight) {
+        private void renderNounours(Canvas canvas, Bitmap bitmap, int viewWidth, int viewHeight) {
+            if(mAmbient) renderAmbientNounours(canvas, viewWidth, viewHeight);
+            else renderNormalNounours(canvas, bitmap, viewWidth, viewHeight);
+        }
+
+        private void renderNormalNounours(Canvas c, Bitmap bitmap, int viewWidth, int viewHeight) {
             c.drawColor(mSettings.getBackgroundColor());
-            if (mAmbient) {
-                c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
-            } else {
-                int bitmapWidth = bitmap.getWidth();
-                int bitmapHeight = bitmap.getHeight();
-                int deviceCenterX = viewWidth / 2;
-                int deviceCenterY = viewHeight / 2;
-                int bitmapCenterX = bitmapWidth / 2;
-                int bitmapCenterY = bitmapHeight / 2;
+            int bitmapWidth = bitmap.getWidth();
+            int bitmapHeight = bitmap.getHeight();
+            int deviceCenterX = viewWidth / 2;
+            int deviceCenterY = viewHeight / 2;
+            int bitmapCenterX = bitmapWidth / 2;
+            int bitmapCenterY = bitmapHeight / 2;
 
-                float scaleX = (float) viewWidth / bitmapWidth;
-                float scaleY = (float) viewHeight / bitmapHeight;
-                float offsetX = deviceCenterX - bitmapCenterX;
-                float offsetY = deviceCenterY - bitmapCenterY;
+            float scaleX = (float) viewWidth / bitmapWidth;
+            float scaleY = (float) viewHeight / bitmapHeight;
+            float offsetX = deviceCenterX - bitmapCenterX;
+            float offsetY = deviceCenterY - bitmapCenterY;
 
-                float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
+            float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
+            Matrix m = new Matrix();
+            m.postTranslate(offsetX, offsetY);
+            m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
+            c.setMatrix(m);
+            c.drawBitmap(bitmap, 0, 0, mBackgroundPaint);
+            if (mSettings.isImageDimmed()) c.drawColor(0x88000000);
+        }
+
+        private void renderAmbientNounours(Canvas c, int viewWidth, int viewHeight) {
+            c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
+            if(!mLowBitAmbient) {
+                Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
+                Rect viewRect = new Rect(viewWidth/3, viewHeight/3, 2*viewWidth/3, 2*viewHeight/3);
+                float minutesRotation = 360*mTime.get(Calendar.MINUTE)/60;
                 Matrix m = new Matrix();
-                m.postTranslate(offsetX, offsetY);
-                m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
+                m.postRotate(minutesRotation, viewWidth/2, viewHeight/2);
                 c.setMatrix(m);
-                c.drawBitmap(bitmap, 0, 0, mBackgroundPaint);
-                if (mSettings.isImageDimmed()) c.drawColor(0x88000000);
+                c.drawBitmap(mAmbientBitmap, bitmapRect, viewRect, null);
+                c.setMatrix(new Matrix());
             }
         }
 
         void renderTime(Canvas c) {
-            mTime.setTime(new Date(System.currentTimeMillis()));
 
             // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
             String text = mAmbient
