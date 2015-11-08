@@ -47,8 +47,8 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
     private final Paint mBackgroundPaint;
     private final Paint mTextPaint;
     private final Bitmap mAmbientBitmap;
-    private float mXOffset;
-    private float mYOffset;
+    private float mTimeXOffset;
+    private float mTimeYOffset;
 
     public NounoursWatchFaceRenderer(Context context, NounoursSettings settings) {
         mCalendar = Calendar.getInstance(Locale.getDefault());
@@ -73,13 +73,13 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
         mIsLowBitAmbient = isLowBitAmbient;
     }
 
-    public void setTextSize(float textSize) {
+    public void setTimeTextSize(float textSize) {
         mTextPaint.setTextSize(textSize);
     }
 
-    public void setOffset(float xOffset, float yOffset) {
-        mXOffset = xOffset;
-        mYOffset = yOffset;
+    public void setTimeOffset(float xOffset, float yOffset) {
+        mTimeXOffset = xOffset;
+        mTimeYOffset = yOffset;
     }
 
     @Override
@@ -146,7 +146,7 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
                 mCalendar.get(Calendar.HOUR),
                 mCalendar.get(Calendar.MINUTE),
                 mCalendar.get(Calendar.SECOND));
-        c.drawText(text, mXOffset, mYOffset, mTextPaint);
+        c.drawText(text, mTimeXOffset, mTimeYOffset, mTextPaint);
     }
 
 }

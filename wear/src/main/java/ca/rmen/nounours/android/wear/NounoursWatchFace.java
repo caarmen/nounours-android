@@ -173,10 +173,10 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             float xOffset = resources.getDimension(isRound
                     ? R.dimen.digital_x_offset_round : R.dimen.digital_x_offset);
             float yOffset = resources.getDimension(R.dimen.digital_y_offset);
-            mRenderer.setOffset(xOffset, yOffset);
+            mRenderer.setTimeOffset(xOffset, yOffset);
             float textSize = resources.getDimension(isRound
                     ? R.dimen.digital_text_size_round : R.dimen.digital_text_size);
-            mRenderer.setTextSize(textSize);
+            mRenderer.setTimeTextSize(textSize);
 
         }
 
