@@ -17,7 +17,7 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ca.rmen.nounours.android.wear" >
+    package="ca.rmen.nounours" >
 
     <uses-feature android:name="android.hardware.type.watch" />
 
@@ -31,7 +31,7 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.DeviceDefault" >
         <service
-            android:name=".DefaultNounoursWatchFace"
+            android:name="ca.rmen.nounours.android.wear.DefaultNounoursWatchFace"
             android:label="@string/nounours_wear_default"
             android:permission="android.permission.BIND_WALLPAPER" >
             <meta-data
@@ -51,7 +51,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".RainbowWatchFace"
+            android:name="ca.rmen.nounours.android.wear.RainbowWatchFace"
             android:label="@string/nounours_wear_rainbow"
             android:permission="android.permission.BIND_WALLPAPER" >
             <meta-data
@@ -71,7 +71,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".CollegeWatchFace"
+            android:name="ca.rmen.nounours.android.wear.CollegeWatchFace"
             android:label="@string/nounours_wear_college"
             android:permission="android.permission.BIND_WALLPAPER" >
             <meta-data
@@ -91,7 +91,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".HalloweenWatchFace"
+            android:name="ca.rmen.nounours.android.wear.HalloweenWatchFace"
             android:label="@string/nounours_wear_halloween"
             android:permission="android.permission.BIND_WALLPAPER" >
             <meta-data
@@ -111,7 +111,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".BugdroidWatchFace"
+            android:name="ca.rmen.nounours.android.wear.BugdroidWatchFace"
             android:label="@string/bugdroid_wear"
             android:permission="android.permission.BIND_WALLPAPER" >
             <meta-data

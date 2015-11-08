@@ -93,4 +93,8 @@ dependencies {
     compile "ca.rmen:libnounours:2.0.1"
     compile 'com.robbypond:android-ColorPickerPreference:1.11.1'
     compile project(':common')
+    // Package the wear apk inside this one (only for the 'wear' flavor)
+    if(rootProject.findProject("wear") != null) {
+        fullWearWearApp project(':wear')
+    }
 }

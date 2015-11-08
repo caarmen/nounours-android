@@ -34,6 +34,10 @@
 
 package ca.rmen.nounours.android.wear;
 
+import android.support.wearable.watchface.CanvasWatchFaceService;
+
+import ca.rmen.nounours.R;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
