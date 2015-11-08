@@ -44,7 +44,7 @@ android {
             applicationId "ca.rmen.nounours.lwp.rainbow"
             resValue "string", "DEFAULT_THEME_ID", "5000"
         }
-        
+
         nounoursWear {
             applicationId "ca.rmen.nounours.lwp.rainbow"
             resValue "string", "DEFAULT_THEME_ID", "5000"
