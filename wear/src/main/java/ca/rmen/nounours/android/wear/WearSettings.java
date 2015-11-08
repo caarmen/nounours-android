@@ -3,6 +3,14 @@ package ca.rmen.nounours.android.wear;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
 public class WearSettings implements NounoursSettings {
+    private final String mThemeId;
+    private final int mBackgroundColor;
+
+    public WearSettings(String themeId, int backgroundColor) {
+        mThemeId = themeId;
+        mBackgroundColor = backgroundColor;
+    }
+
     @Override
     public boolean isSoundEnabled() {
         return false;
@@ -24,11 +32,11 @@ public class WearSettings implements NounoursSettings {
 
     @Override
     public String getThemeId() {
-        return "0";
+        return mThemeId;
     }
 
     @Override
     public int getBackgroundColor() {
-        return 0xff000000;
+        return mBackgroundColor;
     }
 }

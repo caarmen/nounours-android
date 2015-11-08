@@ -54,7 +54,7 @@ import ca.rmen.nounours.data.Image;
  * Digital watch face with seconds. In ambient mode, the seconds aren't displayed. On devices with
  * low-bit ambient mode, the text is drawn without anti-aliasing in ambient mode.
  */
-public class NounoursWatchFace extends CanvasWatchFaceService {
+public abstract class NounoursWatchFace extends CanvasWatchFaceService {
     private static final String TAG = Constants.TAG + NounoursWatchFace.class.getSimpleName();
     private static final Typeface NORMAL_TYPEFACE =
             Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
@@ -69,6 +69,8 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
      * Handler message id for updating the time periodically in interactive mode.
      */
     private static final int MSG_UPDATE_TIME = 0;
+
+    public abstract NounoursSettings getSettings();
 
     @Override
     public Engine onCreateEngine() {
@@ -122,7 +124,7 @@ public class NounoursWatchFace extends CanvasWatchFaceService {
             mTextPaint.setAntiAlias(true);
 
             mTime = Calendar.getInstance(Locale.getDefault());
-            mSettings = new WearSettings();
+            mSettings = getSettings();
             mSettings.setEnableSound(false);
             mCache = new WearNounoursResourceCache(getApplicationContext());
             mNounours = new AndroidNounours("WEAR",
