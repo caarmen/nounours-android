@@ -35,7 +35,6 @@
 package ca.rmen.nounours.android.wear;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -53,7 +52,6 @@ import android.view.WindowInsets;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 
-import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
@@ -111,7 +109,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
                     .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
                     .setAmbientPeekMode(WatchFaceStyle.AMBIENT_PEEK_MODE_VISIBLE)
-                    .setShowSystemUiTime(false)
+                    .setShowSystemUiTime(true)
                     .setStatusBarGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM)
                     .setAcceptsTapEvents(true)
                     .build());
@@ -166,18 +164,6 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
         @Override
         public void onApplyWindowInsets(WindowInsets insets) {
             super.onApplyWindowInsets(insets);
-
-            // Load resources that have alternate values for round watches.
-            Resources resources = NounoursWatchFace.this.getResources();
-            boolean isRound = insets.isRound();
-            float xOffset = resources.getDimension(isRound
-                    ? R.dimen.digital_x_offset_round : R.dimen.digital_x_offset);
-            float yOffset = resources.getDimension(R.dimen.digital_y_offset);
-            mRenderer.setTimeOffset(xOffset, yOffset);
-            float textSize = resources.getDimension(isRound
-                    ? R.dimen.digital_text_size_round : R.dimen.digital_text_size);
-            mRenderer.setTimeTextSize(textSize);
-
         }
 
         @Override
@@ -215,7 +201,6 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                     Bitmap bitmap = mCache.getDrawableImage(getApplicationContext(), image);
                     mRenderer.renderNounours(mSettings, canvas, bitmap, bounds.width(), bounds.height());
                 }
-                mRenderer.renderTime(canvas);
             }
         }
 

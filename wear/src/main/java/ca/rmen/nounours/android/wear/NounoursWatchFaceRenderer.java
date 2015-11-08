@@ -24,62 +24,36 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.view.SurfaceHolder;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
-import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
 class NounoursWatchFaceRenderer extends NounoursRenderer {
-    private static final Typeface NORMAL_TYPEFACE =
-            Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
 
     private boolean mIsAmbient;
     private boolean mIsLowBitAmbient;
-    private final Calendar mCalendar;
     private final Paint mBackgroundPaint;
-    private final Paint mTextPaint;
     private final Bitmap mAmbientBitmap;
-    private float mTimeXOffset;
-    private float mTimeYOffset;
 
     public NounoursWatchFaceRenderer(Context context, NounoursSettings settings) {
-        mCalendar = Calendar.getInstance(Locale.getDefault());
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(ResourcesCompat.getColor(context, settings.getBackgroundColor()));
-        mTextPaint = new Paint();
-        mTextPaint.setColor(ResourcesCompat.getColor(context, R.color.digital_text));
-        mTextPaint.setTypeface(NORMAL_TYPEFACE);
-        mTextPaint.setAntiAlias(true);
         int ambientBitmapId = context.getResources().getIdentifier("ambient_" + settings.getThemeId(), "drawable", context.getPackageName());
         mAmbientBitmap = ((BitmapDrawable) context.getResources().getDrawable(ambientBitmapId, null)).getBitmap();
     }
 
     public void setIsAmbient(boolean isAmbient) {
         mIsAmbient = isAmbient;
-        if (mIsLowBitAmbient) {
-            mTextPaint.setAntiAlias(!isAmbient);
-        }
     }
 
     public void setIsLowBitAmbient(boolean isLowBitAmbient) {
         mIsLowBitAmbient = isLowBitAmbient;
-    }
-
-    public void setTimeTextSize(float textSize) {
-        mTextPaint.setTextSize(textSize);
-    }
-
-    public void setTimeOffset(float xOffset, float yOffset) {
-        mTimeXOffset = xOffset;
-        mTimeYOffset = yOffset;
     }
 
     @Override
@@ -87,7 +61,6 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
         Canvas c = surfaceHolder.lockCanvas();
         if (c != null) {
             renderNounours(settings, c, bitmap, viewWidth, viewHeight);
-            renderTime(c);
             surfaceHolder.unlockCanvasAndPost(c);
         }
     }
@@ -124,29 +97,16 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
         c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
         if (!mIsLowBitAmbient) {
             Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
+            // Draw nounours in a square which is 1/3 the device width, and 1/3 the device height.
             Rect viewRect = new Rect(viewWidth / 3, viewHeight / 3, 2 * viewWidth / 3, 2 * viewHeight / 3);
-            float minutesRotation = 360 * mCalendar.get(Calendar.MINUTE) / 60;
+            Calendar now = Calendar.getInstance(Locale.getDefault());
+            float minutesRotation = 360 * now.get(Calendar.MINUTE) / 60;
             Matrix m = new Matrix();
             m.postRotate(minutesRotation, viewWidth / 2, viewHeight / 2);
             c.setMatrix(m);
             c.drawBitmap(mAmbientBitmap, bitmapRect, viewRect, null);
-            c.setMatrix(new Matrix());
+            c.setMatrix(null);
         }
-    }
-
-    void renderTime(Canvas c) {
-
-        mCalendar.setTime(new Date(System.currentTimeMillis()));
-        // Draw H:MM in ambient mode or H:MM:SS in interactive mode.
-        String text = mIsAmbient
-                ? String.format("%d:%02d",
-                mCalendar.get(Calendar.HOUR),
-                mCalendar.get(Calendar.MINUTE))
-                : String.format("%d:%02d:%02d",
-                mCalendar.get(Calendar.HOUR),
-                mCalendar.get(Calendar.MINUTE),
-                mCalendar.get(Calendar.SECOND));
-        c.drawText(text, mTimeXOffset, mTimeYOffset, mTextPaint);
     }
 
 }
