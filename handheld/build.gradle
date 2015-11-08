@@ -30,22 +30,12 @@ android {
             resValue "string", "DEFAULT_THEME_ID", "0"
         }
 
-        bugdroidFoss {
+        bugdroid {
             applicationId "ca.rmen.nounours.lwp.robot"
             resValue "string", "DEFAULT_THEME_ID", "5004"
         }
 
-        bugdroidWear {
-            applicationId "ca.rmen.nounours.lwp.robot"
-            resValue "string", "DEFAULT_THEME_ID", "5004"
-        }
-
-        nounoursFoss {
-            applicationId "ca.rmen.nounours.lwp.rainbow"
-            resValue "string", "DEFAULT_THEME_ID", "5000"
-        }
-
-        nounoursWear {
+        nounours {
             applicationId "ca.rmen.nounours.lwp.rainbow"
             resValue "string", "DEFAULT_THEME_ID", "5000"
         }
@@ -63,22 +53,6 @@ android {
     }
 
     sourceSets {
-        bugdroidFoss {
-            assets.srcDirs = ['src/bugdroid/assets']
-            res.srcDirs = ['src/bugdroid/res']
-        }
-        bugdroidWear {
-            assets.srcDirs = ['src/bugdroid/assets']
-            res.srcDirs = ['src/bugdroid/res']
-        }
-        nounoursFoss {
-            assets.srcDirs = ['src/nounours/assets']
-            res.srcDirs = ['src/nounours/res']
-        }
-        nounoursWear {
-            assets.srcDirs = ['src/nounours/assets']
-            res.srcDirs = ['src/nounours/res']
-        }
         fullFoss {
             assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
             res.srcDirs = ['src/full/res']
@@ -116,7 +90,7 @@ dependencies {
     // Package the wear apk inside this one (only for the 'wear' flavor)
     if(rootProject.findProject("wear") != null) {
         fullWearWearApp project(path: ':wear', configuration: 'fullRelease')
-        bugdroidWearWearApp project(path: ':wear', configuration: 'bugdroidRelease')
-        nounoursWearWearApp project(path: ':wear', configuration: 'nounoursRelease')
+        bugdroidWearApp project(path: ':wear', configuration: 'bugdroidRelease')
+        nounoursWearApp project(path: ':wear', configuration: 'nounoursRelease')
     }
 }
