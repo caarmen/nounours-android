@@ -21,10 +21,32 @@ android {
     }
 
     sourceSets {
-        main {
+        bugdroid {
+            assets.srcDirs = ['../common/src/bugdroid/assets']
+        }
+        nounours {
+            assets.srcDirs = ['../common/src/nounours/assets']
+        }
+        full {
             assets.srcDirs = ['../common/src/bugdroid/assets', '../common/src/nounours/assets']
         }
     }
+
+    publishNonDefault true
+    productFlavors {
+        full {
+            applicationId "ca.rmen.nounours"
+        }
+
+        bugdroid {
+            applicationId "ca.rmen.nounours.lwp.robot"
+        }
+
+        nounours {
+            applicationId "ca.rmen.nounours.lwp.rainbow"
+        }
+    }
+
 
     File signFile = rootProject.file('signing.properties')
     if (signFile.exists()) {

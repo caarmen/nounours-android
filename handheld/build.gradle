@@ -30,12 +30,22 @@ android {
             resValue "string", "DEFAULT_THEME_ID", "0"
         }
 
-        bugdroid {
+        bugdroidFoss {
             applicationId "ca.rmen.nounours.lwp.robot"
             resValue "string", "DEFAULT_THEME_ID", "5004"
         }
 
-        nounours {
+        bugdroidWear {
+            applicationId "ca.rmen.nounours.lwp.robot"
+            resValue "string", "DEFAULT_THEME_ID", "5004"
+        }
+
+        nounoursFoss {
+            applicationId "ca.rmen.nounours.lwp.rainbow"
+            resValue "string", "DEFAULT_THEME_ID", "5000"
+        }
+        
+        nounoursWear {
             applicationId "ca.rmen.nounours.lwp.rainbow"
             resValue "string", "DEFAULT_THEME_ID", "5000"
         }
@@ -53,11 +63,21 @@ android {
     }
 
     sourceSets {
-        bugdroid {
+        bugdroidFoss {
             assets.srcDirs = ['../common/src/bugdroid/assets']
+            res.srcDirs = ['src/bugdroid/res']
         }
-        nounours {
+        bugdroidWear {
+            assets.srcDirs = ['../common/src/bugdroid/assets']
+            res.srcDirs = ['src/bugdroid/res']
+        }
+        nounoursFoss {
             assets.srcDirs = ['../common/src/nounours/assets']
+            res.srcDirs = ['src/nounours/res']
+        }
+        nounoursWear {
+            assets.srcDirs = ['../common/src/nounours/assets']
+            res.srcDirs = ['src/nounours/res']
         }
         fullFoss {
             assets.srcDirs = ['../common/src/bugdroid/assets', '../common/src/nounours/assets']
@@ -95,6 +115,8 @@ dependencies {
     compile project(':common')
     // Package the wear apk inside this one (only for the 'wear' flavor)
     if(rootProject.findProject("wear") != null) {
-        fullWearWearApp project(':wear')
+        fullWearWearApp project(path: ':wear', configuration: 'fullRelease')
+        bugdroidWearWearApp project(path: ':wear', configuration: 'bugdroidRelease')
+        nounoursWearWearApp project(path: ':wear', configuration: 'nounoursRelease')
     }
 }
