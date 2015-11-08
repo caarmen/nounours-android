@@ -133,8 +133,9 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             Resources resources = NounoursWatchFace.this.getResources();
             mYOffset = resources.getDimension(R.dimen.digital_y_offset);
 
+            mSettings = getSettings();
             mBackgroundPaint = new Paint();
-            mBackgroundPaint.setColor(ResourcesCompat.getColor(context, R.color.digital_background));
+            mBackgroundPaint.setColor(mSettings.getBackgroundColor());
 
             mTextPaint = new Paint();
             mTextPaint.setColor(ResourcesCompat.getColor(context, R.color.digital_text));
@@ -142,7 +143,6 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             mTextPaint.setAntiAlias(true);
 
             mTime = Calendar.getInstance(Locale.getDefault());
-            mSettings = getSettings();
             mSettings.setEnableSound(false);
             mCache = new WearNounoursResourceCache(getApplicationContext());
             mNounours = new AndroidNounours("WEAR",
@@ -170,7 +170,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
 
             if (visible) {
                 // Update time zone in case it changed while we weren't visible.
-                mNounours.doPing(true);
+                mNounours.doPing(!mAmbient);
             } else {
                 mNounours.doPing(false);
             }
