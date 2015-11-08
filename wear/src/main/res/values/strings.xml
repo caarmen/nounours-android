@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Nounours Wear</string>
     <string name="nounours_wear_default">Nounours Default</string>
+    <string name="nounours_wear_rainbow">Nounours Rainbow</string>
+    <string name="nounours_wear_college">Nounours College</string>
+    <string name="nounours_wear_halloween">Nounours Halloween</string>
     <string name="bugdroid_wear">Bugdroid</string>
 </resources>

@@ -109,7 +109,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
                     .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
                     .setShowSystemUiTime(false)
-                    .setStatusBarGravity(Gravity.BOTTOM)
+                    .setStatusBarGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM)
                     .setAcceptsTapEvents(true)
                     .build());
             Resources resources = NounoursWatchFace.this.getResources();
