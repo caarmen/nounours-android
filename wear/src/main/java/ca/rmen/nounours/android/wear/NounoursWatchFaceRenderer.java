@@ -37,15 +37,15 @@ import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
-public class NounoursWatchFaceRenderer extends NounoursRenderer {
+class NounoursWatchFaceRenderer extends NounoursRenderer {
     private static final Typeface NORMAL_TYPEFACE =
             Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL);
 
     private boolean mIsAmbient;
     private boolean mIsLowBitAmbient;
     private final Calendar mCalendar;
-    private Paint mBackgroundPaint;
-    private Paint mTextPaint;
+    private final Paint mBackgroundPaint;
+    private final Paint mTextPaint;
     private final Bitmap mAmbientBitmap;
     private float mXOffset;
     private float mYOffset;
@@ -53,13 +53,13 @@ public class NounoursWatchFaceRenderer extends NounoursRenderer {
     public NounoursWatchFaceRenderer(Context context, NounoursSettings settings) {
         mCalendar = Calendar.getInstance(Locale.getDefault());
         mBackgroundPaint = new Paint();
-        mBackgroundPaint.setColor(settings.getBackgroundColor());
+        mBackgroundPaint.setColor(ResourcesCompat.getColor(context, settings.getBackgroundColor()));
         mTextPaint = new Paint();
         mTextPaint.setColor(ResourcesCompat.getColor(context, R.color.digital_text));
         mTextPaint.setTypeface(NORMAL_TYPEFACE);
         mTextPaint.setAntiAlias(true);
         int ambientBitmapId = context.getResources().getIdentifier("ambient_" + settings.getThemeId(), "drawable", context.getPackageName());
-        mAmbientBitmap = ((BitmapDrawable)context.getResources().getDrawable(ambientBitmapId, null)).getBitmap();
+        mAmbientBitmap = ((BitmapDrawable) context.getResources().getDrawable(ambientBitmapId, null)).getBitmap();
     }
 
     public void setIsAmbient(boolean isAmbient) {
@@ -93,12 +93,12 @@ public class NounoursWatchFaceRenderer extends NounoursRenderer {
     }
 
     void renderNounours(NounoursSettings settings, Canvas canvas, Bitmap bitmap, int viewWidth, int viewHeight) {
-        if(mIsAmbient) renderAmbientNounours(canvas, viewWidth, viewHeight);
+        if (mIsAmbient) renderAmbientNounours(canvas, viewWidth, viewHeight);
         else renderNormalNounours(settings, canvas, bitmap, viewWidth, viewHeight);
     }
 
     private void renderNormalNounours(NounoursSettings settings, Canvas c, Bitmap bitmap, int viewWidth, int viewHeight) {
-        c.drawColor(settings.getBackgroundColor());
+        c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
         int bitmapWidth = bitmap.getWidth();
         int bitmapHeight = bitmap.getHeight();
         int deviceCenterX = viewWidth / 2;
@@ -122,12 +122,12 @@ public class NounoursWatchFaceRenderer extends NounoursRenderer {
 
     private void renderAmbientNounours(Canvas c, int viewWidth, int viewHeight) {
         c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
-        if(!mIsLowBitAmbient) {
+        if (!mIsLowBitAmbient) {
             Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
-            Rect viewRect = new Rect(viewWidth/3, viewHeight/3, 2*viewWidth/3, 2*viewHeight/3);
-            float minutesRotation = 360*mCalendar.get(Calendar.MINUTE)/60;
+            Rect viewRect = new Rect(viewWidth / 3, viewHeight / 3, 2 * viewWidth / 3, 2 * viewHeight / 3);
+            float minutesRotation = 360 * mCalendar.get(Calendar.MINUTE) / 60;
             Matrix m = new Matrix();
-            m.postRotate(minutesRotation, viewWidth/2, viewHeight/2);
+            m.postRotate(minutesRotation, viewWidth / 2, viewHeight / 2);
             c.setMatrix(m);
             c.drawBitmap(mAmbientBitmap, bitmapRect, viewRect, null);
             c.setMatrix(new Matrix());

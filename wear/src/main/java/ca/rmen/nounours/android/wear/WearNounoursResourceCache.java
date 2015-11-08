@@ -27,7 +27,7 @@ import ca.rmen.nounours.android.common.nounours.cache.NounoursResourceCache;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 
-public class WearNounoursResourceCache implements NounoursResourceCache {
+class WearNounoursResourceCache implements NounoursResourceCache {
 
     private final Context mContext;
     private final ImageCache mImageCache;

@@ -26,7 +26,7 @@ public class CollegeWatchFace extends NounoursWatchFace {
 
     public CollegeWatchFace() {
         super();
-        mSettings = new WearSettings("5001", 0xff000000);
+        mSettings = new WearSettings("5001");
     }
 
     @Override

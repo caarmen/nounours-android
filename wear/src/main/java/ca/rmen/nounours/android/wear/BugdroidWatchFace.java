@@ -26,7 +26,7 @@ public class BugdroidWatchFace extends NounoursWatchFace {
 
     public BugdroidWatchFace() {
         super();
-        mSettings = new WearSettings("5004", 0xff000000);
+        mSettings = new WearSettings("5004");
     }
 
     @Override

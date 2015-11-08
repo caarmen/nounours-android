@@ -80,7 +80,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
      */
     private static final int MSG_UPDATE_TIME = 0;
 
-    public abstract NounoursSettings getSettings();
+    protected abstract NounoursSettings getSettings();
 
     @Override
     public Engine onCreateEngine() {

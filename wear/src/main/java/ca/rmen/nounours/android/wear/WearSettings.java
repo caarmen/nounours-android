@@ -18,15 +18,14 @@
  */
 package ca.rmen.nounours.android.wear;
 
+import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
-public class WearSettings implements NounoursSettings {
+class WearSettings implements NounoursSettings {
     private final String mThemeId;
-    private final int mBackgroundColor;
 
-    public WearSettings(String themeId, int backgroundColor) {
+    public WearSettings(String themeId) {
         mThemeId = themeId;
-        mBackgroundColor = backgroundColor;
     }
 
     @Override
@@ -54,8 +53,8 @@ public class WearSettings implements NounoursSettings {
     }
 
     @Override
-    public int getBackgroundColor() {
-        return mBackgroundColor;
+    public int getBackgroundColor(){
+        return R.color.background_color;
     }
 
 }
