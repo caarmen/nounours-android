@@ -98,11 +98,22 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
         if (!mIsLowBitAmbient) {
             Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
             // Draw nounours in a square which is 1/3 the device width, and 1/3 the device height.
-            Rect viewRect = new Rect(viewWidth / 3, viewHeight / 3, 2 * viewWidth / 3, 2 * viewHeight / 3);
+            final int shorterViewSide;
+            int offsetX = 0;
+            int offsetY = 0;
+            if (viewWidth < viewHeight) {
+                shorterViewSide = viewWidth;
+                offsetY = (viewHeight - viewWidth) / 2;
+            } else {
+                shorterViewSide = viewHeight;
+                offsetX = (viewWidth - viewHeight) / 2;
+            }
+            Rect viewRect = new Rect(shorterViewSide/ 3, shorterViewSide/ 3, 2 * shorterViewSide/ 3, 2 * shorterViewSide/ 3);
             Calendar now = Calendar.getInstance(Locale.getDefault());
             float minutesRotation = 360 * now.get(Calendar.MINUTE) / 60;
             Matrix m = new Matrix();
-            m.postRotate(minutesRotation, viewWidth / 2, viewHeight / 2);
+            m.postRotate(minutesRotation, shorterViewSide/ 2, shorterViewSide/ 2);
+            m.postTranslate(offsetX, offsetY);
             c.setMatrix(m);
             c.drawBitmap(mAmbientBitmap, bitmapRect, viewRect, null);
             c.setMatrix(null);
