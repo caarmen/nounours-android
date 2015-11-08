@@ -64,27 +64,27 @@ android {
 
     sourceSets {
         bugdroidFoss {
-            assets.srcDirs = ['../common/src/bugdroid/assets']
+            assets.srcDirs = ['src/bugdroid/assets']
             res.srcDirs = ['src/bugdroid/res']
         }
         bugdroidWear {
-            assets.srcDirs = ['../common/src/bugdroid/assets']
+            assets.srcDirs = ['src/bugdroid/assets']
             res.srcDirs = ['src/bugdroid/res']
         }
         nounoursFoss {
-            assets.srcDirs = ['../common/src/nounours/assets']
+            assets.srcDirs = ['src/nounours/assets']
             res.srcDirs = ['src/nounours/res']
         }
         nounoursWear {
-            assets.srcDirs = ['../common/src/nounours/assets']
+            assets.srcDirs = ['src/nounours/assets']
             res.srcDirs = ['src/nounours/res']
         }
         fullFoss {
-            assets.srcDirs = ['../common/src/bugdroid/assets', '../common/src/nounours/assets']
+            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
             res.srcDirs = ['src/full/res']
         }
         fullWear {
-            assets.srcDirs = ['../common/src/bugdroid/assets', '../common/src/nounours/assets']
+            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
             res.srcDirs = ['src/full/res']
         }
     }

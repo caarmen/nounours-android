@@ -16,19 +16,20 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
     sourceSets {
         bugdroid {
-            assets.srcDirs = ['../common/src/bugdroid/assets']
+            assets.srcDirs = ['src/bugdroid/assets']
         }
         nounours {
-            assets.srcDirs = ['../common/src/nounours/assets']
+            assets.srcDirs = ['src/nounours/assets']
         }
         full {
-            assets.srcDirs = ['../common/src/bugdroid/assets', '../common/src/nounours/assets']
+            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
         }
     }
 

@@ -187,6 +187,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
         @Override
         public void onTapCommand(int tapType, int x, int y, long eventTime) {
             super.onTapCommand(tapType, x, y, eventTime);
+            if (mNounours.isLoading()) return;
             if (tapType == WatchFaceService.TAP_TYPE_TAP) {
                 mNounours.doRandomAnimation();
             }
