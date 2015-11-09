@@ -25,12 +25,10 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.view.SurfaceHolder;
 
 import java.util.Calendar;
 import java.util.Locale;
 
-import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
@@ -43,7 +41,7 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
 
     public NounoursWatchFaceRenderer(Context context, NounoursSettings settings) {
         mBackgroundPaint = new Paint();
-        mBackgroundPaint.setColor(ResourcesCompat.getColor(context, settings.getBackgroundColor()));
+        mBackgroundPaint.setColor(settings.getBackgroundColor());
         int ambientBitmapId = context.getResources().getIdentifier("ambient_" + settings.getThemeId(), "drawable", context.getPackageName());
         mAmbientBitmap = ((BitmapDrawable) context.getResources().getDrawable(ambientBitmapId, null)).getBitmap();
     }
@@ -57,65 +55,41 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
     }
 
     @Override
-    public void render(NounoursSettings settings, Bitmap bitmap, SurfaceHolder surfaceHolder, int viewWidth, int viewHeight, int backgroundColor, Paint paint) {
-        Canvas c = surfaceHolder.lockCanvas();
-        if (c != null) {
-            renderNounours(settings, c, bitmap, viewWidth, viewHeight);
-            surfaceHolder.unlockCanvasAndPost(c);
-        }
-    }
-
-    void renderNounours(NounoursSettings settings, Canvas canvas, Bitmap bitmap, int viewWidth, int viewHeight) {
+    public void render(NounoursSettings settings, Bitmap bitmap, Canvas canvas, int viewWidth, int viewHeight) {
         if (mIsAmbient) renderAmbientNounours(canvas, viewWidth, viewHeight);
-        else renderNormalNounours(settings, canvas, bitmap, viewWidth, viewHeight);
-    }
-
-    private void renderNormalNounours(NounoursSettings settings, Canvas c, Bitmap bitmap, int viewWidth, int viewHeight) {
-        c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
-        int bitmapWidth = bitmap.getWidth();
-        int bitmapHeight = bitmap.getHeight();
-        int deviceCenterX = viewWidth / 2;
-        int deviceCenterY = viewHeight / 2;
-        int bitmapCenterX = bitmapWidth / 2;
-        int bitmapCenterY = bitmapHeight / 2;
-
-        float scaleX = (float) viewWidth / bitmapWidth;
-        float scaleY = (float) viewHeight / bitmapHeight;
-        float offsetX = deviceCenterX - bitmapCenterX;
-        float offsetY = deviceCenterY - bitmapCenterY;
-
-        float scaleToUse = (scaleX < scaleY) ? scaleX : scaleY;
-        Matrix m = new Matrix();
-        m.postTranslate(offsetX, offsetY);
-        m.postScale(scaleToUse, scaleToUse, deviceCenterX, deviceCenterY);
-        c.setMatrix(m);
-        c.drawBitmap(bitmap, 0, 0, mBackgroundPaint);
-        if (settings.isImageDimmed()) c.drawColor(0x88000000);
+        else super.render(settings, bitmap, canvas, viewWidth, viewHeight);
     }
 
     private void renderAmbientNounours(Canvas c, int viewWidth, int viewHeight) {
         c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
         if (!mIsLowBitAmbient) {
-            Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
-            // Draw nounours in a square which is 1/3 the device width, and 1/3 the device height.
-            final int shorterViewSide;
+            // First figure out the largest possible square within the (possibly) rectangular view:
+            // The square's upper left corner will have offsetX and offsetY
+            // and the square will have a width squareViewWidth
+            final int squareViewWidth;
             int offsetX = 0;
             int offsetY = 0;
             if (viewWidth < viewHeight) {
-                shorterViewSide = viewWidth;
+                squareViewWidth = viewWidth;
                 offsetY = (viewHeight - viewWidth) / 2;
             } else {
-                shorterViewSide = viewHeight;
+                squareViewWidth = viewHeight;
                 offsetX = (viewWidth - viewHeight) / 2;
             }
-            Rect viewRect = new Rect(shorterViewSide/ 3, shorterViewSide/ 3, 2 * shorterViewSide/ 3, 2 * shorterViewSide/ 3);
+
+            // Draw nounours in a square which is 1/3 the square view width
+            Rect nounoursDisplayViewRect = new Rect(squareViewWidth/ 3, squareViewWidth/ 3, 2 * squareViewWidth/ 3, 2 * squareViewWidth/ 3);
+
+            // Rotate nounours according to the minutes of the current time.
             Calendar now = Calendar.getInstance(Locale.getDefault());
             float minutesRotation = 360 * now.get(Calendar.MINUTE) / 60;
             Matrix m = new Matrix();
-            m.postRotate(minutesRotation, shorterViewSide/ 2, shorterViewSide/ 2);
+            m.postRotate(minutesRotation, squareViewWidth/ 2, squareViewWidth/ 2);
             m.postTranslate(offsetX, offsetY);
             c.setMatrix(m);
-            c.drawBitmap(mAmbientBitmap, bitmapRect, viewRect, null);
+
+            Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
+            c.drawBitmap(mAmbientBitmap, bitmapRect, nounoursDisplayViewRect, null);
             c.setMatrix(null);
         }
     }

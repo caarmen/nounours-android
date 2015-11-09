@@ -19,10 +19,8 @@
 
 package ca.rmen.nounours.android.wear;
 
-import ca.rmen.nounours.android.common.settings.NounoursSettings;
-
 public class CollegeWatchFace extends NounoursWatchFace {
-    private final NounoursSettings mSettings;
+    private final WearSettings mSettings;
 
     public CollegeWatchFace() {
         super();
@@ -30,7 +28,7 @@ public class CollegeWatchFace extends NounoursWatchFace {
     }
 
     @Override
-    public NounoursSettings getSettings() {
+    public WearSettings getSettings() {
         return mSettings;
     }
 }

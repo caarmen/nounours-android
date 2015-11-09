@@ -45,14 +45,15 @@ import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.WindowInsets;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.TimeUnit;
 
+import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
 import ca.rmen.nounours.android.common.nounours.EmptyThemeLoadListener;
@@ -78,7 +79,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
      */
     private static final int MSG_UPDATE_TIME = 0;
 
-    protected abstract NounoursSettings getSettings();
+    protected abstract WearSettings getSettings();
 
     @Override
     public Engine onCreateEngine() {
@@ -95,7 +96,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
          * disable anti-aliasing in ambient mode.
          */
         private AndroidNounours mNounours;
-        private NounoursSettings mSettings;
+        private WearSettings mSettings;
         private WearNounoursResourceCache mCache;
         private NounoursWatchFaceRenderer mRenderer;
 
@@ -114,6 +115,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                     .build());
 
             mSettings = getSettings();
+            mSettings.setBackgroundColor(ResourcesCompat.getColor(getApplicationContext(), R.color.background_color));
             mRenderer = new NounoursWatchFaceRenderer(context, mSettings);
             mCache = new WearNounoursResourceCache(getApplicationContext());
             mNounours = new AndroidNounours("WEAR",
@@ -198,7 +200,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                 Image image = mNounours.getCurrentImage();
                 if (image != null) {
                     Bitmap bitmap = mCache.getDrawableImage(getApplicationContext(), image);
-                    mRenderer.renderNounours(mSettings, canvas, bitmap, bounds.width(), bounds.height());
+                    mRenderer.render(mSettings, bitmap, canvas, bounds.width(), bounds.height());
                 }
             }
         }

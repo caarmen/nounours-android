@@ -21,7 +21,7 @@ package ca.rmen.nounours.android.common.nounours;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
+import android.graphics.Canvas;
 import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -61,8 +61,6 @@ public class AndroidNounours extends Nounours {
     private final SurfaceHolder mSurfaceHolder;
     private final ThemeLoadListener mListener;
     private final NounoursSoundHandler mSoundHandler;
-    private final Paint mPaint = new Paint();
-    private int mBackgroundColor;
     private int mViewWidth;
     private int mViewHeight;
     private final NounoursResourceCache mNounoursResourceCache;
@@ -169,7 +167,11 @@ public class AndroidNounours extends Nounours {
         final Bitmap bitmap = mNounoursResourceCache.getDrawableImage(mContext, image);
         if (bitmap == null) return;
 
-        mRenderer.render(mSettings, bitmap, mSurfaceHolder, mViewWidth, mViewHeight, mBackgroundColor, mPaint);
+        Canvas c = mSurfaceHolder.lockCanvas();
+        if (c != null) {
+            mRenderer.render(mSettings, bitmap, c, mViewWidth, mViewHeight);
+            mSurfaceHolder.unlockCanvasAndPost(c);
+        }
     }
 
     public void redraw() {
@@ -231,7 +233,6 @@ public class AndroidNounours extends Nounours {
         setEnableSound(mSettings.isSoundEnabled());
         setEnableVibrate(mSettings.isSoundEnabled());
         setIdleTimeout(mSettings.getIdleTimeout());
-        mBackgroundColor = mSettings.getBackgroundColor();
         reloadThemeFromPreference();
     }
 
