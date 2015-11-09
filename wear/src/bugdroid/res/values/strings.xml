@@ -17,6 +17,5 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string name="nounours_wear_college">Nounours College</string>
-    <string name="bugdroid_wear">Bugdroid</string>
+    <string name="bugdroid_app_name">Bugdroid Watch Face</string>
 </resources>

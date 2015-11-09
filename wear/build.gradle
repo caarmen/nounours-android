@@ -24,7 +24,7 @@ android {
     sourceSets {
         full {
             assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
-            res.srcDirs = ['src/bugdroid/res', 'src/nounours/res', 'src/main/res']
+            res.srcDirs = ['src/bugdroid/res', 'src/nounours/res', 'src/main/res', 'src/full/res']
         }
     }
 

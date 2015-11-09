@@ -19,7 +19,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <application>
+    <application
+        android:label="@string/bugdroid_app_name">
         <service
             android:name="ca.rmen.nounours.android.wear.BugdroidWatchFace"
             android:label="@string/bugdroid_wear"
