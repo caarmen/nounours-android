@@ -17,7 +17,7 @@
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.nounours.android.handheld.nounours.cache;
+package ca.rmen.nounours.android.common.nounours.cache;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -33,7 +33,9 @@ import ca.rmen.nounours.data.Sound;
 import ca.rmen.nounours.data.Theme;
 
 /**
- * Loads sounds
+ * Loads sounds into a SoundPool.
+ * We use SoundPool instead of MediaPlayer because it allows playing sounds which
+ * are not on the sdcard.  But we only play one sound at a time.
  *
  * @author Carmen Alvarez
  */

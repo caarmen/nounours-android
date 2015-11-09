@@ -36,10 +36,11 @@ import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
 import ca.rmen.nounours.android.common.nounours.EmptyVibrateHandler;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.nounours.ThemeLoadListener;
+import ca.rmen.nounours.android.common.nounours.cache.ImageCache;
+import ca.rmen.nounours.android.common.nounours.cache.NounoursResourceCache;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.handheld.nounours.FlingDetector;
 import ca.rmen.nounours.android.handheld.nounours.TouchListener;
-import ca.rmen.nounours.android.handheld.nounours.cache.HandheldNounoursResourceCache;
 import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
 
@@ -74,7 +75,7 @@ public class LWPService extends WallpaperService {
                     settings,
                     getSurfaceHolder(),
                     new NounoursRenderer(),
-                    new HandheldNounoursResourceCache(context, settings),
+                    new NounoursResourceCache(context, settings, new ImageCache()),
                     new EmptySoundHandler(),
                     new EmptyVibrateHandler(),
                     mListener);

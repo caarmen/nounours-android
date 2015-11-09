@@ -20,24 +20,67 @@ package ca.rmen.nounours.android.common.nounours.cache;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.util.Log;
 
+import ca.rmen.nounours.android.common.Constants;
+import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.data.Image;
 import ca.rmen.nounours.data.Theme;
 
 /**
  * Responsible for caching and freeing the image and sound resources needed by Nounours.
  */
-public interface NounoursResourceCache {
+public class NounoursResourceCache {
+    private static final String TAG = Constants.TAG + NounoursResourceCache.class.getSimpleName();
 
-    /**
-     * @param theme load the images from this theme
-     * @param imageCacheListener notify this listener as each image is loaded
-     * @return true if the images could all be loaded, false otherwise.
-     */
-    boolean loadImages(Theme theme, ImageCache.ImageCacheListener imageCacheListener);
-    Bitmap getDrawableImage(Context context, final Image image);
-    void freeImages();
+    private final Context mContext;
+    private final Handler mUiHandler;
 
-    boolean loadSounds(Theme theme);
-    void freeSounds();
+    private final NounoursSettings mSettings;
+
+    private final ImageCache mImageCache;
+    private final SoundCache mSoundCache;
+
+
+    public NounoursResourceCache(Context context,
+                                         NounoursSettings settings,
+                                         ImageCache imageCache,
+                                         SoundCache soundCache) {
+        mContext = context;
+        mUiHandler = new Handler();
+        mSettings = settings;
+        mImageCache = imageCache;
+        mSoundCache = soundCache;
+    }
+
+    public NounoursResourceCache(Context context, NounoursSettings settings, ImageCache imageCache) {
+        this(context, settings, imageCache, null);
+    }
+
+    public boolean loadImages(Theme theme, ImageCache.ImageCacheListener imageCacheListener) {
+        Log.v(TAG, "loadImages, theme = " + theme);
+        return mImageCache.cacheImages(mContext, theme.getImages().values(), mUiHandler, imageCacheListener);
+    }
+
+    public Bitmap getDrawableImage(Context context, Image image) {
+        return mImageCache.getDrawableImage(context, image);
+    }
+
+    public void freeImages() {
+        Log.v(TAG, "freeImages");
+        mImageCache.clearImageCache();
+    }
+
+    public boolean loadSounds(Theme theme) {
+        Log.v(TAG, "loadSounds, theme = " + theme);
+        if (mSoundCache != null && mSettings.isSoundEnabled()) mSoundCache.cacheSounds(theme);
+        return true;
+    }
+
+    public void freeSounds() {
+        Log.v(TAG, "freeSounds");
+        if (mSoundCache != null) mSoundCache.clearSoundCache();
+    }
+
 }

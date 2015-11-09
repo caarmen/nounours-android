@@ -58,7 +58,8 @@ import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
 import ca.rmen.nounours.android.common.nounours.EmptyThemeLoadListener;
 import ca.rmen.nounours.android.common.nounours.EmptyVibrateHandler;
-import ca.rmen.nounours.android.common.settings.NounoursSettings;
+import ca.rmen.nounours.android.common.nounours.cache.ImageCache;
+import ca.rmen.nounours.android.common.nounours.cache.NounoursResourceCache;
 import ca.rmen.nounours.data.Image;
 
 /**
@@ -97,7 +98,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
          */
         private AndroidNounours mNounours;
         private WearSettings mSettings;
-        private WearNounoursResourceCache mCache;
+        private NounoursResourceCache mCache;
         private NounoursWatchFaceRenderer mRenderer;
 
         @Override
@@ -117,7 +118,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             mSettings = getSettings();
             mSettings.setBackgroundColor(ResourcesCompat.getColor(getApplicationContext(), R.color.background_color));
             mRenderer = new NounoursWatchFaceRenderer(context, mSettings);
-            mCache = new WearNounoursResourceCache(getApplicationContext());
+            mCache = new NounoursResourceCache(getApplicationContext(), mSettings, new ImageCache());
             mNounours = new AndroidNounours("WEAR",
                     getApplicationContext(),
                     new Handler(),

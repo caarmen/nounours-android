@@ -24,7 +24,7 @@ import android.util.Log;
 
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.android.common.Constants;
-import ca.rmen.nounours.android.handheld.nounours.cache.SoundCache;
+import ca.rmen.nounours.android.common.nounours.cache.SoundCache;
 
 /**
  * Manages sound effects and music for Nounours on the Android device.
@@ -37,8 +37,6 @@ public class SoundHandler implements NounoursSoundHandler {
     private final SoundCache mSoundCache;
     private final SoundPool mSoundPool;
     private boolean mSoundEnabled = true;
-    // We use SoundPool instead of MediaPlayer because it allows playing sounds which
-    // are not on the sdcard.  But we only play one sound at a time.
     private int mCurrentSoundId;
 
 

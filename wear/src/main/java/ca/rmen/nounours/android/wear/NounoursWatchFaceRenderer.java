@@ -32,6 +32,9 @@ import java.util.Locale;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
+/**
+ * Renders nounours both in normal and ambient modes.
+ */
 class NounoursWatchFaceRenderer extends NounoursRenderer {
 
     private boolean mIsAmbient;

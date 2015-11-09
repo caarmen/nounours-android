@@ -51,6 +51,9 @@ import ca.rmen.nounours.android.common.compat.ApiHelper;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.nounours.ThemeLoadListener;
+import ca.rmen.nounours.android.common.nounours.cache.ImageCache;
+import ca.rmen.nounours.android.common.nounours.cache.NounoursResourceCache;
+import ca.rmen.nounours.android.common.nounours.cache.SoundCache;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 import ca.rmen.nounours.android.handheld.compat.ActivityCompat;
 import ca.rmen.nounours.android.handheld.compat.SoundPoolCompat;
@@ -58,8 +61,6 @@ import ca.rmen.nounours.android.handheld.nounours.FlingDetector;
 import ca.rmen.nounours.android.handheld.nounours.SoundHandler;
 import ca.rmen.nounours.android.handheld.nounours.TouchListener;
 import ca.rmen.nounours.android.handheld.nounours.VibrateHandler;
-import ca.rmen.nounours.android.handheld.nounours.cache.HandheldNounoursResourceCache;
-import ca.rmen.nounours.android.handheld.nounours.cache.SoundCache;
 import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.handheld.settings.SettingsActivity;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
@@ -103,24 +104,25 @@ public class MainActivity extends Activity {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
 
-
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
         mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
         mRecordButton.setOnClickListener(mOnClickListener);
+        ImageCache imageCache = new ImageCache();
         SoundPool soundPool = SoundPoolCompat.create();
         SoundCache soundCache = new SoundCache(this, soundPool);
         SoundHandler soundHandler = new SoundHandler(soundCache, soundPool);
         VibrateHandler vibrateHandler = new VibrateHandler(this);
         NounoursSettings settings = SharedPreferenceSettings.getAppSettings(this);
-        HandheldNounoursResourceCache nounoursResources = new HandheldNounoursResourceCache(this, settings, soundCache);
+        NounoursResourceCache nounoursResources = new NounoursResourceCache(this, settings, imageCache, soundCache);
+        NounoursRenderer renderer = new NounoursRenderer();
 
         mNounours = new AndroidNounours("APP",
                 MainActivity.this,
                 new Handler(),
                 settings,
                 surfaceView.getHolder(),
-                new NounoursRenderer(),
+                renderer,
                 nounoursResources,
                 soundHandler,
                 vibrateHandler,

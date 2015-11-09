@@ -55,6 +55,7 @@ class WearSettings implements NounoursSettings {
     public void setBackgroundColor(int backgroundColor) {
         mBackgroundColor = backgroundColor;
     }
+
     @Override
     public int getBackgroundColor(){
         return mBackgroundColor;
