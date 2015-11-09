@@ -31,8 +31,6 @@ import android.support.wearable.watchface.WatchFaceStyle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import java.util.concurrent.TimeUnit;
-
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.common.compat.ResourcesCompat;
@@ -63,7 +61,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
     }
 
     private class Engine extends CanvasWatchFaceService.Engine {
-        private boolean mAmbient;
+        private boolean mIsAmbient;
 
         /**
          * Whether the display supports fewer bits for each color in ambient mode. When true, we
@@ -113,13 +111,8 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
         @Override
         public void onVisibilityChanged(boolean visible) {
             super.onVisibilityChanged(visible);
-
-            if (visible) {
-                // Update time zone in case it changed while we weren't visible.
-                mNounours.doPing(!mAmbient);
-            } else {
-                mNounours.doPing(false);
-            }
+            Log.v(TAG, "onVisibilityChanged: visible = " + visible + ", ambient = " + mIsAmbient);
+            mNounours.doPing(visible && !mIsAmbient);
         }
 
         @Override
@@ -146,10 +139,11 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
         @Override
         public void onAmbientModeChanged(boolean inAmbientMode) {
             super.onAmbientModeChanged(inAmbientMode);
+            Log.v(TAG, "onAmbientModeChanged: ambient = " + inAmbientMode);
             mRenderer.setIsAmbient(inAmbientMode);
-            mNounours.doPing(!mAmbient);
-            if (mAmbient != inAmbientMode) {
-                mAmbient = inAmbientMode;
+            mNounours.doPing(!inAmbientMode);
+            if (mIsAmbient != inAmbientMode) {
+                mIsAmbient = inAmbientMode;
                 invalidate();
             }
         }
