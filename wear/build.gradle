@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "ca.rmen.nounours"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionName "3.0.0"
+        versionCode 300
+        archivesBaseName += "-" + versionName
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        full {
+            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
+            res.srcDirs = ['src/bugdroid/res', 'src/nounours/res', 'src/main/res', 'src/full/res']
+        }
+    }
+
+    publishNonDefault true
+    productFlavors {
+        full {
+            applicationId "ca.rmen.nounours"
+        }
+
+        bugdroid {
+            applicationId "ca.rmen.nounours.lwp.robot"
+        }
+
+        nounours {
+            applicationId "ca.rmen.nounours.lwp.rainbow"
+        }
+    }
+
+
+    File signFile = rootProject.file('signing.properties')
+    if (signFile.exists()) {
+        Properties p = new Properties();
+        p.load(new FileInputStream(signFile))
+
+        signingConfigs {
+            release {
+                keyAlias p.KeyAlias
+                keyPassword p.KeyPassword
+                storeFile file(p.StoreFile)
+                storePassword p.StorePassword
+            }
+        }
+        android.buildTypes.release.signingConfig =signingConfigs.release
+    } else  {
+        android.buildTypes.release.signingConfig = null
+    }
+}
+
+dependencies {
+    compile 'com.google.android.support:wearable:1.3.0'
+    compile 'com.google.android.gms:play-services-wearable:8.3.0'
+    compile project(':common')
+}

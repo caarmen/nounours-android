@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+    Copyright (c) 2009 - 2015 Carmen Alvarez
+
+    This file is part of Nounours for Android.
+
+    Nounours for Android is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Nounours for Android is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="ca.rmen.nounours" >
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18"
+        tools:ignore="UnusedAttribute" />
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="false"
+        tools:ignore="UnusedAttribute" />
+    <uses-sdk tools:overrideLibrary="net.margaritov.preference.colorpicker"/>
+    <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:fullBackupContent="false"
+        android:icon="@drawable/app_icon"
+        android:label="@string/app_name"
+        tools:ignore="UnusedAttribute">
+        <activity
+            android:name=".android.handheld.MainActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/NounoursActivityStyle">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:exported="true"
+            android:name=".android.handheld.settings.SettingsActivity"
+            android:label="@string/options"
+            android:parentActivityName=".android.handheld.MainActivity"
+            android:theme="@style/NounoursActivityStyle"
+            tools:ignore="ExportedPreferenceActivity,UnusedAttribute" />
+        <activity
+            android:exported="false"
+            android:name=".android.handheld.AboutActivity"
+            android:label="@string/about"
+            android:parentActivityName=".android.handheld.settings.SettingsActivity"
+            android:theme="@style/NounoursActivityStyle"
+            tools:ignore="UnusedAttribute">
+        </activity>
+
+        <service
+            android:name=".android.handheld.AnimationSaveService"
+            android:exported="false"/>
+        <service
+            android:name=".android.handheld.lwp.LWPService"
+            android:icon="@drawable/app_icon"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/lwp" />
+        </service>
+    </application>
+
+</manifest>
