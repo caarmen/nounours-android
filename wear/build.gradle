@@ -9,8 +9,8 @@ android {
         applicationId "ca.rmen.nounours"
         minSdkVersion 21
         targetSdkVersion 23
-        versionName "3.0.0"
-        versionCode 300
+        versionName "3.0.1"
+        versionCode 301
         archivesBaseName += "-" + versionName
     }
     buildTypes {
