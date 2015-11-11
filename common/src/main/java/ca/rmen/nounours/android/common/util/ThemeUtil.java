@@ -33,7 +33,7 @@ public final class ThemeUtil {
     public static CharSequence getThemeLabel(Context context, Theme theme) {
         String themeLabel = theme.getName();
         int themeLabelId = context.getResources().getIdentifier(theme.getName(), "string",
-                R.class.getPackage().getName());
+                context.getPackageName());
         if (themeLabelId > 0)
             return context.getResources().getText(themeLabelId);
         return themeLabel;
