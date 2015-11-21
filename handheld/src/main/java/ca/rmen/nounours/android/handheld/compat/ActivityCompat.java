@@ -20,6 +20,7 @@
 package ca.rmen.nounours.android.handheld.compat;
 
 import android.app.Activity;
+import android.view.WindowManager;
 
 import ca.rmen.nounours.android.common.compat.ApiHelper;
 
@@ -34,6 +35,25 @@ public class ActivityCompat {
     public static void setDisplayHomeAsUpEnabled(Activity activity) {
         if (ApiHelper.getAPILevel() >= 11) {
             Api11Helper.setDisplayHomeAsUpEnabled(activity);
+        }
+    }
+
+    public static void setFullScreen(Activity activity, boolean isFullScreen) {
+        if (isFullScreen) {
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
+                    | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        } else {
+            activity.getWindow().clearFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+
+        if (ApiHelper.getAPILevel() >= 19) {
+            Api19Helper.setFullScreen(activity, isFullScreen);
+        } else if (ApiHelper.getAPILevel() >= 16) {
+            Api16Helper.setFullScreen(activity, isFullScreen);
+        } else if (ApiHelper.getAPILevel() >= 14) {
+            Api14Helper.setFullScreen(activity, isFullScreen);
         }
     }
 }

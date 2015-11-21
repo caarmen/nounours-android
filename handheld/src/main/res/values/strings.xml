@@ -33,6 +33,7 @@ B-Roll (Macarenours music): <a href="http://incompetech.com">Kevin MacLeod</a><b
 <a href="https://github.com/nbadal/android-gif-encoder">Nick Badal</a> and <a href="http://www.jappit.com/blog/2008/12/04/j2me-animated-gif-encoder/">Alessandro La Rosa</a>, for the animated gif encoder.<br><br>
 The Android(TM) Robot is created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.]]></string>
 	<string name="help">Help</string>
+	<string name="fullscreen">Full screen</string>
 	<string name="wallpaper">Set your wallpaper</string>
 	<string name="dimTitle">Dimmed image</string>
 	<string name="dimSummary">This makes the icons more readable</string>

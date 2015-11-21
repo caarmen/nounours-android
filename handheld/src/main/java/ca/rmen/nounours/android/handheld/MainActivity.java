@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -79,6 +80,8 @@ public class MainActivity extends Activity {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
 
+    private static final String FLAG_FULLSCREEN = "fullscreen";
+
     private AndroidNounours mNounours;
     private SensorManager mSensorManager;
     private SensorListener mSensorListener;
@@ -86,6 +89,7 @@ public class MainActivity extends Activity {
     private Sensor mMagneticFieldSensor;
     private ImageButton mRecordButton;
     private ProgressDialog mProgressDialog;
+    private boolean mIsFullScreen;
 
 
     /**
@@ -99,7 +103,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
+        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() < 9;
         if (!isOldEmulator) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
@@ -143,6 +147,19 @@ public class MainActivity extends Activity {
             Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(FLAG_FULLSCREEN, mIsFullScreen);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mIsFullScreen = savedInstanceState.getBoolean(FLAG_FULLSCREEN);
+        ActivityCompat.setFullScreen(this, mIsFullScreen);
     }
 
     /**
@@ -224,6 +241,11 @@ public class MainActivity extends Activity {
     public boolean onPrepareOptionsMenu(final Menu menu) {
         // Prevent changing the theme in the middle of the animation.
         if (mNounours != null) {
+            menu.findItem(R.id.menu_options).setVisible(!mIsFullScreen);
+            menu.findItem(R.id.menu_start_recording).setVisible(!mIsFullScreen);
+            menu.findItem(R.id.menu_help).setVisible(!mIsFullScreen);
+            menu.findItem(R.id.menu_about).setVisible(!mIsFullScreen);
+            //menu.findItem(R.id.menu_fullscreen).setVisible(!mIsFullScreen);
             Theme theme = mNounours.getCurrentTheme();
             boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
             MenuItem animationMenu = menu.findItem(R.id.menu_animation);
@@ -269,6 +291,11 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
             return true;
+        } else if (menuItem.getItemId() == R.id.menu_fullscreen) {
+            mIsFullScreen = !mIsFullScreen;
+            ActivityCompat.setFullScreen(this, mIsFullScreen);
+            ActivityCompat.invalidateOptionsMenu(this);
+            return true;
         }
         // Show an animation or change the theme.
         else {
@@ -282,11 +309,19 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mIsFullScreen && keyCode == KeyEvent.KEYCODE_BACK) {
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onDestroy()
-     */
+         * (non-Javadoc)
+         *
+         * @see android.app.Activity#onDestroy()
+         */
     @Override
     protected void onDestroy() {
         mNounours.onDestroy();

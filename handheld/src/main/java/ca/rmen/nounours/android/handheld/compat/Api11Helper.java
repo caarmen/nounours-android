@@ -48,7 +48,7 @@ class Api11Helper {
 
     static void setDisplayHomeAsUpEnabled(Activity activity) {
         ActionBar actionBar = activity.getActionBar();
-        if(actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
 }

@@ -31,6 +31,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import ca.rmen.nounours.android.common.compat.ApiHelper;
 import ca.rmen.nounours.android.common.nounours.AndroidNounours;
 import ca.rmen.nounours.android.common.nounours.EmptySoundHandler;
 import ca.rmen.nounours.android.common.nounours.EmptyVibrateHandler;
@@ -81,11 +82,14 @@ public class LWPService extends WallpaperService {
                     mListener);
             FlingDetector nounoursFlingDetector = new FlingDetector(mNounours);
             final GestureDetector gestureDetector = new GestureDetector(context, nounoursFlingDetector);
-            mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+            boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() < 9;
+            if (!isOldEmulator) {
+                mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+                mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+                mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+                mSensorListener = new SensorListener(mNounours, context);
+            }
             mTouchListener = new TouchListener(mNounours, gestureDetector);
-            mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            mMagneticFieldSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-            mSensorListener = new SensorListener(mNounours, context);
             final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(LWPService.this);
             sharedPreferences.registerOnSharedPreferenceChangeListener(this);
         }
@@ -101,8 +105,10 @@ public class LWPService extends WallpaperService {
         public void onVisibilityChanged(boolean visible) {
             if (visible) {
                 if(!mNounours.isLoading()) {
-                    mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-                    mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                    if (mSensorManager != null) {
+                        mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                        mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                    }
                 }
                 mNounours.reloadSettings();
                 if (mWasPaused) {
@@ -112,7 +118,9 @@ public class LWPService extends WallpaperService {
                 mWasPaused = false;
 
             } else {
-                mSensorManager.unregisterListener(mSensorListener);
+                if (mSensorManager != null) {
+                    mSensorManager.unregisterListener(mSensorListener);
+                }
                 mWasPaused = true;
                 mNounours.doPing(false);
             }
@@ -150,9 +158,11 @@ public class LWPService extends WallpaperService {
 
             @Override
             public void onThemeLoadComplete() {
-                mSensorListener.rereadOrientationFile(getApplicationContext());
-                mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-                mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                if (mSensorManager != null) {
+                    mSensorListener.rereadOrientationFile(getApplicationContext());
+                    mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                    mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                }
             }
         };
 
