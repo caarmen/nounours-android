@@ -89,7 +89,7 @@ public class MainActivity extends Activity {
     private Sensor mMagneticFieldSensor;
     private ImageButton mRecordButton;
     private ProgressDialog mProgressDialog;
-    private boolean mIsFullScreen;
+    private FullScreenMode mFullScreenMode;
 
 
     /**
@@ -107,6 +107,13 @@ public class MainActivity extends Activity {
         if (!isOldEmulator) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
+
+        mFullScreenMode = new FullScreenMode(this,
+                findViewById(R.id.corner1),
+                findViewById(R.id.corner2),
+                findViewById(R.id.corner3),
+                findViewById(R.id.corner4),
+                findViewById(R.id.fullscreen_hint));
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
@@ -151,15 +158,19 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(FLAG_FULLSCREEN, mIsFullScreen);
+        outState.putBoolean(FLAG_FULLSCREEN, mFullScreenMode.isInFullScreen());
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mIsFullScreen = savedInstanceState.getBoolean(FLAG_FULLSCREEN);
-        ActivityCompat.setFullScreen(this, mIsFullScreen);
+        boolean isInFullScreen = savedInstanceState.getBoolean(FLAG_FULLSCREEN);
+        if (isInFullScreen) {
+            mFullScreenMode.enterFullScreen();
+        } else {
+            mFullScreenMode.exitFullScreen();
+        }
     }
 
     /**
@@ -239,13 +250,14 @@ public class MainActivity extends Activity {
      * Disable/enable any menu items.
      */
     public boolean onPrepareOptionsMenu(final Menu menu) {
+        boolean isFullScreen = mFullScreenMode.isInFullScreen();
         // Prevent changing the theme in the middle of the animation.
         if (mNounours != null) {
-            menu.findItem(R.id.menu_options).setVisible(!mIsFullScreen);
-            menu.findItem(R.id.menu_start_recording).setVisible(!mIsFullScreen);
-            menu.findItem(R.id.menu_help).setVisible(!mIsFullScreen);
-            menu.findItem(R.id.menu_about).setVisible(!mIsFullScreen);
-            //menu.findItem(R.id.menu_fullscreen).setVisible(!mIsFullScreen);
+            menu.findItem(R.id.menu_options).setVisible(!isFullScreen);
+            menu.findItem(R.id.menu_start_recording).setVisible(!isFullScreen);
+            menu.findItem(R.id.menu_help).setVisible(!isFullScreen);
+            menu.findItem(R.id.menu_about).setVisible(!isFullScreen);
+            menu.findItem(R.id.menu_fullscreen).setVisible(!isFullScreen);
             Theme theme = mNounours.getCurrentTheme();
             boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
             MenuItem animationMenu = menu.findItem(R.id.menu_animation);
@@ -292,9 +304,7 @@ public class MainActivity extends Activity {
             startActivity(intent);
             return true;
         } else if (menuItem.getItemId() == R.id.menu_fullscreen) {
-            mIsFullScreen = !mIsFullScreen;
-            ActivityCompat.setFullScreen(this, mIsFullScreen);
-            ActivityCompat.invalidateOptionsMenu(this);
+            mFullScreenMode.enterFullScreen();
             return true;
         }
         // Show an animation or change the theme.
@@ -311,7 +321,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mIsFullScreen && keyCode == KeyEvent.KEYCODE_BACK) {
+        if (mFullScreenMode.isInFullScreen() && keyCode == KeyEvent.KEYCODE_BACK) {
             return true;
         }
         return super.onKeyDown(keyCode, event);

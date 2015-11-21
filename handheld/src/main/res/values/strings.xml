@@ -34,6 +34,7 @@ B-Roll (Macarenours music): <a href="http://incompetech.com">Kevin MacLeod</a><b
 The Android(TM) Robot is created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License.]]></string>
 	<string name="help">Help</string>
 	<string name="fullscreen">Full screen</string>
+	<string name="fullscreen_hint">Tap the four corners to exit full-screen mode.</string>
 	<string name="wallpaper">Set your wallpaper</string>
 	<string name="dimTitle">Dimmed image</string>
 	<string name="dimSummary">This makes the icons more readable</string>

@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2009 - 2015 Carmen Alvarez
+ *   Copyright (c) 2015 Carmen Alvarez
  *
  *   This file is part of Nounours for Android.
  *
@@ -19,22 +19,29 @@
 
 package ca.rmen.nounours.android.handheld.compat;
 
-import android.app.Activity;
+import android.view.Window;
+import android.view.WindowManager;
 
 import ca.rmen.nounours.android.common.compat.ApiHelper;
 
-public class ActivityCompat {
+public class WindowCompat {
 
-    public static void invalidateOptionsMenu(Activity activity) {
-        if (ApiHelper.getAPILevel() >= 11) {
-            Api11Helper.invalidateOptionsMenu(activity);
+    public static void setFullScreen(Window window, boolean isFullScreen) {
+        if (isFullScreen) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
+                    | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        } else {
+            window.clearFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
+
+        if (ApiHelper.getAPILevel() >= 19) {
+            Api19Helper.setFullScreen(window, isFullScreen);
+        } else if (ApiHelper.getAPILevel() >= 16) {
+            Api16Helper.setFullScreen(window, isFullScreen);
+        } else if (ApiHelper.getAPILevel() >= 14) {
+            Api14Helper.setFullScreen(window, isFullScreen);
         }
     }
-
-    public static void setDisplayHomeAsUpEnabled(Activity activity) {
-        if (ApiHelper.getAPILevel() >= 11) {
-            Api11Helper.setDisplayHomeAsUpEnabled(activity);
-        }
-    }
-
 }
