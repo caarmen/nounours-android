@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2009 - 2015 Carmen Alvarez
+ *   Copyright (c) 2015 Carmen Alvarez
  *
  *   This file is part of Nounours for Android.
  *
@@ -20,38 +20,24 @@
 package ca.rmen.nounours.android.handheld.compat;
 
 import android.annotation.TargetApi;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.view.View;
 import android.view.Window;
 
-@TargetApi(16)
-class Api16Helper {
-    private Api16Helper() {
+@TargetApi(19)
+class Api19Helper {
+    private Api19Helper() {
         // prevent instantiation
-    }
-
-    static Notification createNotification(Context context, int iconId, String tickerText, String contentText, int actionIconId, CharSequence actionText, PendingIntent pendingIntent) {
-        Notification.Builder builder = new Notification.Builder(context)
-                .setContentTitle(tickerText)
-                .setContentText(contentText)
-                .setSmallIcon(iconId)
-                .setContentIntent(pendingIntent);
-
-        if (actionIconId > 0) {
-            //noinspection deprecation
-            builder.addAction(actionIconId, actionText, pendingIntent);
-        }
-        return builder.build();
     }
 
     static void setFullScreen(Window window, boolean isFullScreen) {
         if (isFullScreen) {
             window.getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LOW_PROFILE
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN);
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         } else {
             window.getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_VISIBLE);

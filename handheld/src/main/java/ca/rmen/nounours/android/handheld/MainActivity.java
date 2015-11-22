@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -79,6 +80,8 @@ public class MainActivity extends Activity {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
 
+    private static final String FLAG_FULLSCREEN = "fullscreen";
+
     private AndroidNounours mNounours;
     private SensorManager mSensorManager;
     private SensorListener mSensorListener;
@@ -86,6 +89,7 @@ public class MainActivity extends Activity {
     private Sensor mMagneticFieldSensor;
     private ImageButton mRecordButton;
     private ProgressDialog mProgressDialog;
+    private FullScreenMode mFullScreenMode;
 
 
     /**
@@ -99,10 +103,17 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() == 3;
+        boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() < 9;
         if (!isOldEmulator) {
             mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         }
+
+        mFullScreenMode = new FullScreenMode(this,
+                findViewById(R.id.corner1),
+                findViewById(R.id.corner2),
+                findViewById(R.id.corner3),
+                findViewById(R.id.corner4),
+                findViewById(R.id.fullscreen_hint));
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
@@ -143,6 +154,23 @@ public class MainActivity extends Activity {
             Toast.makeText(this, R.string.toast_remindMenuButton, Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(FLAG_FULLSCREEN, mFullScreenMode.isInFullScreen());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        boolean isInFullScreen = savedInstanceState.getBoolean(FLAG_FULLSCREEN);
+        if (isInFullScreen) {
+            mFullScreenMode.enterFullScreen();
+        } else {
+            mFullScreenMode.exitFullScreen();
+        }
     }
 
     /**
@@ -222,8 +250,14 @@ public class MainActivity extends Activity {
      * Disable/enable any menu items.
      */
     public boolean onPrepareOptionsMenu(final Menu menu) {
+        boolean isFullScreen = mFullScreenMode.isInFullScreen();
         // Prevent changing the theme in the middle of the animation.
         if (mNounours != null) {
+            menu.findItem(R.id.menu_options).setVisible(!isFullScreen);
+            menu.findItem(R.id.menu_start_recording).setVisible(!isFullScreen);
+            menu.findItem(R.id.menu_help).setVisible(!isFullScreen);
+            menu.findItem(R.id.menu_about).setVisible(!isFullScreen);
+            menu.findItem(R.id.menu_fullscreen).setVisible(!isFullScreen);
             Theme theme = mNounours.getCurrentTheme();
             boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
             MenuItem animationMenu = menu.findItem(R.id.menu_animation);
@@ -269,6 +303,9 @@ public class MainActivity extends Activity {
             Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
             return true;
+        } else if (menuItem.getItemId() == R.id.menu_fullscreen) {
+            mFullScreenMode.enterFullScreen();
+            return true;
         }
         // Show an animation or change the theme.
         else {
@@ -282,11 +319,19 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mFullScreenMode.isInFullScreen() && keyCode == KeyEvent.KEYCODE_BACK) {
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see android.app.Activity#onDestroy()
-     */
+         * (non-Javadoc)
+         *
+         * @see android.app.Activity#onDestroy()
+         */
     @Override
     protected void onDestroy() {
         mNounours.onDestroy();

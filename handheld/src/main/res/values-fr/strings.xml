@@ -33,6 +33,8 @@ B-Roll (musique Macarenours) : <a href="http://incompetech.com">Kevin MacLeod</a
 <a href="https://github.com/nbadal/android-gif-encoder">Nick Badal</a> et <a href="http://www.jappit.com/blog/2008/12/04/j2me-animated-gif-encoder/">Alessandro La Rosa</a>, pour l\'encodeur des gifs animés<br><br>
 Le robot Android(TM) est crée et partagé par Google et utilisé selon les conditions de la Licence Creative Commons 3.0 Attribution.]]></string>
 	<string name="help">Aide</string>
+	<string name="fullscreen">Plein écran</string>
+	<string name="fullscreen_hint">Toucher les quatre coins de l\'écran pour sortir du mode plein écran.</string>
 	<string name="wallpaper">Fond d\'écran animé</string>
 	<string name="dimTitle">Image sombre</string>
 	<string name="dimSummary">Ceci rend les icônes plus visibles</string>
