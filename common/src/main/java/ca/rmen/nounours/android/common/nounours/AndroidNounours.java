@@ -60,7 +60,6 @@ public class AndroidNounours extends Nounours {
     private final NounoursSettings mSettings;
     private final SurfaceHolder mSurfaceHolder;
     private final ThemeLoadListener mListener;
-    private final NounoursSoundHandler mSoundHandler;
     private int mViewWidth;
     private int mViewHeight;
     private final NounoursResourceCache mNounoursResourceCache;
@@ -98,13 +97,12 @@ public class AndroidNounours extends Nounours {
 
         String themeId = mSettings.getThemeId();
         AnimationHandler animationHandler = new AnimationHandler(this);
-        mSoundHandler = soundHandler;
         final InputStream propertiesFile = context.getResources().openRawResource(R.raw.nounours);
         final InputStream themesFile = context.getResources().openRawResource(R.raw.themes);
         mSurfaceHolder.addCallback(mSurfaceHolderCallback);
 
         try {
-            init(streamLoader, animationHandler, mSoundHandler, vibrateHandler, propertiesFile,
+            init(streamLoader, animationHandler, soundHandler, vibrateHandler, propertiesFile,
                     themesFile, themeId);
             setEnableVibrate(mSettings.isSoundEnabled());
             setEnableSound(mSettings.isSoundEnabled());

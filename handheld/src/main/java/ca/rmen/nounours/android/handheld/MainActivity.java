@@ -320,6 +320,7 @@ public class MainActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //noinspection SimplifiableIfStatement
         if (mFullScreenMode.isInFullScreen() && keyCode == KeyEvent.KEYCODE_BACK) {
             return true;
         }

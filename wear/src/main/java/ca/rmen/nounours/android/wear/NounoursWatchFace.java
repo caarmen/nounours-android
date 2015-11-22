@@ -44,7 +44,7 @@ import ca.rmen.nounours.data.Image;
 
 /**
  * Low-bit ambient mode: displays the time using the system format.
- * Ambient mode (not low-bit): displays the time using the system format, and a grayscale image of
+ * Ambient mode (not low-bit): displays the time using the system format, and a gray scale image of
  * Nounours rotated according to the time.
  * Normal mode: displays the time using the system format, and a color image of Nounours. In
  * normal mode, Nounours is somewhat interactive: a simple tap will trigger an animation. This is

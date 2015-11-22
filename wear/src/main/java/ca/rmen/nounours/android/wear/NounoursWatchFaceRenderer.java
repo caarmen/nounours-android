@@ -46,7 +46,9 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(settings.getBackgroundColor());
         int ambientBitmapId = context.getResources().getIdentifier("ambient_" + settings.getThemeId(), "drawable", context.getPackageName());
-        mAmbientBitmap = ((BitmapDrawable) context.getResources().getDrawable(ambientBitmapId, null)).getBitmap();
+        BitmapDrawable ambientBitmapDrawable = (BitmapDrawable) context.getResources().getDrawable(ambientBitmapId, null);
+        if (ambientBitmapDrawable != null) mAmbientBitmap = ambientBitmapDrawable.getBitmap();
+        else mAmbientBitmap = null;
     }
 
     public void setIsAmbient(boolean isAmbient) {
@@ -65,7 +67,7 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
 
     private void renderAmbientNounours(Canvas c, int viewWidth, int viewHeight) {
         c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
-        if (!mIsLowBitAmbient) {
+        if (mAmbientBitmap != null && !mIsLowBitAmbient) {
             // First figure out the largest possible square within the (possibly) rectangular view:
             // The square's upper left corner will have offsetX and offsetY
             // and the square will have a width squareViewWidth
@@ -76,6 +78,7 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
                 squareViewWidth = viewWidth;
                 offsetY = (viewHeight - viewWidth) / 2;
             } else {
+                //noinspection SuspiciousNameCombination
                 squareViewWidth = viewHeight;
                 offsetX = (viewWidth - viewHeight) / 2;
             }

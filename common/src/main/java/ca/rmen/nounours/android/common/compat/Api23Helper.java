@@ -23,6 +23,7 @@ import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.graphics.drawable.Icon;
 
 @TargetApi(23)
 public class Api23Helper {
@@ -42,7 +43,8 @@ public class Api23Helper {
                 .setContentIntent(pendingIntent);
 
         if (actionIconId > 0) {
-            Notification.Action action = new Notification.Action.Builder(actionIconId, actionText, pendingIntent).build();
+            Icon icon = Icon.createWithResource(context, actionIconId);
+            Notification.Action action = new Notification.Action.Builder(icon, actionText, pendingIntent).build();
             builder.addAction(action);
         }
         return builder.build();

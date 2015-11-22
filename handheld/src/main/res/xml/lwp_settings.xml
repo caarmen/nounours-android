@@ -29,6 +29,7 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null" />
 
+    <!--suppress AndroidElementNotAllowed -->
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         android:defaultValue="@android:color/black"
         android:icon="@drawable/ic_pref_background_color"

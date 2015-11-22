@@ -30,7 +30,7 @@ import ca.rmen.nounours.io.StreamLoader;
 /**
  * Allows Nounours to read Android asset files.
  */
-public class AssetStreamLoader implements StreamLoader {
+class AssetStreamLoader implements StreamLoader {
     private static final String ANDROID_ASSET = "/android_asset/";
     private final Context mContext;
 

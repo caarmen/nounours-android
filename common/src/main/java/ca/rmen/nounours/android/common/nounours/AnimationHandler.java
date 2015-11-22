@@ -37,7 +37,7 @@ import ca.rmen.nounours.data.AnimationImage;
  *
  * @author Carmen Alvarez
  */
-public class AnimationHandler implements NounoursAnimationHandler {
+class AnimationHandler implements NounoursAnimationHandler {
     private static final String TAG = Constants.TAG + AnimationHandler.class.getSimpleName();
 
     private final Nounours mNounours;

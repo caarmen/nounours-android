@@ -27,6 +27,7 @@ public class ResourcesCompat {
         if (ApiHelper.getAPILevel() >= 23) {
             return Api23Helper.getColor(context, color);
         } else {
+            //noinspection deprecation
             return context.getResources().getColor(color);
         }
     }

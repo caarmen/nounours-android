@@ -23,7 +23,7 @@ import android.annotation.TargetApi;
 import android.graphics.BitmapFactory;
 
 @TargetApi(4)
-public class Api4Helper {
+class Api4Helper {
     private Api4Helper() {
         // prevent instantiation
     }
