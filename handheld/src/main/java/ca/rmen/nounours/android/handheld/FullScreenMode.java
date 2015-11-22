@@ -23,7 +23,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import ca.rmen.nounours.android.handheld.compat.ActivityCompat;
-import ca.rmen.nounours.android.handheld.compat.WindowCompat;
 
 /**
  * The activity can enter full-screen mode when the user selects the option from the menu.
@@ -67,8 +66,7 @@ class FullScreenMode {
         mCorner3.setVisibility(View.VISIBLE);
         mCorner4.setVisibility(View.VISIBLE);
         mViewFullScreenHint.setVisibility(View.VISIBLE);
-        WindowCompat.setFullScreen(mActivity.getWindow(), true);
-        ActivityCompat.invalidateOptionsMenu(mActivity);
+        ActivityCompat.setFullScreen(mActivity, true);
         for (int i = 0; i < mCornerTouchTimestamps.length; i++) mCornerTouchTimestamps[i] = 0;
     }
 
@@ -79,8 +77,7 @@ class FullScreenMode {
         mCorner3.setVisibility(View.GONE);
         mCorner4.setVisibility(View.GONE);
         mViewFullScreenHint.setVisibility(View.GONE);
-        WindowCompat.setFullScreen(mActivity.getWindow(), false);
-        ActivityCompat.invalidateOptionsMenu(mActivity);
+        ActivityCompat.setFullScreen(mActivity, false);
     }
 
     private boolean haveCornersAllBeenTappedRecently() {

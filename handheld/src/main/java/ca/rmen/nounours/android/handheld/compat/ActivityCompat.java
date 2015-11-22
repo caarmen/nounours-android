@@ -20,6 +20,8 @@
 package ca.rmen.nounours.android.handheld.compat;
 
 import android.app.Activity;
+import android.view.Window;
+import android.view.WindowManager;
 
 import ca.rmen.nounours.android.common.compat.ApiHelper;
 
@@ -37,4 +39,22 @@ public class ActivityCompat {
         }
     }
 
+    public static void setFullScreen(Activity activity, boolean isFullScreen) {
+        Window window = activity.getWindow();
+        if (isFullScreen) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+
+        if (ApiHelper.getAPILevel() >= 19) {
+            Api19Helper.setFullScreen(activity, isFullScreen);
+        } else if (ApiHelper.getAPILevel() >= 16) {
+            Api16Helper.setFullScreen(activity, isFullScreen);
+        } else if (ApiHelper.getAPILevel() >= 14) {
+            Api14Helper.setFullScreen(activity, isFullScreen);
+        }
+
+        invalidateOptionsMenu(activity);
+    }
 }

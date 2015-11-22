@@ -251,13 +251,12 @@ public class MainActivity extends Activity {
      */
     public boolean onPrepareOptionsMenu(final Menu menu) {
         boolean isFullScreen = mFullScreenMode.isInFullScreen();
+        // Hide all menu items in full-screen mode.
+        for (int i=0; i < menu.size(); i++) {
+            menu.getItem(i).setVisible(!isFullScreen);
+        }
         // Prevent changing the theme in the middle of the animation.
-        if (mNounours != null) {
-            menu.findItem(R.id.menu_options).setVisible(!isFullScreen);
-            menu.findItem(R.id.menu_start_recording).setVisible(!isFullScreen);
-            menu.findItem(R.id.menu_help).setVisible(!isFullScreen);
-            menu.findItem(R.id.menu_about).setVisible(!isFullScreen);
-            menu.findItem(R.id.menu_fullscreen).setVisible(!isFullScreen);
+        if (mNounours != null && !isFullScreen) {
             Theme theme = mNounours.getCurrentTheme();
             boolean nounoursIsBusy = mNounours.isAnimationRunning() || mNounours.isLoading();
             MenuItem animationMenu = menu.findItem(R.id.menu_animation);

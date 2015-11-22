@@ -20,8 +20,9 @@
 package ca.rmen.nounours.android.handheld.compat;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
+import android.app.Activity;
 import android.view.View;
-import android.view.Window;
 
 @TargetApi(14)
 class Api14Helper {
@@ -29,11 +30,14 @@ class Api14Helper {
         // prevent instantiation
     }
 
-    static void setFullScreen(Window window, boolean isFullScreen) {
+    static void setFullScreen(Activity activity, boolean isFullScreen) {
+        ActionBar actionBar = activity.getActionBar();
         if(isFullScreen) {
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+            activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+            if (actionBar != null) actionBar.hide();
         } else {
-            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            if (actionBar != null) actionBar.show();
         }
     }
 
