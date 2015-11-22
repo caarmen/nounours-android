@@ -28,12 +28,9 @@ public class WindowCompat {
 
     public static void setFullScreen(Window window, boolean isFullScreen) {
         if (isFullScreen) {
-            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN
-                    | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
-            window.clearFlags(
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN
-                            | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
         if (ApiHelper.getAPILevel() >= 19) {
