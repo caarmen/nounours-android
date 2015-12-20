@@ -86,12 +86,20 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
             // Draw nounours in a square which is 1/3 the square view width
             Rect nounoursDisplayViewRect = new Rect(squareViewWidth/ 3, squareViewWidth/ 3, 2 * squareViewWidth/ 3, 2 * squareViewWidth/ 3);
 
-            // Rotate nounours according to the minutes of the current time.
+            // Rotate nounours around himself according to the minutes of the current time.
             Calendar now = Calendar.getInstance(Locale.getDefault());
             float minutesRotation = 360 * now.get(Calendar.MINUTE) / 60;
+
+            // Place nounours somewhere around the edge of the watch, according to the hour of the current time.
+            // timeInHours: ex: 8:30am and 8:30pm would both be 0.708333
+            float timeInHours = now.get(Calendar.HOUR) + (float) now.get(Calendar.MINUTE)/60;
+            float hoursRotation = 90 - (360 * timeInHours / 12);
+            float offsetHoursX = (float) Math.cos(Math.toRadians(hoursRotation)) * squareViewWidth / 3;
+            float offsetHoursY = -(float) Math.sin(Math.toRadians(hoursRotation)) * squareViewWidth / 3;
             Matrix m = new Matrix();
             m.postRotate(minutesRotation, squareViewWidth/ 2, squareViewWidth/ 2);
             m.postTranslate(offsetX, offsetY);
+            m.postTranslate(offsetHoursX, offsetHoursY);
             c.setMatrix(m);
 
             Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
