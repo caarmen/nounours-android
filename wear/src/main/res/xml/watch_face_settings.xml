@@ -16,11 +16,15 @@
     You should have received a copy of the GNU General Public License
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<resources>
-    <string name="nounours_wear_college">Nounours College</string>
-    <string name="bugdroid_wear">Bugdroid</string>
-    <string name="watch_face_settings">Settings</string>
-    <string name="digital_time_on">Digital and analog</string>
-    <string name="digital_time_off">Analog only</string>
-    <string name="show_digital_time">Time display</string>
-</resources>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="PREF_SHOW_DIGITAL_TIME"
+        android:summaryOff="@string/digital_time_off"
+        android:summaryOn="@string/digital_time_on"
+        android:title="@string/show_digital_time"
+        app:wear_iconOff="@drawable/ic_analog_time"
+        app:wear_iconOn="@drawable/ic_digital_time"
+        />
+</PreferenceScreen>

@@ -20,15 +20,8 @@
 package ca.rmen.nounours.android.wear;
 
 public class BugdroidWatchFace extends NounoursWatchFace {
-    private final WearSettings mSettings;
-
-    public BugdroidWatchFace() {
-        super();
-        mSettings = new WearSettings("5004");
-    }
-
     @Override
     public WearSettings getSettings() {
-        return mSettings;
+        return new WearSettings(this, "5004");
     }
 }
