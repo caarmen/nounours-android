@@ -46,6 +46,7 @@ I have tried to clean up the project a bit.  I've:
 * moved settings out of custom menus and dialogs into a ```PreferenceActivity```.
 * added native action bar support for API level 11+.
 * changed the license from no license (all rights reserved) to GPLv3.
+* added watch faces for Android Wear compatible devices.
 
 Nevertheless, the original 2009 design and implementation of the project is still visible, and
 this project is not the first one I would show off to prospective employers or clients :)
@@ -61,5 +62,5 @@ typical modern Android project:
   result would be a ```AndroidRuntime: java.lang.VerifyError: com.mycompany.MyClass```. To prevent
   this, code for higher API levels must be completely isolated into separate classes.
 * The check for the API level is done on the String ```Build.VERSION.SDK``` instead of the int ```Build.VERSION.SDK_INT```.
-* No support library is included.  The only library included in this project is libnounours.
+* No support library is included, for the handheld app.
 
