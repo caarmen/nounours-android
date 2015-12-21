@@ -19,4 +19,8 @@
 <resources>
     <string name="bugdroid_wear">Bugdroid</string>
     <string name="nounours_wear_college">Nounours Université</string>
+    <string name="watch_face_settings">Préférences</string>
+    <string name="digital_time_on">Analogique et numérique</string>
+    <string name="digital_time_off">Analogique</string>
+    <string name="show_digital_time">Affichage de l\'heure</string>
 </resources>
