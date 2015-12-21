@@ -37,7 +37,7 @@
             <!-- wearable configuration activity -->
             <meta-data
                 android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
-                android:value="ca.rmen.nounours.android.wear.CONFIG" />
+                android:value="ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

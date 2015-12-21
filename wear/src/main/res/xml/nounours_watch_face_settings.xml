@@ -20,7 +20,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <SwitchPreference
         android:defaultValue="true"
-        android:key="PREF_SHOW_DIGITAL_TIME"
+        android:key="PREF_5001_SHOW_DIGITAL_TIME"
         android:summaryOff="@string/digital_time_off"
         android:summaryOn="@string/digital_time_on"
         android:title="@string/show_digital_time"

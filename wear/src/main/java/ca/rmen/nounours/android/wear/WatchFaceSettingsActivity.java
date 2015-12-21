@@ -24,10 +24,15 @@ import ca.rmen.nounours.R;
 import preference.WearPreferenceActivity;
 
 public class WatchFaceSettingsActivity extends WearPreferenceActivity {
+    private static final String ACTION_CONFIG_NOUNOURS = "ca.rmen.nounours.android.wear.CONFIG_NOUNOURS";
+    private static final String ACTION_CONFIG_BUGDROID = "ca.rmen.nounours.android.wear.CONFIG_BUGDROID";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addPreferencesFromResource(R.xml.watch_face_settings);
+        String action = getIntent().getAction();
+
+        if (ACTION_CONFIG_BUGDROID.equals(action)) addPreferencesFromResource(R.xml.bugdroid_watch_face_settings);
+        else if (ACTION_CONFIG_NOUNOURS.equals(action)) addPreferencesFromResource(R.xml.nounours_watch_face_settings);
     }
 }

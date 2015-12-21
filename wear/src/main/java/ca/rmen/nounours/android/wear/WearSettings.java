@@ -25,13 +25,15 @@ import android.preference.PreferenceManager;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
 class WearSettings implements NounoursSettings {
-    private static final String PREF_SHOW_DIGITAL_TIME = "PREF_SHOW_DIGITAL_TIME";
+    private static final String PREF_SHOW_DIGITAL_TIME = "SHOW_DIGITAL_TIME";
+    private final String mPreferencePrefix;
     private final String mThemeId;
     private int mBackgroundColor;
     private final SharedPreferences mPrefs;
 
     public WearSettings(Context context, String themeId) {
         mThemeId = themeId;
+        mPreferencePrefix = "PREF_" + mThemeId + "_";
         mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
@@ -69,7 +71,7 @@ class WearSettings implements NounoursSettings {
     }
 
     public boolean isDigitalTimeEnabled() {
-        return mPrefs.getBoolean(PREF_SHOW_DIGITAL_TIME, true);
+        return mPrefs.getBoolean(mPreferencePrefix + PREF_SHOW_DIGITAL_TIME, true);
     }
 
 }

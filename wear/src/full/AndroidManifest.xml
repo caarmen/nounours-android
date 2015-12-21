@@ -33,6 +33,10 @@
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
                 android:resource="@drawable/preview_college_round" />
+            <!-- wearable configuration activity -->
+            <meta-data
+                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
+                android:value="ca.rmen.nounours.android.wear.CONFIG_NOUNOURS" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
@@ -53,6 +57,10 @@
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
                 android:resource="@drawable/preview_bugdroid_round" />
+            <!-- wearable configuration activity -->
+            <meta-data
+                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
+                android:value="ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
