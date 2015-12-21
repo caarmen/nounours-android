@@ -20,6 +20,28 @@
 
     <application
         android:label="@string/nounours_and_friends_app_name">
+        <activity
+            android:name="ca.rmen.nounours.android.wear.CollegeSettingsActivity"
+            android:label="@string/watch_face_settings">
+            <intent-filter>
+                <action android:name=
+                    "ca.rmen.nounours.android.wear.CONFIG_COLLEGE" />
+                <category android:name=
+                    "com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="ca.rmen.nounours.android.wear.BugdroidSettingsActivity"
+            android:label="@string/watch_face_settings">
+            <intent-filter>
+                <action android:name=
+                    "ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
+                <category android:name=
+                    "com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <service
             android:name="ca.rmen.nounours.android.wear.CollegeWatchFace"
             android:label="@string/nounours_wear_college"
@@ -33,6 +55,10 @@
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
                 android:resource="@drawable/preview_college_round" />
+            <!-- wearable configuration activity -->
+            <meta-data
+                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
+                android:value="ca.rmen.nounours.android.wear.CONFIG_COLLEGE" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
@@ -53,6 +79,10 @@
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
                 android:resource="@drawable/preview_bugdroid_round" />
+            <!-- wearable configuration activity -->
+            <meta-data
+                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
+                android:value="ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />

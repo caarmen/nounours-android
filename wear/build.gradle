@@ -25,6 +25,7 @@ android {
         full {
             assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
             res.srcDirs = ['src/bugdroid/res', 'src/nounours/res', 'src/main/res', 'src/full/res']
+            java.srcDirs = ['src/bugdroid/java', 'src/nounours/java', 'src/main/java', 'src/full/java']
         }
     }
 
@@ -66,5 +67,6 @@ android {
 dependencies {
     compile 'com.google.android.support:wearable:1.3.0'
     compile 'com.google.android.gms:play-services-wearable:8.3.0'
+    compile 'me.denley.wearpreferenceactivity:wearpreferenceactivity:0.5.0'
     compile project(':common')
 }

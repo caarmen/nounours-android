@@ -16,19 +16,17 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.rmen.nounours.android.wear;
 
-public class CollegeWatchFace extends NounoursWatchFace {
-    private final WearSettings mSettings;
+import android.os.Bundle;
 
-    public CollegeWatchFace() {
-        super();
-        mSettings = new WearSettings("5001");
-    }
+import ca.rmen.nounours.R;
+import preference.WearPreferenceActivity;
 
+public class CollegeSettingsActivity extends WearPreferenceActivity {
     @Override
-    public WearSettings getSettings() {
-        return mSettings;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.xml.nounours_watch_face_settings);
     }
 }

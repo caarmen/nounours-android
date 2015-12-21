@@ -20,11 +20,13 @@
 package ca.rmen.nounours.android.wear;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.wearable.watchface.CanvasWatchFaceService;
 import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
@@ -62,11 +64,6 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
 
     private class Engine extends CanvasWatchFaceService.Engine {
         private boolean mIsAmbient;
-
-        /**
-         * Whether the display supports fewer bits for each color in ambient mode. When true, we
-         * disable anti-aliasing in ambient mode.
-         */
         private AndroidNounours mNounours;
         private WearSettings mSettings;
         private NounoursResourceCache mCache;
@@ -77,19 +74,15 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             super.onCreate(holder);
             Log.v(TAG, "onCreate");
 
-            Context context = getApplicationContext();
-            setWatchFaceStyle(new WatchFaceStyle.Builder(NounoursWatchFace.this)
-                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
-                    .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
-                    .setAmbientPeekMode(WatchFaceStyle.AMBIENT_PEEK_MODE_VISIBLE)
-                    .setShowSystemUiTime(true)
-                    .setAcceptsTapEvents(true)
-                    .build());
-
             mSettings = getSettings();
+            setWatchFaceStyle();
+
+            Context context = getApplicationContext();
+
             mSettings.setBackgroundColor(ResourcesCompat.getColor(getApplicationContext(), R.color.background_color));
             mRenderer = new NounoursWatchFaceRenderer(context, mSettings);
-            mCache = new NounoursResourceCache(getApplicationContext(), mSettings, new ImageCache());
+            mCache = new NounoursResourceCache(context, mSettings, new ImageCache());
+            PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(mSharedPrefsListener);
             mNounours = new AndroidNounours("WEAR",
                     getApplicationContext(),
                     new Handler(),
@@ -102,9 +95,20 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                     new EmptyThemeLoadListener());
         }
 
+        private void setWatchFaceStyle() {
+            setWatchFaceStyle(new WatchFaceStyle.Builder(NounoursWatchFace.this)
+                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
+                    .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
+                    .setAmbientPeekMode(WatchFaceStyle.AMBIENT_PEEK_MODE_VISIBLE)
+                    .setShowSystemUiTime(mSettings.isDigitalTimeEnabled() || !mIsAmbient)
+                    .setAcceptsTapEvents(true)
+                    .build());
+        }
+
         @Override
         public void onDestroy() {
             mNounours.onDestroy();
+            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).unregisterOnSharedPreferenceChangeListener(mSharedPrefsListener);
             super.onDestroy();
         }
 
@@ -144,6 +148,7 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
             mNounours.doPing(!inAmbientMode);
             if (mIsAmbient != inAmbientMode) {
                 mIsAmbient = inAmbientMode;
+                setWatchFaceStyle();
                 invalidate();
             }
         }
@@ -158,5 +163,12 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                 }
             }
         }
+        private final SharedPreferences.OnSharedPreferenceChangeListener mSharedPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                setWatchFaceStyle();
+            }
+        };
     }
+
 }

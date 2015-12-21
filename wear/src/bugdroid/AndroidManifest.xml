@@ -21,6 +21,17 @@
 
     <application
         android:label="@string/bugdroid_app_name">
+        <activity
+            android:name="ca.rmen.nounours.android.wear.BugdroidSettingsActivity"
+            android:label="@string/watch_face_settings">
+            <intent-filter>
+                <action android:name=
+                    "ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
+                <category android:name=
+                    "com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <service
             android:name="ca.rmen.nounours.android.wear.BugdroidWatchFace"
             android:label="@string/bugdroid_wear"
@@ -34,6 +45,10 @@
             <meta-data
                 android:name="com.google.android.wearable.watchface.preview_circular"
                 android:resource="@drawable/preview_bugdroid_round" />
+            <!-- wearable configuration activity -->
+            <meta-data
+                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
+                android:value="ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
