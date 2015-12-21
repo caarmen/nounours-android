@@ -41,14 +41,21 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
     private boolean mIsLowBitAmbient;
     private final Paint mBackgroundPaint;
     private final Bitmap mAmbientBitmap;
+    private final Bitmap mLowBitAmbientBitmap;
 
     public NounoursWatchFaceRenderer(Context context, NounoursSettings settings) {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(settings.getBackgroundColor());
-        int ambientBitmapId = context.getResources().getIdentifier("ambient_" + settings.getThemeId(), "drawable", context.getPackageName());
-        BitmapDrawable ambientBitmapDrawable = (BitmapDrawable) context.getResources().getDrawable(ambientBitmapId, null);
-        if (ambientBitmapDrawable != null) mAmbientBitmap = ambientBitmapDrawable.getBitmap();
-        else mAmbientBitmap = null;
+        mAmbientBitmap = getBitmap(context, "ambient_" + settings.getThemeId());
+        mLowBitAmbientBitmap = getBitmap(context, "low_bit_ambient_" + settings.getThemeId());
+    }
+
+    private Bitmap getBitmap(Context context, String identifier) {
+        int bitmapId = context.getResources().getIdentifier(identifier, "drawable", context.getPackageName());
+        if (bitmapId == 0) return null;
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) context.getResources().getDrawable(bitmapId, null);
+        if (bitmapDrawable != null) return bitmapDrawable.getBitmap();
+        return null;
     }
 
     public void setIsAmbient(boolean isAmbient) {
@@ -67,7 +74,8 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
 
     private void renderAmbientNounours(Canvas c, int viewWidth, int viewHeight) {
         c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
-        if (mAmbientBitmap != null && !mIsLowBitAmbient) {
+        Bitmap bitmap = mIsLowBitAmbient ? mLowBitAmbientBitmap : mAmbientBitmap;
+        if (bitmap != null) {
             // First figure out the largest possible square within the (possibly) rectangular view:
             // The square's upper left corner will have offsetX and offsetY
             // and the square will have a width squareViewWidth
@@ -102,8 +110,8 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
             m.postTranslate(offsetHoursX, offsetHoursY);
             c.setMatrix(m);
 
-            Rect bitmapRect = new Rect(0, 0, mAmbientBitmap.getWidth(), mAmbientBitmap.getHeight());
-            c.drawBitmap(mAmbientBitmap, bitmapRect, nounoursDisplayViewRect, null);
+            Rect bitmapRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            c.drawBitmap(bitmap, bitmapRect, nounoursDisplayViewRect, null);
             c.setMatrix(null);
         }
     }
