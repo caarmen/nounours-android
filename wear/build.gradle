@@ -25,6 +25,7 @@ android {
         full {
             assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
             res.srcDirs = ['src/bugdroid/res', 'src/nounours/res', 'src/main/res', 'src/full/res']
+            java.srcDirs = ['src/bugdroid/java', 'src/nounours/java', 'src/main/java', 'src/full/java']
         }
     }
 

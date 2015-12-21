@@ -32,19 +32,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <activity
-            android:name="ca.rmen.nounours.android.wear.WatchFaceSettingsActivity"
-            android:label="@string/watch_face_settings">
-            <intent-filter>
-                <action android:name=
-                    "ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
-                <action android:name=
-                    "ca.rmen.nounours.android.wear.CONFIG_NOUNOURS" />
-                <category android:name=
-                    "com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
