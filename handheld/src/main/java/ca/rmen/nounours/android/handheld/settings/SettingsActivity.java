@@ -106,13 +106,15 @@ public class SettingsActivity extends PreferenceActivity {
             }
             // The wallpaper feature isn't available on older devices.
             else if (PREF_LAUNCH_WALLPAPER_SETTINGS.equals(preference.getKey())) {
-                if (ApiHelper.getAPILevel() < Build.VERSION_CODES.ECLAIR_MR1) {
+                if (ApiHelper.getAPILevel() < Build.VERSION_CODES.ECLAIR_MR1
+                        || !canLaunchPreferenceIntent(preference)) {
                     preferencesToHide.add(preference);
                 }
             }
             // The dream feature isn't available on older devices.
             else if (PREF_LAUNCH_DREAM_SETTINGS.equals(preference.getKey())) {
-                if (ApiHelper.getAPILevel() < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                if (ApiHelper.getAPILevel() < Build.VERSION_CODES.JELLY_BEAN_MR2
+                        || !canLaunchPreferenceIntent(preference)) {
                     preferencesToHide.add(preference);
                 }
             } else if (preference.getKey().endsWith(SharedPreferenceSettings.PREF_BACKGROUND_COLOR)) {
@@ -133,6 +135,13 @@ public class SettingsActivity extends PreferenceActivity {
             themePreference.setOnPreferenceChangeListener(themeChangedListener);
             themeChangedListener.onPreferenceChange(themePreference, themePreference.getValue());
         }
+    }
+
+    /**
+     * @return true if some activity can handle the intent of the given preference.
+     */
+    private boolean canLaunchPreferenceIntent(Preference preference) {
+        return preference.getIntent().resolveActivity(getPackageManager()) != null;
     }
 
     private static void updateListPreferenceSummary(ListPreference listPreference, String newValue) {
