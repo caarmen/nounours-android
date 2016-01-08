@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2009 - 2015 Carmen Alvarez
+    Copyright (c) 2016 Carmen Alvarez
 
     This file is part of Nounours for Android.
 
@@ -21,7 +21,7 @@
 
     <ListPreference
         android:icon="@drawable/ic_menu_gallery"
-        android:key="app_Theme"
+        android:key="dream_Theme"
         android:title="@string/themes"
         android:defaultValue="@string/DEFAULT_THEME_ID"
         android:entries="@array/themesList"
@@ -33,18 +33,12 @@
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         android:defaultValue="@android:color/black"
         android:icon="@drawable/ic_pref_background_color"
-        android:key="app_BackgroundColor"
+        android:key="dream_BackgroundColor"
         android:title="@string/backgroundColor" />
-
-    <CheckBoxPreference
-        android:icon="@drawable/ic_pref_sound"
-        android:key="app_SoundAndVibrate"
-        android:title="@string/enablesound"
-        android:defaultValue="true" />
 
     <ListPreference
         android:icon="@drawable/ic_pref_idle_timeout"
-        android:key="app_IdleTimeout2"
+        android:key="dream_IdleTimeout2"
         android:title="@string/idleTimeout"
         android:defaultValue="30000"
         android:entries="@array/idleTimeout"
@@ -53,17 +47,11 @@
         android:positiveButtonText="@null" />
 
     <Preference
-        android:key="launch_wallpaper_settings"
-        android:icon="@drawable/ic_pref_wallpaper"
-        android:title="@string/wallpaper">
-        <intent android:action="android.service.wallpaper.LIVE_WALLPAPER_CHOOSER" />
-    </Preference>
-
-    <Preference
-        android:key="launch_dream_settings"
-        android:icon="@drawable/ic_pref_dream"
-        android:title="@string/daydream">
-        <intent android:action="android.settings.DREAM_SETTINGS"/>
+        android:icon="@drawable/ic_menu_info_details"
+        android:title="@string/about">
+        <intent
+            android:targetPackage="@string/APPLICATION_ID"
+            android:targetClass="ca.rmen.nounours.android.handheld.AboutActivity" />
     </Preference>
 
 </PreferenceScreen>

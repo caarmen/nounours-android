@@ -36,6 +36,7 @@ Le robot Android(TM) est crée et partagé par Google et utilisé selon les cond
 	<string name="fullscreen">Plein écran</string>
 	<string name="fullscreen_hint">Toucher les quatre coins de l\'écran pour sortir du mode plein écran.</string>
 	<string name="wallpaper">Fond d\'écran animé</string>
+	<string name="daydream">Préférences écran de veille</string>
 	<string name="dimTitle">Image sombre</string>
 	<string name="dimSummary">Ceci rend les icônes plus visibles</string>
 	<string name="enablesound">Activer son/vibreur</string>

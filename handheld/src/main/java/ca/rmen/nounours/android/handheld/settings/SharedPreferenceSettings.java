@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2009 - 2015 Carmen Alvarez
+ *   Copyright (c) 2009 - 2016 Carmen Alvarez
  *
  *   This file is part of Nounours for Android.
  *
@@ -33,6 +33,7 @@ public final class SharedPreferenceSettings implements NounoursSettings {
     private static final String PREF_DIM = "nounourslwp_dim";
     private static final String PREFIX_APP = "app_";
     private static final String PREFIX_LWP = "lwp_";
+    private static final String PREFIX_DREAM = "dream_";
     // IdleTimeout changed from 1.3.5 to 2.0.0 from a Long to a String
     // We just rename the preference here and don't care about migrating this setting.
     private static final String PREF_IDLE_TIMEOUT = "IdleTimeout2";
@@ -47,6 +48,10 @@ public final class SharedPreferenceSettings implements NounoursSettings {
 
     public static NounoursSettings getLwpSettings(Context context) {
         return new SharedPreferenceSettings(context, PREFIX_LWP);
+    }
+
+    public static NounoursSettings getDreamSettings(Context context) {
+        return new SharedPreferenceSettings(context, PREFIX_DREAM);
     }
 
     private SharedPreferenceSettings(Context context, String preferencePrefix) {
