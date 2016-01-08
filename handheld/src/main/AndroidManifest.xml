@@ -65,14 +65,14 @@
             android:exported="true"
             android:label="@string/options"
             android:theme="@style/NounoursActivityStyle"
-            tools:ignore="ExportedPreferenceActivity,UnusedAttribute" />
+            tools:ignore="ExportedPreferenceActivity" />
         <activity
             android:name=".android.handheld.AboutActivity"
             android:exported="false"
             android:label="@string/about"
             android:parentActivityName=".android.handheld.settings.SettingsActivity"
             android:theme="@style/NounoursActivityStyle"
-            tools:ignore="UnusedAttribute"></activity>
+            tools:ignore="UnusedAttribute"/>
 
         <service
             android:name=".android.handheld.AnimationSaveService"

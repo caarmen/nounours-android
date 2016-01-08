@@ -140,6 +140,7 @@ public class SettingsActivity extends PreferenceActivity {
     /**
      * @return true if some activity can handle the intent of the given preference.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean canLaunchPreferenceIntent(Preference preference) {
         return preference.getIntent().resolveActivity(getPackageManager()) != null;
     }
