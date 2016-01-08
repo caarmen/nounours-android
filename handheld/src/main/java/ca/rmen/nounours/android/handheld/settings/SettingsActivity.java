@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2009 - 2015 Carmen Alvarez
+ *   Copyright (c) 2009 - 2016 Carmen Alvarez
  *
  *   This file is part of Nounours for Android.
  *
@@ -51,7 +51,7 @@ import ca.rmen.nounours.android.common.util.ThemeUtil;
  */
 public class SettingsActivity extends PreferenceActivity {
 
-    private static final String EXTRA_PREFERENCE_XML_RES_ID = "nounours_preference_xml_res_id";
+    protected static final String EXTRA_PREFERENCE_XML_RES_ID = "nounours_preference_xml_res_id";
     private static final String PREF_LAUNCH_WALLPAPER_SETTINGS = "launch_wallpaper_settings";
 
     public static void startAppSettingsActivity(Context context) {
