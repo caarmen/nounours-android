@@ -59,4 +59,11 @@
         <intent android:action="android.service.wallpaper.LIVE_WALLPAPER_CHOOSER" />
     </Preference>
 
+    <Preference
+        android:key="launch_dream_settings"
+        android:icon="@drawable/ic_pref_dream"
+        android:title="@string/daydream">
+        <intent android:action="android.settings.DREAM_SETTINGS"/>
+    </Preference>
+
 </PreferenceScreen>

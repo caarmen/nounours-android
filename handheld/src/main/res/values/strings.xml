@@ -36,6 +36,7 @@ The Android(TM) Robot is created and shared by Google and used according to term
 	<string name="fullscreen">Full screen</string>
 	<string name="fullscreen_hint">Tap the four corners to exit full-screen mode.</string>
 	<string name="wallpaper">Set your wallpaper</string>
+	<string name="daydream">Daydream settings</string>
 	<string name="dimTitle">Dimmed image</string>
 	<string name="dimSummary">This makes the icons more readable</string>
 	<string name="enablesound">Turn sound/vibrate on</string>

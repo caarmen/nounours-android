@@ -53,6 +53,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     protected static final String EXTRA_PREFERENCE_XML_RES_ID = "nounours_preference_xml_res_id";
     private static final String PREF_LAUNCH_WALLPAPER_SETTINGS = "launch_wallpaper_settings";
+    private static final String PREF_LAUNCH_DREAM_SETTINGS = "launch_dream_settings";
 
     public static void startAppSettingsActivity(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
@@ -106,6 +107,12 @@ public class SettingsActivity extends PreferenceActivity {
             // The wallpaper feature isn't available on older devices.
             else if (PREF_LAUNCH_WALLPAPER_SETTINGS.equals(preference.getKey())) {
                 if (ApiHelper.getAPILevel() < Build.VERSION_CODES.ECLAIR_MR1) {
+                    preferencesToHide.add(preference);
+                }
+            }
+            // The dream feature isn't available on older devices.
+            else if (PREF_LAUNCH_DREAM_SETTINGS.equals(preference.getKey())) {
+                if (ApiHelper.getAPILevel() < Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     preferencesToHide.add(preference);
                 }
             } else if (preference.getKey().endsWith(SharedPreferenceSettings.PREF_BACKGROUND_COLOR)) {
