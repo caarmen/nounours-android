@@ -23,7 +23,7 @@
         android:icon="@drawable/ic_menu_gallery"
         android:key="lwp_Theme"
         android:title="@string/themes"
-        android:defaultValue="@string/DEFAULT_THEME_ID"
+        android:defaultValue="@string/DEFAULT_LWP_THEME_ID"
         android:entries="@array/themesList"
         android:entryValues="@array/themeListValues"
         android:negativeButtonText="@null"

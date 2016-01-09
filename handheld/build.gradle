@@ -23,22 +23,26 @@ android {
     productFlavors {
         fullFoss {
             applicationId "ca.rmen.nounours"
-            resValue "string", "DEFAULT_THEME_ID", "0"
+            resValue "string", "DEFAULT_APP_THEME_ID", "5000"
+            resValue "string", "DEFAULT_LWP_THEME_ID", "5001"
         }
 
         fullWear {
             applicationId "ca.rmen.nounours"
-            resValue "string", "DEFAULT_THEME_ID", "0"
+            resValue "string", "DEFAULT_APP_THEME_ID", "5000"
+            resValue "string", "DEFAULT_LWP_THEME_ID", "5001"
         }
 
         bugdroid {
             applicationId "ca.rmen.nounours.lwp.robot"
-            resValue "string", "DEFAULT_THEME_ID", "5004"
+            resValue "string", "DEFAULT_APP_THEME_ID", "5004"
+            resValue "string", "DEFAULT_LWP_THEME_ID", "5004"
         }
 
         nounours {
             applicationId "ca.rmen.nounours.lwp.rainbow"
-            resValue "string", "DEFAULT_THEME_ID", "5000"
+            resValue "string", "DEFAULT_APP_THEME_ID", "5000"
+            resValue "string", "DEFAULT_LWP_THEME_ID", "5001"
         }
 
         all {

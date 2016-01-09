@@ -42,22 +42,24 @@ public final class SharedPreferenceSettings implements NounoursSettings {
     private final Context mContext;
     // To have different app_settings for the app vs lwp, we prefix the app_settings:
     private final String mPreferencePrefix;
+    private final String mDefaultThemeId;
 
     public static NounoursSettings getAppSettings(Context context) {
-        return new SharedPreferenceSettings(context, PREFIX_APP);
+        return new SharedPreferenceSettings(context, PREFIX_APP, context.getString(R.string.DEFAULT_APP_THEME_ID));
     }
 
     public static NounoursSettings getLwpSettings(Context context) {
-        return new SharedPreferenceSettings(context, PREFIX_LWP);
+        return new SharedPreferenceSettings(context, PREFIX_LWP, context.getString(R.string.DEFAULT_LWP_THEME_ID));
     }
 
     public static NounoursSettings getDreamSettings(Context context) {
-        return new SharedPreferenceSettings(context, PREFIX_DREAM);
+        return new SharedPreferenceSettings(context, PREFIX_DREAM, context.getString(R.string.DEFAULT_LWP_THEME_ID));
     }
 
-    private SharedPreferenceSettings(Context context, String preferencePrefix) {
+    private SharedPreferenceSettings(Context context, String preferencePrefix, String defaultThemeId) {
         mContext = context;
         mPreferencePrefix = preferencePrefix;
+        mDefaultThemeId = defaultThemeId;
     }
 
     @Override
@@ -88,7 +90,7 @@ public final class SharedPreferenceSettings implements NounoursSettings {
 
     @Override
     public String getThemeId() {
-        return PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_THEME, mContext.getString(R.string.DEFAULT_THEME_ID));
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getString(mPreferencePrefix + PREF_THEME, mDefaultThemeId);
     }
 
     @Override
