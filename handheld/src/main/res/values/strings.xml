@@ -39,6 +39,7 @@ The Android(TM) Robot is created and shared by Google and used according to term
 	<string name="daydream">Daydream settings</string>
 	<string name="dimTitle">Dimmed image</string>
 	<string name="dimSummary">This makes the icons more readable</string>
+	<string name="grayscaleTitle">Black and white</string>
 	<string name="enablesound">Turn sound/vibrate on</string>
 	<string name="toast_remindMenuButton">Press the MENU button for more options\u2026</string>
 	<string name="options">Options</string>

@@ -26,6 +26,8 @@ public interface NounoursSettings {
 
     boolean isImageDimmed();
 
+    boolean isGrayscale();
+
     long getIdleTimeout();
 
     String getThemeId();

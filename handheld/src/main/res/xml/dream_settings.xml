@@ -36,6 +36,18 @@
         android:key="dream_BackgroundColor"
         android:title="@string/backgroundColor" />
 
+    <CheckBoxPreference
+        android:icon="@drawable/ic_pref_dim"
+        android:key="dream_nounourslwp_dim"
+        android:title="@string/dimTitle"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:icon="@drawable/ic_pref_grayscale"
+        android:key="dream_grayscale"
+        android:title="@string/grayscaleTitle"
+        android:defaultValue="false" />
+
     <ListPreference
         android:icon="@drawable/ic_pref_idle_timeout"
         android:key="dream_IdleTimeout2"

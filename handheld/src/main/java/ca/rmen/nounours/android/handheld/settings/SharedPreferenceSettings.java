@@ -31,6 +31,7 @@ public final class SharedPreferenceSettings implements NounoursSettings {
     static final String PREF_BACKGROUND_COLOR = "BackgroundColor";
     private static final String PREF_SOUND_AND_VIBRATE = "SoundAndVibrate";
     private static final String PREF_DIM = "nounourslwp_dim";
+    private static final String PREF_GRAYSCALE = "grayscale";
     private static final String PREFIX_APP = "app_";
     private static final String PREFIX_LWP = "lwp_";
     private static final String PREFIX_DREAM = "dream_";
@@ -73,6 +74,11 @@ public final class SharedPreferenceSettings implements NounoursSettings {
     @Override
     public boolean isImageDimmed() {
         return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_DIM, false);
+    }
+
+    @Override
+    public boolean isGrayscale() {
+        return PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(mPreferencePrefix + PREF_GRAYSCALE, false);
     }
 
     @Override

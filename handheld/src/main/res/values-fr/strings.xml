@@ -39,6 +39,7 @@ Le robot Android(TM) est crée et partagé par Google et utilisé selon les cond
 	<string name="daydream">Préférences écran de veille</string>
 	<string name="dimTitle">Image sombre</string>
 	<string name="dimSummary">Ceci rend les icônes plus visibles</string>
+	<string name="grayscaleTitle">Noir et blanc</string>
 	<string name="enablesound">Activer son/vibreur</string>
     <string name="toast_remindMenuButton">Appuyez sur le bouton MENU pour plus d\'options\u2026</string>
 	<string name="options">Options</string>

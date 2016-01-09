@@ -52,6 +52,11 @@ class WearSettings implements NounoursSettings {
     }
 
     @Override
+    public boolean isGrayscale() {
+        return false;
+    }
+
+    @Override
     public long getIdleTimeout() {
         return 90000;
     }
