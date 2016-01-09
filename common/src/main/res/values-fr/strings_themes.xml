@@ -17,7 +17,7 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string name="defaultTheme">Standard</string>
+    <string name="defaultTheme">Classique</string>
     <string name="rainbow">Arc-en-ciel</string>
     <string name="greenshirtbluebkg">Université</string>
     <string name="halloween">Halloween</string>
