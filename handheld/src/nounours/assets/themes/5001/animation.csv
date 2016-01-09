@@ -4,7 +4,7 @@ Id,Label,Interval,Repeat,Sequence,Visible,Vibrate,Sound
 3,headbang,100,7,Default;HeadDown1;HeadDown2;HeadDown1;Default;HeadUp;,true,false,lullaby_guitar
 4,disco,500,4,LHUp;LHFwd;,true,false,disco
 5,clap,100,10,Default;BothFwd;Clap;BothFwd,true,false,clap
-6,sleep,1000,200,Sleep1;Sleep2,false
+6,sleep,1000,40,Sleep1;Sleep2,false
 7,shake,60,20,SlightLeft;SlightRight,true,true,psychotoy
 8,reverseSpin,50,5,Default;SlightRight;Rotate430;Rotate300;Rotate130;Rotate1200;Rotate1030;Rotate900;Rotate730;SlightLeft,false,false,swoosh
 9,ska,120,1,d=4;RHFwd;BothFwd;LHFwd;Default;RHUp;BothUp;LHUp;Default;d=1;SlightRight;Rotate430;Rotate300;Rotate130;Rotate1200;Rotate1030;Rotate900;Rotate730;SlightLeft;d=4;RHUp;d=8;BothUp,true,false,kmacleod_broll
