@@ -19,8 +19,12 @@
 
 package ca.rmen.nounours.android.handheld.nounours;
 
-import android.media.SoundPool;
+import android.content.Context;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
 import android.util.Log;
+
+import java.io.IOException;
 
 import ca.rmen.nounours.NounoursSoundHandler;
 import ca.rmen.nounours.android.common.Constants;
@@ -34,15 +38,17 @@ import ca.rmen.nounours.android.common.nounours.cache.SoundCache;
 public class SoundHandler implements NounoursSoundHandler {
     private static final String TAG = Constants.TAG + SoundHandler.class.getSimpleName();
 
+    private final Context mContext;
     private final SoundCache mSoundCache;
-    private final SoundPool mSoundPool;
     private boolean mSoundEnabled = true;
-    private int mCurrentSoundId;
+    private final MediaPlayer mMediaPlayer;
 
 
-    public SoundHandler(SoundCache soundCache, SoundPool soundPool) {
+    public SoundHandler(Context context, SoundCache soundCache) {
+        mContext = context;
         mSoundCache = soundCache;
-        mSoundPool = soundPool;
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setOnErrorListener(new MediaPlayerErrorListener());
     }
 
     /**
@@ -52,10 +58,17 @@ public class SoundHandler implements NounoursSoundHandler {
     public void playSound(final String soundId) {
         Log.v(TAG, "playSound " + soundId);
         if (!mSoundEnabled) return;
-        Integer soundPoolId = mSoundCache.getSoundPoolId(soundId);
-        if (soundPoolId == null) return;
-        mCurrentSoundId = mSoundPool.play(soundPoolId, 1.0f, 1.0f, 0, 0, 1.0f);
-        Log.v(TAG, "sound play result for " + soundPoolId + ": " + mCurrentSoundId);
+        String assetPath = mSoundCache.getAssetPath(soundId);
+        try {
+            AssetFileDescriptor assetFd = mContext.getAssets().openFd(assetPath);
+            mMediaPlayer.reset();
+            mMediaPlayer.setDataSource(assetFd.getFileDescriptor(),
+                    assetFd.getStartOffset(), assetFd.getLength());
+            mMediaPlayer.prepare();
+            mMediaPlayer.start();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 
     /**
@@ -66,7 +79,7 @@ public class SoundHandler implements NounoursSoundHandler {
     @Override
     public void stopSound() {
         Log.v(TAG, "stopSound");
-        mSoundPool.stop(mCurrentSoundId);
+        mMediaPlayer.stop();
         Log.v(TAG, "stopSound finished");
     }
 
@@ -78,6 +91,26 @@ public class SoundHandler implements NounoursSoundHandler {
     @Override
     public void setEnableSound(final boolean enableSound) {
         mSoundEnabled = enableSound;
+        if (enableSound) {
+            mMediaPlayer.setVolume(1f, 1f);
+        } else {
+            mMediaPlayer.setVolume(0f, 0f);
+        }
+    }
+
+    private static class MediaPlayerErrorListener implements MediaPlayer.OnErrorListener {
+        /**
+         * Some error occurred using the media player
+         *
+         * @see android.media.MediaPlayer.OnErrorListener#onError(android.media.MediaPlayer,
+         * int, int)
+         */
+        @Override
+        public boolean onError(final MediaPlayer mp, final int what, final int extra) {
+            Log.v(TAG, "MediaPlayer error: MediaPlayer = " + mp + "(" + mp.getClass() + "), what=" + what
+                    + ", extra = " + extra);
+            return false;
+        }
     }
 
 }

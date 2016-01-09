@@ -19,12 +19,8 @@
 
 package ca.rmen.nounours.android.common.nounours.cache;
 
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.media.SoundPool;
 import android.util.Log;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,62 +29,30 @@ import ca.rmen.nounours.data.Sound;
 import ca.rmen.nounours.data.Theme;
 
 /**
- * Loads sounds into a SoundPool.
- * We use SoundPool instead of MediaPlayer because it allows playing sounds which
- * are not on the sdcard.  But we only play one sound at a time.
- *
  * @author Carmen Alvarez
  */
 public class SoundCache {
     private static final String TAG = Constants.TAG + SoundCache.class.getSimpleName();
 
-    private final Context mContext;
-    private final SoundPool mSoundPool;
-    private final Map<String, Integer> mSoundPoolIds = new ConcurrentHashMap<>();
+    private final Map<String, String> mAssetPaths = new ConcurrentHashMap<>();
 
-
-    public SoundCache(Context context, SoundPool soundPool) {
-        mContext = context;
-        // Initialize the media player.
-        mSoundPool = soundPool;
-    }
-
-    public Integer getSoundPoolId(String soundId) {
-        return mSoundPoolIds.get(soundId);
+    public String getAssetPath(String soundId) {
+        return mAssetPaths.get(soundId);
     }
 
     public void cacheSounds(final Theme theme) {
         Log.v(TAG, "cacheSounds for theme " + theme);
-
-        Thread thread = new Thread(){
-            @Override
-            public void run() {
-                for (Sound sound : theme.getSounds().values()) {
-                    final int soundPoolId;
-                    String assetPath = "themes/" + theme.getId() + "/" + sound.getFilename();
-                    try {
-                        AssetFileDescriptor assetFd = mContext.getAssets().openFd(assetPath);
-                        soundPoolId = mSoundPool.load(assetFd, 0);
-                    } catch (IOException e) {
-                        Log.v(TAG, "couldn't load sound " + sound, e);
-                        continue;
-                    }
-                    mSoundPoolIds.put(sound.getId(), soundPoolId);
-                }
-                Log.v(TAG, "cached sounds");
-            }
-        };
-        thread.setPriority(Thread.MIN_PRIORITY);
-        thread.start();
+        for (Sound sound : theme.getSounds().values()) {
+            String assetPath = "themes/" + theme.getId() + "/" + sound.getFilename();
+            mAssetPaths.put(sound.getId(), assetPath);
+        }
+        Log.v(TAG, "cached sounds");
     }
 
     public void clearSoundCache() {
         Log.v(TAG, "clearSoundCache");
         // clear the existing cache
-        for (Integer soundPoolId : mSoundPoolIds.values()) {
-            mSoundPool.unload(soundPoolId);
-        }
-        mSoundPoolIds.clear();
+        mAssetPaths.clear();
     }
 
 }

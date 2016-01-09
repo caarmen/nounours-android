@@ -47,7 +47,7 @@ public class EnvironmentCompat {
         }
         if (!result.exists()) {
             if (!result.mkdirs() || !result.isDirectory()) {
-                Log.v(TAG, "Could not createSoundPool folder " + result);
+                Log.v(TAG, "Could not create folder " + result);
             }
         }
         return result;
