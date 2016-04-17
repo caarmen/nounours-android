@@ -27,11 +27,11 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.VisibleForTesting;
+import android.util.TypedValue;
 
 import java.util.Calendar;
 import java.util.Locale;
 
-import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
@@ -41,6 +41,8 @@ import ca.rmen.nounours.android.common.settings.NounoursSettings;
  */
 class NounoursWatchFaceRenderer extends NounoursRenderer {
 
+    private static final int DIAL_NUMBER_TEXT_SIZE_SP = 18;
+
     private boolean mIsRound;
     private boolean mIsAmbient;
     private boolean mIsLowBitAmbient;
@@ -48,7 +50,7 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
     private final Bitmap mAmbientBitmap;
     private final Bitmap mLowBitAmbientBitmap;
     private final int mDialNumberColor;
-    private final int mDialNumberTextSize;
+    private final float mDialNumberTextSize;
 
     public NounoursWatchFaceRenderer(Context context, NounoursSettings settings) {
         mBackgroundPaint = new Paint();
@@ -56,7 +58,7 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
         mAmbientBitmap = getBitmap(context, "ambient_" + settings.getThemeId());
         mLowBitAmbientBitmap = getBitmap(context, "low_bit_ambient_" + settings.getThemeId());
         mDialNumberColor = ResourcesCompat.getColor(context, android.R.color.white);
-        mDialNumberTextSize = context.getResources().getDimensionPixelSize(R.dimen.dial_number_text_size);
+        mDialNumberTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DIAL_NUMBER_TEXT_SIZE_SP, context.getResources().getDisplayMetrics());
     }
 
     private Bitmap getBitmap(Context context, String identifier) {
