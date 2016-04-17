@@ -23,12 +23,16 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.VisibleForTesting;
+import android.util.TypedValue;
 
 import java.util.Calendar;
 import java.util.Locale;
 
+import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
@@ -37,17 +41,24 @@ import ca.rmen.nounours.android.common.settings.NounoursSettings;
  */
 class NounoursWatchFaceRenderer extends NounoursRenderer {
 
+    private static final int DIAL_NUMBER_TEXT_SIZE_SP = 18;
+
+    private boolean mIsRound;
     private boolean mIsAmbient;
     private boolean mIsLowBitAmbient;
     private final Paint mBackgroundPaint;
     private final Bitmap mAmbientBitmap;
     private final Bitmap mLowBitAmbientBitmap;
+    private final int mDialNumberColor;
+    private final float mDialNumberTextSize;
 
     public NounoursWatchFaceRenderer(Context context, NounoursSettings settings) {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(settings.getBackgroundColor());
         mAmbientBitmap = getBitmap(context, "ambient_" + settings.getThemeId());
         mLowBitAmbientBitmap = getBitmap(context, "low_bit_ambient_" + settings.getThemeId());
+        mDialNumberColor = ResourcesCompat.getColor(context, android.R.color.white);
+        mDialNumberTextSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, DIAL_NUMBER_TEXT_SIZE_SP, context.getResources().getDisplayMetrics());
     }
 
     private Bitmap getBitmap(Context context, String identifier) {
@@ -56,6 +67,10 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
         BitmapDrawable bitmapDrawable = (BitmapDrawable) context.getResources().getDrawable(bitmapId, null);
         if (bitmapDrawable != null) return bitmapDrawable.getBitmap();
         return null;
+    }
+
+    public void setIsRound(boolean isRound) {
+        mIsRound = isRound;
     }
 
     public void setIsAmbient(boolean isAmbient) {
@@ -68,11 +83,11 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
 
     @Override
     public void render(NounoursSettings settings, Bitmap bitmap, Canvas canvas, int viewWidth, int viewHeight) {
-        if (mIsAmbient) renderAmbientNounours(canvas, viewWidth, viewHeight);
+        if (mIsAmbient) renderAmbientNounours((WearSettings) settings, canvas, viewWidth, viewHeight);
         else super.render(settings, bitmap, canvas, viewWidth, viewHeight);
     }
 
-    private void renderAmbientNounours(Canvas c, int viewWidth, int viewHeight) {
+    private void renderAmbientNounours(WearSettings settings, Canvas c, int viewWidth, int viewHeight) {
         c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
         Bitmap bitmap = mIsLowBitAmbient ? mLowBitAmbientBitmap : mAmbientBitmap;
         if (bitmap != null) {
@@ -113,7 +128,101 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
             Rect bitmapRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
             c.drawBitmap(bitmap, bitmapRect, nounoursDisplayViewRect, null);
             c.setMatrix(null);
+            if (!settings.isDigitalTimeEnabled()) {
+                renderDialNumbers(c, viewWidth, viewHeight);
+            }
         }
+    }
+
+    private void renderDialNumbers(Canvas c, int viewWidth, int viewHeight) {
+        Rect textBounds = new Rect();
+        Paint paint = new Paint();
+        paint.setTextSize(mDialNumberTextSize);
+        for (int dialNumber = 1; dialNumber <= 12; dialNumber++) {
+            String dialNumberLabel = String.valueOf(dialNumber);
+            paint.getTextBounds(dialNumberLabel, 0, dialNumberLabel.length(), textBounds);
+            float altTextWidth = paint.measureText(dialNumberLabel);
+            int textHeight = textBounds.height();
+            int textWidth = (int) Math.max(textBounds.width(), altTextWidth);
+            Point dialNumberPosition = mIsRound ?
+                    getDialNumberPositionInCircle(dialNumber, viewWidth, textWidth, textHeight) :
+                    getDialNumberPositionInRect(dialNumber, viewWidth, viewHeight, textWidth, textHeight);
+            paint.setColor(mDialNumberColor);
+            c.drawText(dialNumberLabel,
+                    dialNumberPosition.x - textWidth / 2,
+                    dialNumberPosition.y + textHeight / 2,
+                    paint);
+        }
+    }
+
+    /**
+     * @param dialNumber   from 1 to 12.
+     * @param numberWidth  the width of the image of the dial number
+     * @param numberHeight the height of the image of the dial number
+     * @return the position of the center of the dial number image, relative to the upper-left corner of the rectangular screen.
+     */
+    @VisibleForTesting
+    static Point getDialNumberPositionInRect(int dialNumber, double screenWidth, double screenHeight, double numberWidth, double numberHeight) {
+        double degrees = 90 - (dialNumber * 30);
+        Point outerRimPoint = getOuterRimPointInRect(screenWidth - numberWidth, screenHeight - numberHeight, degrees);
+        return new Point(outerRimPoint.x + (int) (numberWidth / 2), outerRimPoint.y + (int) (numberHeight / 2));
+    }
+
+    /**
+     * @param degrees the angle of rotation about the center of the screen.  For example, for the position of the number "3" in an analog watchface, the angle is 0, and for the number "2", the angle is 30 degrees.
+     * @return the coordinates of the point on the outermost location of the rectangular screen, relative to the upper-left corner of the screen.
+     */
+    @VisibleForTesting
+    static Point getOuterRimPointInRect(double screenWidth, double screenHeight, double degrees) {
+        // deltaX and deltaY represent the horizontal and vertical distance from the point to the center point in the screen.
+        // The values are always positive.
+
+        double deltaX = Math.min(screenWidth / 2, (screenHeight / 2) / Math.abs(Math.tan(Math.toRadians(degrees))));
+        double deltaY = Math.min(screenHeight / 2, (screenWidth / 2) * Math.abs(Math.tan(Math.toRadians(degrees))));
+
+        final double x;
+        final double y;
+        double normalizedDegrees = degrees % 360;
+        if (normalizedDegrees < 0) normalizedDegrees += 360;
+        if (normalizedDegrees > 90 && normalizedDegrees < 270) {
+            x = screenWidth / 2 - deltaX;
+        } else {
+            x = screenWidth / 2 + deltaX;
+        }
+        if (normalizedDegrees < 180) {
+            y = screenHeight / 2 - deltaY;
+        } else {
+            y = screenHeight / 2 + deltaY;
+        }
+
+        // The additional 0.5 is for rounding
+        return new Point((int) (x + 0.5), (int) (y + 0.5));
+    }
+
+    /**
+     * @param dialNumber   from 1 to 12.
+     * @param numberWidth  the width of the image of the dial number
+     * @param numberHeight the height of the image of the dial number
+     * @return the position of the center of the dial number image, relative to the upper-left corner of the circular screen.
+     */
+    @VisibleForTesting
+    static Point getDialNumberPositionInCircle(int dialNumber, double screenWidth, double numberWidth, double numberHeight) {
+        double degrees = 90 - (dialNumber * 30);
+        double dialNumberSize = Math.max(numberWidth, numberHeight);
+        Point outerRimPoint = getOuterRimPointInCircle(screenWidth - dialNumberSize, degrees);
+        return new Point(outerRimPoint.x + (int) (dialNumberSize / 2), outerRimPoint.y + (int) (dialNumberSize / 2));
+    }
+
+    /**
+     * @param degrees the angle of rotation about the center of the screen.  For example, for the position of the number "3" in an analog watchface, the angle is 0, and for the number "2", the angle is 30 degrees.
+     * @return the coordinates of the point on the outermost location of the circular screen, relative to the upper-left corner of the screen.
+     */
+    @VisibleForTesting
+    static Point getOuterRimPointInCircle(double screenWidth, double degrees) {
+        // the additional 0.5 is for rounding
+        int x = (int) (screenWidth / 2 + (screenWidth / 2) * Math.cos(Math.toRadians(degrees)) + 0.5);
+        int y = (int) (screenWidth / 2 - (screenWidth / 2) * Math.sin(Math.toRadians(degrees)) + 0.5);
+        return new Point(x, y);
     }
 
 }
