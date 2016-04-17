@@ -3,14 +3,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "ca.rmen.nounours"
         minSdkVersion 21
         targetSdkVersion 23
-        versionName "3.3.0"
-        versionCode 330
+        versionName "3.4.0"
+        versionCode 340
         archivesBaseName += "-" + versionName
     }
     buildTypes {
@@ -65,8 +65,8 @@ android {
 }
 
 dependencies {
-    compile 'com.google.android.support:wearable:1.3.0'
-    compile 'com.google.android.gms:play-services-wearable:8.3.0'
+    compile 'com.google.android.support:wearable:1.4.0'
+    compile 'com.google.android.gms:play-services-wearable:8.4.0'
     compile 'me.denley.wearpreferenceactivity:wearpreferenceactivity:0.5.0'
     compile project(':common')
 }
