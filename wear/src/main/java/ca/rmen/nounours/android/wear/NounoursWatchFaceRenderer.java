@@ -31,6 +31,8 @@ import android.support.annotation.VisibleForTesting;
 import java.util.Calendar;
 import java.util.Locale;
 
+import ca.rmen.nounours.R;
+import ca.rmen.nounours.android.common.compat.ResourcesCompat;
 import ca.rmen.nounours.android.common.nounours.NounoursRenderer;
 import ca.rmen.nounours.android.common.settings.NounoursSettings;
 
@@ -39,17 +41,22 @@ import ca.rmen.nounours.android.common.settings.NounoursSettings;
  */
 class NounoursWatchFaceRenderer extends NounoursRenderer {
 
+    private boolean mIsRound;
     private boolean mIsAmbient;
     private boolean mIsLowBitAmbient;
     private final Paint mBackgroundPaint;
     private final Bitmap mAmbientBitmap;
     private final Bitmap mLowBitAmbientBitmap;
+    private final int mDialNumberColor;
+    private final int mDialNumberTextSize;
 
     public NounoursWatchFaceRenderer(Context context, NounoursSettings settings) {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(settings.getBackgroundColor());
         mAmbientBitmap = getBitmap(context, "ambient_" + settings.getThemeId());
         mLowBitAmbientBitmap = getBitmap(context, "low_bit_ambient_" + settings.getThemeId());
+        mDialNumberColor = ResourcesCompat.getColor(context, android.R.color.white);
+        mDialNumberTextSize = context.getResources().getDimensionPixelSize(R.dimen.dial_number_text_size);
     }
 
     private Bitmap getBitmap(Context context, String identifier) {
@@ -58,6 +65,10 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
         BitmapDrawable bitmapDrawable = (BitmapDrawable) context.getResources().getDrawable(bitmapId, null);
         if (bitmapDrawable != null) return bitmapDrawable.getBitmap();
         return null;
+    }
+
+    public void setIsRound(boolean isRound) {
+        mIsRound = isRound;
     }
 
     public void setIsAmbient(boolean isAmbient) {
@@ -70,11 +81,11 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
 
     @Override
     public void render(NounoursSettings settings, Bitmap bitmap, Canvas canvas, int viewWidth, int viewHeight) {
-        if (mIsAmbient) renderAmbientNounours(canvas, viewWidth, viewHeight);
+        if (mIsAmbient) renderAmbientNounours((WearSettings) settings, canvas, viewWidth, viewHeight);
         else super.render(settings, bitmap, canvas, viewWidth, viewHeight);
     }
 
-    private void renderAmbientNounours(Canvas c, int viewWidth, int viewHeight) {
+    private void renderAmbientNounours(WearSettings settings, Canvas c, int viewWidth, int viewHeight) {
         c.drawRect(0, 0, viewWidth, viewHeight, mBackgroundPaint);
         Bitmap bitmap = mIsLowBitAmbient ? mLowBitAmbientBitmap : mAmbientBitmap;
         if (bitmap != null) {
@@ -115,6 +126,30 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
             Rect bitmapRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
             c.drawBitmap(bitmap, bitmapRect, nounoursDisplayViewRect, null);
             c.setMatrix(null);
+            if (!settings.isDigitalTimeEnabled()) {
+                renderDialNumbers(c, viewWidth, viewHeight);
+            }
+        }
+    }
+
+    private void renderDialNumbers(Canvas c, int viewWidth, int viewHeight) {
+        Rect textBounds = new Rect();
+        Paint paint = new Paint();
+        paint.setTextSize(mDialNumberTextSize);
+        for (int dialNumber = 1; dialNumber <= 12; dialNumber++) {
+            String dialNumberLabel = String.valueOf(dialNumber);
+            paint.getTextBounds(dialNumberLabel, 0, dialNumberLabel.length(), textBounds);
+            float altTextWidth = paint.measureText(dialNumberLabel);
+            int textHeight = textBounds.height();
+            int textWidth = (int) Math.max(textBounds.width(), altTextWidth);
+            Point dialNumberPosition = mIsRound ?
+                    getDialNumberPositionInCircle(dialNumber, viewWidth, textWidth, textHeight) :
+                    getDialNumberPositionInRect(dialNumber, viewWidth, viewHeight, textWidth, textHeight);
+            paint.setColor(mDialNumberColor);
+            c.drawText(dialNumberLabel,
+                    dialNumberPosition.x - textWidth / 2,
+                    dialNumberPosition.y + textHeight / 2,
+                    paint);
         }
     }
 

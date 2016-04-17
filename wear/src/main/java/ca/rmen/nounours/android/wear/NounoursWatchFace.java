@@ -32,6 +32,7 @@ import android.support.wearable.watchface.WatchFaceService;
 import android.support.wearable.watchface.WatchFaceStyle;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.WindowInsets;
 
 import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
@@ -151,6 +152,12 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
                 setWatchFaceStyle();
                 invalidate();
             }
+        }
+
+        @Override
+        public void onApplyWindowInsets(WindowInsets insets) {
+            super.onApplyWindowInsets(insets);
+            mRenderer.setIsRound(insets.isRound());
         }
 
         @Override
