@@ -23,8 +23,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -114,6 +116,76 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
             c.drawBitmap(bitmap, bitmapRect, nounoursDisplayViewRect, null);
             c.setMatrix(null);
         }
+    }
+
+    /**
+     * @param dialNumber   from 1 to 12.
+     * @param numberWidth  the width of the image of the dial number
+     * @param numberHeight the height of the image of the dial number
+     * @return the position of the center of the dial number image, relative to the upper-left corner of the rectangular screen.
+     */
+    @VisibleForTesting
+    static Point getDialNumberPositionInRect(int dialNumber, double screenWidth, double screenHeight, double numberWidth, double numberHeight) {
+        double degrees = 90 - (dialNumber * 30);
+        Point outerRimPoint = getOuterRimPointInRect(screenWidth - numberWidth, screenHeight - numberHeight, degrees);
+        return new Point(outerRimPoint.x + (int) (numberWidth / 2), outerRimPoint.y + (int) (numberHeight / 2));
+    }
+
+    /**
+     * @param degrees the angle of rotation about the center of the screen.  For example, for the position of the number "3" in an analog watchface, the angle is 0, and for the number "2", the angle is 30 degrees.
+     * @return the coordinates of the point on the outermost location of the rectangular screen, relative to the upper-left corner of the screen.
+     */
+    @VisibleForTesting
+    static Point getOuterRimPointInRect(double screenWidth, double screenHeight, double degrees) {
+        // deltaX and deltaY represent the horizontal and vertical distance from the point to the center point in the screen.
+        // The values are always positive.
+
+        double deltaX = Math.min(screenWidth / 2, (screenHeight / 2) / Math.abs(Math.tan(Math.toRadians(degrees))));
+        double deltaY = Math.min(screenHeight / 2, (screenWidth / 2) * Math.abs(Math.tan(Math.toRadians(degrees))));
+
+        final double x;
+        final double y;
+        double normalizedDegrees = degrees % 360;
+        if (normalizedDegrees < 0) normalizedDegrees += 360;
+        if (normalizedDegrees > 90 && normalizedDegrees < 270) {
+            x = screenWidth / 2 - deltaX;
+        } else {
+            x = screenWidth / 2 + deltaX;
+        }
+        if (normalizedDegrees < 180) {
+            y = screenHeight / 2 - deltaY;
+        } else {
+            y = screenHeight / 2 + deltaY;
+        }
+
+        // The additional 0.5 is for rounding
+        return new Point((int) (x + 0.5), (int) (y + 0.5));
+    }
+
+    /**
+     * @param dialNumber   from 1 to 12.
+     * @param numberWidth  the width of the image of the dial number
+     * @param numberHeight the height of the image of the dial number
+     * @return the position of the center of the dial number image, relative to the upper-left corner of the circular screen.
+     */
+    @VisibleForTesting
+    static Point getDialNumberPositionInCircle(int dialNumber, double screenWidth, double numberWidth, double numberHeight) {
+        double degrees = 90 - (dialNumber * 30);
+        double dialNumberSize = Math.max(numberWidth, numberHeight);
+        Point outerRimPoint = getOuterRimPointInCircle(screenWidth - dialNumberSize, degrees);
+        return new Point(outerRimPoint.x + (int) (dialNumberSize / 2), outerRimPoint.y + (int) (dialNumberSize / 2));
+    }
+
+    /**
+     * @param degrees the angle of rotation about the center of the screen.  For example, for the position of the number "3" in an analog watchface, the angle is 0, and for the number "2", the angle is 30 degrees.
+     * @return the coordinates of the point on the outermost location of the circular screen, relative to the upper-left corner of the screen.
+     */
+    @VisibleForTesting
+    static Point getOuterRimPointInCircle(double screenWidth, double degrees) {
+        // the additional 0.5 is for rounding
+        int x = (int) (screenWidth / 2 + (screenWidth / 2) * Math.cos(Math.toRadians(degrees)) + 0.5);
+        int y = (int) (screenWidth / 2 - (screenWidth / 2) * Math.sin(Math.toRadians(degrees)) + 0.5);
+        return new Point(x, y);
     }
 
 }

@@ -69,4 +69,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-wearable:8.4.0'
     compile 'me.denley.wearpreferenceactivity:wearpreferenceactivity:0.5.0'
     compile project(':common')
+    testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.0"
 }
