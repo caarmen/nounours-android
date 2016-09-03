@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24"
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         minSdkVersion 3
         targetSdkVersion 24
-        versionName "3.4.2"
-        versionCode 342
+        versionName "3.4.3"
+        versionCode 343
         archivesBaseName += "-" + versionName
     }
 
