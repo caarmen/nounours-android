@@ -1,7 +1,9 @@
 # Nounours for Android
 
-Source code for the "Nounours" (aka "Noonoors") app:
-https://play.google.com/store/apps/details?id=ca.rmen.nounours
+<a href="https://f-droid.org/repository/browse/?fdid=ca.rmen.nounours" target="_blank">
+<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80"/></a>
+<a href="https://play.google.com/store/apps/details?id=ca.rmen.nounours" target="_blank">
+<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80"/></a>
 
 ## What is this?
 This app includes a series of images of a teddy bear.  By dragging his "features" (paws, ears,
@@ -26,17 +28,17 @@ library, libnounours (https://github.com/caarmen/libnounours), which I then incl
 app.
 
 
-The project was closed-source until 2015, when I decided to publish it on GitHub.  The legacy code
+The project was closed-source until 2015, when I decided to publish it on GitHub. The legacy code
 from 2009 was not too clean, as I was just discovering Android development at the time: The project
 had unusual naming conventions, unusual logging, messy hairs added to the code as I tried to resolve
 memory issues when loading bitmaps...
 
 #### Trivia
 This app was selected as one of 10 "Prix du Public" finalists in the "SFR Jeunes Talents Développeurs" competition
-in Paris on May 13, 2009.  http://www.pointgphone.com/resultats-concours-android-sfr-jeunes-talents-developpeurs-2636/
+in Paris on May 13, 2009. http://www.pointgphone.com/resultats-concours-android-sfr-jeunes-talents-developpeurs-2636/
 
 ## Modernization
-I have tried to clean up the project a bit.  I've:
+I have tried to clean up the project a bit. I've:
 * moved the build system from ant to gradle.
 * fixed some bugs.
 * removed the feature to check for new themes on the server: in the six years since this app was
