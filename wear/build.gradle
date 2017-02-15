@@ -70,6 +70,6 @@ dependencies {
     compile 'me.denley.wearpreferenceactivity:wearpreferenceactivity:0.5.0'
     compile project(':common')
     testCompile 'junit:junit:4.12'
-    testCompile "org.robolectric:robolectric:3.1.4"
+    testCompile "org.robolectric:robolectric:3.2.2"
 }
 
