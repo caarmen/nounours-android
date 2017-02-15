@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2009 - 2015 Carmen Alvarez
+ *   Copyright (c) 2009 - 2017 Carmen Alvarez
  *
  *   This file is part of Nounours for Android.
  *
@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ca.rmen.nounours.android.common.Constants;
-import ca.rmen.nounours.android.handheld.compat.EnvironmentCompat;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.AnimationImage;
 import ca.rmen.nounours.android.common.nounours.cache.ImageCache;
@@ -48,6 +47,7 @@ import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
 
 public class AnimationUtil {
     private static final String TAG = Constants.TAG + AnimationUtil.class.getSimpleName();
+    private static final String EXPORT_FOLDER_PATH = "export";
 
     /**
      * Save an animation as an animated gif.
@@ -90,8 +90,9 @@ public class AnimationUtil {
             }
             Log.v(TAG, "saveAnimation: finish writing gif...");
             encoder.finish();
-            File file = new File(EnvironmentCompat.getExternalFilesDir(context), "nounours-animation.gif");
+            File file = getExportFile(context, "nounours-animation.gif");
             Log.v(TAG, "Saving file " + file);
+            if (file == null) return null;
             FileOutputStream fos = new FileOutputStream(file);
             InputStream is = new ByteArrayInputStream(bos.toByteArray());
             FileUtil.copy(is, fos);
@@ -145,6 +146,18 @@ public class AnimationUtil {
             final AnimationDrawable animationDrawable = (AnimationDrawable) imageView.getDrawable();
             animationDrawable.setVisible(false, false);
         }
+    }
+
+    /**
+     * @return File in the share folder that we can write to before sharing.
+     */
+    private static File getExportFile(Context context, String filename) {
+        File exportFolder = new File(context.getFilesDir(), EXPORT_FOLDER_PATH);
+        if (!exportFolder.exists() && !exportFolder.mkdirs()) {
+            Log.v(TAG, "Couldn't find or create export folder " + exportFolder);
+            return null;
+        }
+        return new File(exportFolder, filename);
     }
 
 }
