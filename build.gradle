@@ -6,13 +6,16 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
+        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
     }
 }
 
 allprojects {
     repositories {
+        maven {
+            url "https://dl.google.com/dl/android/maven2/"
+        }
         jcenter()
         mavenLocal()
     }
@@ -29,10 +32,19 @@ allprojects {
             }
         }
     }
+    configurations.all {
+       resolutionStrategy {
+           eachDependency { dep ->
+                if (dep.requested.group == 'com.android.support') {
+                    dep.useVersion "27.1.0"
+                }
+           }
+       }
+    }
 }
 
-ext.compileSdkVersion=25
-ext.buildToolsVersion="25"
-ext.versionName="3.4.5"
-ext.versionCode=345
-ext.targetSdkVersion=25
+ext.compileSdkVersion=27
+ext.buildToolsVersion="28.0.1"
+ext.versionName="3.4.6"
+ext.versionCode=346
+ext.targetSdkVersion=27
