@@ -7,10 +7,10 @@ android {
 
     defaultConfig {
         applicationId "ca.rmen.nounours"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion rootProject.targetSdkVersion
-        versionName rootProject.versionName
-        versionCode rootProject.versionCode
+        versionName rootProject.wearVersionName
+        versionCode rootProject.wearVersionCode
         archivesBaseName += "-" + versionName
     }
     buildTypes {
