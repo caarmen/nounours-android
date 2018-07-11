@@ -45,6 +45,6 @@ allprojects {
 
 ext.compileSdkVersion=27
 ext.buildToolsVersion="28.0.1"
-ext.versionName="3.4.5"
-ext.versionCode=345
+ext.versionName="3.4.6"
+ext.versionCode=346
 ext.targetSdkVersion=27
