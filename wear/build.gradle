@@ -1,6 +1,12 @@
 apply plugin: 'com.android.application'
 
 
+repositories {
+    maven {
+        url "https://dl.google.com/dl/android/maven2/"
+    }
+} 
+
 android {
     compileSdkVersion rootProject.compileSdkVersion
     buildToolsVersion rootProject.buildToolsVersion
