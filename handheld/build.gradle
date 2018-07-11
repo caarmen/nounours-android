@@ -5,10 +5,11 @@ android {
     buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
+        wearAppUnbundled true
         minSdkVersion 3
         targetSdkVersion rootProject.targetSdkVersion
-        versionName rootProject.versionName
-        versionCode rootProject.versionCode
+        versionName rootProject.handheldVersionName
+        versionCode rootProject.handheldVersionCode
         archivesBaseName += "-" + versionName
     }
 
@@ -21,13 +22,7 @@ android {
     }
 
     productFlavors {
-        fullFoss {
-            applicationId "ca.rmen.nounours"
-            resValue "string", "DEFAULT_APP_THEME_ID", "5000"
-            resValue "string", "DEFAULT_LWP_THEME_ID", "5001"
-        }
-
-        fullWear {
+        full {
             applicationId "ca.rmen.nounours"
             resValue "string", "DEFAULT_APP_THEME_ID", "5000"
             resValue "string", "DEFAULT_LWP_THEME_ID", "5001"
@@ -58,11 +53,7 @@ android {
     }
 
     sourceSets {
-        fullFoss {
-            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
-            res.srcDirs = ['src/full/res']
-        }
-        fullWear {
+        full {
             assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
             res.srcDirs = ['src/full/res']
         }
@@ -92,10 +83,4 @@ dependencies {
     compile "ca.rmen:libnounours:2.0.1"
     compile 'com.robbypond:android-ColorPickerPreference:1.11.1'
     compile project(':common')
-    // Package the wear apk inside this one (only for the 'wear' flavor)
-    if(rootProject.findProject("wear") != null) {
-        fullWearWearApp project(path: ':wear', configuration: 'fullRelease')
-        bugdroidWearApp project(path: ':wear', configuration: 'bugdroidRelease')
-        nounoursWearApp project(path: ':wear', configuration: 'nounoursRelease')
-    }
 }
