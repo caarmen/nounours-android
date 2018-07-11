@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2015 Carmen Alvarez
+    Copyright (c) 2015 - 2018 Carmen Alvarez
 
     This file is part of Nounours for Android.
 
@@ -20,5 +20,5 @@
 <wallpaper xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:settingsActivity="ca.rmen.nounours.android.handheld.settings.SettingsActivity"
-    android:thumbnail="@drawable/app_icon"
+    android:thumbnail="@drawable/ic_launcher"
     tools:ignore="UnusedAttribute" />
