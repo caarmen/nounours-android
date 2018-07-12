@@ -18,10 +18,10 @@
 -->
 <resources>
     <string name="bugdroid_wear">Bugdroid</string>
-    <string name="nounours_wear_college">Nounours Université</string>
+    <string name="nounours_wear_college">Nounours</string>
     <string name="watch_face_settings">Préférences</string>
     <string name="digital_time_on">Activée</string>
     <string name="digital_time_off">Désactivée</string>
     <string name="show_digital_time">Heure numérique</string>
-    <string name="nounours_and_friends_app_name">Cadran de montre Nounours et ses amis</string>
+    <string name="nounours_and_friends_app_name">Cadran de montre Nounours et Bugdroid</string>
 </resources>

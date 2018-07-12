@@ -17,11 +17,11 @@
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <string name="nounours_wear_college">Nounours College</string>
+    <string name="nounours_wear_college">Nounours</string>
     <string name="bugdroid_wear">Bugdroid</string>
     <string name="watch_face_settings">Settings</string>
     <string name="digital_time_on">On</string>
     <string name="digital_time_off">Off</string>
     <string name="show_digital_time">Digital time</string>
-    <string name="nounours_and_friends_app_name">Nounours and Friends Watch Face</string>
+    <string name="nounours_and_friends_app_name">Nounours and Bugdroid Watch Face</string>
 </resources>
