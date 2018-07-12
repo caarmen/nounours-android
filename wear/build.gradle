@@ -12,7 +12,7 @@ android {
     buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
-        applicationId "ca.rmen.nounours"
+        applicationId "ca.rmen.nounours.wear"
         minSdkVersion 23
         targetSdkVersion rootProject.targetSdkVersion
         versionName rootProject.wearVersionName
@@ -27,25 +27,7 @@ android {
         }
     }
 
-    sourceSets {
-        full {
-            assets.srcDirs = ['src/bugdroid/assets', 'src/nounours/assets']
-            res.srcDirs = ['src/bugdroid/res', 'src/nounours/res', 'src/main/res', 'src/full/res']
-            java.srcDirs = ['src/bugdroid/java', 'src/nounours/java', 'src/main/java', 'src/full/java']
-        }
-    }
-
     publishNonDefault true
-    productFlavors {
-        full {
-            applicationId "ca.rmen.nounours"
-        }
-
-        bugdroid {
-            applicationId "ca.rmen.nounours.lwp.robot"
-        }
-    }
-
 
     File signFile = rootProject.file('signing.properties')
     if (signFile.exists()) {
