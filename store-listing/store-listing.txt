@@ -1,0 +1,26 @@
+English:
+
+Title: Nounours and Bugdroid watch face
+
+Short description: Nounours and Bugdroid watch faces
+
+Full description: Two watch faces, one with Nounours, and one with Bugdroid. In each watch face, you may animate the character with a simple tap, or let the character animate itself until the watch enters ambient mode. In ambient mode, the position of the character indicates the time. Its position around the watch face indicates the hour, and it's rotation about itself indicates the minutes. You may choose to display the time as well, in digital format.
+
+These watch faces used to be bundled with phone apps "Bugdroid Buddy", "My buddy Nounours" and "Nounours and friends", but now they are available in this standalone wear app.
+
+Promo video: https://www.youtube.com/watch?v=X-FsBtEfOpE
+
+Français:
+Title: Cadrans Nounurs et Bugdroid
+
+Short description: Nounours et Bugdroid : cadrans de montre
+
+Full description: Deux cadrans de montre, un avec Nounours, et un avec Bugdroid. Dans chaque cadran de montre, vous pouvez animer le personnage avec un seul tap, ou bien laisser le personnage s'animer tout seul jusqu'à ce que le cadran entre en mode ambiant. En mode ambiant, la position du personnage indique l'heure. Sa position autour du cadran de montre indique l'heure, et sa rotation autour de lui-même indique les minutes. Vous pouvez également opter pour afficher l'heure, en format numérique.
+
+Ces cadrans de montre étaient avant fournis avec d'autres applications de téléphone "Mon pote Bugdroid", "Mon pote Nounours" et "Nounours et ses amis", mais maintenant ils sont disponibles dans cette application indépendante.
+
+Website: http://www.facebook.com/nounoursbear
+Email: nounours@rmen.ca
+Privacy policy: https://raw.githubusercontent.com/caarmen/nounours-android/master/PRIVACY-wear.md
+
+Promo video: https://www.youtube.com/watch?v=X-FsBtEfOpE
