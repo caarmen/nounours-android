@@ -44,10 +44,6 @@ android {
         bugdroid {
             applicationId "ca.rmen.nounours.lwp.robot"
         }
-
-        nounours {
-            applicationId "ca.rmen.nounours.lwp.rainbow"
-        }
     }
 
 
