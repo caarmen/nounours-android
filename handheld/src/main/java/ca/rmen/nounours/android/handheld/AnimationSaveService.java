@@ -29,7 +29,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
@@ -40,8 +39,8 @@ import ca.rmen.nounours.R;
 import ca.rmen.nounours.android.common.Constants;
 import ca.rmen.nounours.android.common.compat.ApiHelper;
 import ca.rmen.nounours.android.handheld.compat.NotificationCompat;
-import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.android.handheld.util.AnimationUtil;
+import ca.rmen.nounours.data.Animation;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -155,7 +154,6 @@ public class AnimationSaveService extends IntentService {
         Uri uri = Uri.parse("content://" + BuildConfig.APPLICATION_ID + ".fileprovider/export/" + file.getName());
         sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
         sendIntent.setType("image/gif");
-        sendIntent.setFlags(PendingIntent.FLAG_CANCEL_CURRENT);
         if (ApiHelper.getAPILevel() < Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(sendIntent, PackageManager.MATCH_DEFAULT_ONLY);
             for (ResolveInfo resolveInfo : resInfoList) {

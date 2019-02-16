@@ -70,8 +70,10 @@ public final class NotificationCompat {
             return Api11Helper.createNotification(context, iconId, tickerText, contentText, pendingIntent);
         } else if (ApiHelper.getAPILevel() < 23){
             return Api16Helper.createNotification(context, iconId, tickerText, contentText, actionIconId, actionText, pendingIntent);
-        } else {
+        } else if (ApiHelper.getAPILevel() < 26){
             return Api23Helper.createNotification(context, iconId, tickerText, contentText, actionIconId, actionText, pendingIntent);
+        } else {
+            return Api26Helper.createNotification(context, iconId, tickerText, contentText, actionIconId, actionText, pendingIntent);
         }
     }
 

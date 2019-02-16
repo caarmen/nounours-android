@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         wearAppUnbundled true
-        minSdkVersion 3
+        minSdkVersion 10
         targetSdkVersion rootProject.targetSdkVersion
         versionName rootProject.handheldVersionName
         versionCode rootProject.handheldVersionCode
