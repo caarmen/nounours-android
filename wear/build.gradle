@@ -29,11 +29,11 @@ android {
     flavorDimensions "character"
     productFlavors {
         nounours {
-            applicationId "ca.rmen.nounours.wear"
+            applicationId "ca.rmen.nounours"
         }
 
         bugdroid {
-            applicationId "ca.rmen.bugdroid.wear"
+            applicationId "ca.rmen.nounours.lwp.robot"
         }
     }
 
