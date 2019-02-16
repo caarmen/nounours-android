@@ -21,6 +21,7 @@ android {
         }
     }
 
+    flavorDimensions "character"
     productFlavors {
         full {
             applicationId "ca.rmen.nounours"
@@ -74,7 +75,7 @@ android {
 }
 
 dependencies {
-    compile "ca.rmen:libnounours:2.0.1"
-    compile 'com.robbypond:android-ColorPickerPreference:1.11.1'
-    compile project(':common')
+    implementation "ca.rmen:libnounours:$libnounoursVersion"
+    implementation 'com.robbypond:android-ColorPickerPreference:1.11.1'
+    implementation project(':common')
 }
