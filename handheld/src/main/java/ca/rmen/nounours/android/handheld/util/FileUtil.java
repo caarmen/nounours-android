@@ -19,19 +19,11 @@
 
 package ca.rmen.nounours.android.handheld.util;
 
-import android.os.Environment;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 public class FileUtil {
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isSdPresent() {
-        final String externalStorageState = Environment.getExternalStorageState();
-        return externalStorageState.equals(Environment.MEDIA_MOUNTED)
-                || externalStorageState.equals(Environment.MEDIA_MOUNTED_READ_ONLY);
-    }
 
     public static void copy(final InputStream in, final OutputStream out) throws IOException {
         try {

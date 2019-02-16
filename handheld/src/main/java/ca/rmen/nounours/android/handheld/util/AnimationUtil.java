@@ -56,7 +56,6 @@ public class AnimationUtil {
      */
     public static File saveAnimation(Context context, Animation animation) {
         Log.v(TAG, "saveAnimation " + animation);
-        if (!FileUtil.isSdPresent()) return null;
         ImageCache imageCache = new ImageCache();
         try {
 

@@ -64,7 +64,6 @@ import ca.rmen.nounours.android.handheld.nounours.orientation.SensorListener;
 import ca.rmen.nounours.android.handheld.settings.SettingsActivity;
 import ca.rmen.nounours.android.handheld.settings.SharedPreferenceSettings;
 import ca.rmen.nounours.android.handheld.util.AnimationUtil;
-import ca.rmen.nounours.android.handheld.util.FileUtil;
 import ca.rmen.nounours.data.Animation;
 import ca.rmen.nounours.data.Theme;
 
@@ -265,7 +264,7 @@ public class MainActivity extends Activity {
             }
             MenuItem recordingMenu = menu.findItem(R.id.menu_start_recording);
             if (recordingMenu != null) {
-                recordingMenu.setEnabled(FileUtil.isSdPresent() && !mNounours.getNounoursRecorder().isRecording());
+                recordingMenu.setEnabled(!mNounours.getNounoursRecorder().isRecording());
             }
         }
         return super.onPrepareOptionsMenu(menu);
