@@ -98,9 +98,6 @@ public abstract class NounoursWatchFace extends CanvasWatchFaceService {
 
         private void setWatchFaceStyle() {
             setWatchFaceStyle(new WatchFaceStyle.Builder(NounoursWatchFace.this)
-                    .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
-                    .setBackgroundVisibility(WatchFaceStyle.BACKGROUND_VISIBILITY_INTERRUPTIVE)
-                    .setAmbientPeekMode(WatchFaceStyle.AMBIENT_PEEK_MODE_VISIBLE)
                     .setShowSystemUiTime(mSettings.isDigitalTimeEnabled() || !mIsAmbient)
                     .setAcceptsTapEvents(true)
                     .build());

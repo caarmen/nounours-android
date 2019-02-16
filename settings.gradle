@@ -1,10 +1,2 @@
-boolean includeWear=false
-// If we are building with a "wear" task, include the wearable module.
-for(String taskName : startParameter.taskNames) {
-println "task: $taskName"
-    if(taskName.contains("wear"))
-        includeWear=true
-}
 include ':handheld', ':common'
-if(includeWear)
-    include ':wear'
+include ':wear'
