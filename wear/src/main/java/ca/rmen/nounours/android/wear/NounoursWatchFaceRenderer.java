@@ -111,7 +111,7 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
 
             // Rotate nounours around himself according to the minutes of the current time.
             Calendar now = Calendar.getInstance(Locale.getDefault());
-            float minutesRotation = 360 * now.get(Calendar.MINUTE) / 60;
+            float minutesRotation = 360 * now.get(Calendar.MINUTE) / 60f;
 
             // Place nounours somewhere around the edge of the watch, according to the hour of the current time.
             // timeInHours: ex: 8:30am and 8:30pm would both be 0.708333
@@ -120,7 +120,7 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
             float offsetHoursX = (float) Math.cos(Math.toRadians(hoursRotation)) * squareViewWidth / 3;
             float offsetHoursY = -(float) Math.sin(Math.toRadians(hoursRotation)) * squareViewWidth / 3;
             Matrix m = new Matrix();
-            m.postRotate(minutesRotation, squareViewWidth/ 2, squareViewWidth/ 2);
+            m.postRotate(minutesRotation, squareViewWidth/ 2f, squareViewWidth/ 2f);
             m.postTranslate(offsetX, offsetY);
             m.postTranslate(offsetHoursX, offsetHoursY);
             c.setMatrix(m);
@@ -149,8 +149,8 @@ class NounoursWatchFaceRenderer extends NounoursRenderer {
                     getDialNumberPositionInRect(dialNumber, viewWidth, viewHeight, textWidth, textHeight);
             paint.setColor(mDialNumberColor);
             c.drawText(dialNumberLabel,
-                    dialNumberPosition.x - textWidth / 2,
-                    dialNumberPosition.y + textHeight / 2,
+                    dialNumberPosition.x - textWidth / 2f,
+                    dialNumberPosition.y + textHeight / 2f,
                     paint);
         }
     }
