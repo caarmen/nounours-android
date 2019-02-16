@@ -26,6 +26,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "character"
     productFlavors {
         nounours {
             applicationId "ca.rmen.nounours.wear"
@@ -58,11 +59,13 @@ android {
 }
 
 dependencies {
-    compile 'com.google.android.support:wearable:2.3.0'
-    compile 'com.google.android.gms:play-services-wearable:12.0.1'
-    compile 'me.denley.wearpreferenceactivity:wearpreferenceactivity:0.5.0'
-    compile project(':common')
-    testCompile 'junit:junit:4.12'
-    testCompile "org.robolectric:robolectric:3.8"
+    implementation 'com.google.android.support:wearable:2.4.0'
+    compileOnly "com.google.android.wearable:wearable:2.4.0"
+    implementation 'com.google.android.gms:play-services-wearable:16.0.1'
+    implementation 'me.denley.wearpreferenceactivity:wearpreferenceactivity:0.5.0'
+    implementation "ca.rmen:libnounours:$libnounoursVersion"
+    implementation project(':common')
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.robolectric:robolectric:4.2"
 }
 

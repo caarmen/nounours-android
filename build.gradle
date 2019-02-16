@@ -3,16 +3,18 @@ apply plugin: 'com.github.ben-manes.versions'
 
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.3.1'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
     }
 }
 
 allprojects {
     repositories {
+        google()
         jcenter()
         mavenLocal()
     }
@@ -33,17 +35,18 @@ allprojects {
        resolutionStrategy {
            eachDependency { dep ->
                 if (dep.requested.group == 'com.android.support') {
-                    dep.useVersion "27.1.0"
+                    dep.useVersion "28.0.0"
                 }
            }
        }
     }
 }
 
-ext.compileSdkVersion=27
-ext.buildToolsVersion="28.0.1"
+ext.compileSdkVersion=28
+ext.buildToolsVersion="28.0.3"
 ext.handheldVersionName="3.4.8"
 ext.handheldVersionCode=348
 ext.wearVersionName="1.0.0"
 ext.wearVersionCode=100
 ext.targetSdkVersion=27
+ext.libnounoursVersion="2.0.1"

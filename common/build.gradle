@@ -19,5 +19,5 @@ android {
 }
 
 dependencies {
-    compile "ca.rmen:libnounours:2.0.1"
+    implementation "ca.rmen:libnounours:$libnounoursVersion"
 }
