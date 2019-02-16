@@ -3,6 +3,7 @@ apply plugin: 'com.github.ben-manes.versions'
 
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
@@ -41,7 +42,7 @@ allprojects {
 }
 
 ext.compileSdkVersion=27
-ext.buildToolsVersion="28.0.1"
+ext.buildToolsVersion="28.0.3"
 ext.handheldVersionName="3.4.8"
 ext.handheldVersionCode=348
 ext.wearVersionName="1.0.0"
