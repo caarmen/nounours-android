@@ -1,4 +1,4 @@
-This privacy policy applies to the "Nounours and Bugdroid watch face" Android application, hereafter "the app". 
+This privacy policy applies to the "Bugdroid Buddy watch face" Android application, hereafter "the app". 
 
 * The app does not contain ads.
 * The app does not request the permission to access the internet.

@@ -12,7 +12,7 @@ android {
     buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
-        applicationId "ca.rmen.nounours.wear"
+        applicationId "ca.rmen.nounours"
         minSdkVersion 23
         targetSdkVersion rootProject.targetSdkVersion
         versionName rootProject.wearVersionName
@@ -24,6 +24,15 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        nounours {
+            applicationId "ca.rmen.nounours.wear"
+        }
+
+        bugdroid {
+            applicationId "ca.rmen.bugdroid.wear"
         }
     }
 
