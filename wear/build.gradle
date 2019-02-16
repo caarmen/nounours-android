@@ -37,8 +37,6 @@ android {
         }
     }
 
-    publishNonDefault true
-
     File signFile = rootProject.file('signing.properties')
     if (signFile.exists()) {
         Properties p = new Properties();
