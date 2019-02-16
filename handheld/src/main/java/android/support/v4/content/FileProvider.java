@@ -16,9 +16,6 @@
 
 package android.support.v4.content;
 
-import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
-import static org.xmlpull.v1.XmlPullParser.START_TAG;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
@@ -42,6 +39,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
+import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 /**
  * FileProvider is a special subclass of {@link ContentProvider} that facilitates secure sharing
@@ -320,6 +320,7 @@ import java.util.Map;
  *    <a href="{@docRoot}training/secure-file-sharing/index.html">Sharing Files Securely with URIs</a>.
  * </p>
  */
+@SuppressWarnings("ALL") // not our code
 public class FileProvider extends ContentProvider {
     private static final String[] COLUMNS = {
             OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE };

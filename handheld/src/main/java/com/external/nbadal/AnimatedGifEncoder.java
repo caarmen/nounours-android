@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import java.io.IOException;
 import java.io.OutputStream;
 
+//noinspection ConstantConditions
 @SuppressWarnings({"CanBeFinal", "UnusedReturnValue", "unused", "JavaDoc", "JavadocReference", "PointlessBitwiseExpression"})
 public class AnimatedGifEncoder {
 
@@ -514,7 +515,7 @@ public class AnimatedGifEncoder {
 	 */
 
 //	 Ported to Java 12/00 K Weiner
-@SuppressWarnings({"unused", "EmptyCatchBlock", "PointlessArithmeticExpression", "RedundantCast", "PointlessBitwiseExpression"})
+@SuppressWarnings({"unused", "EmptyCatchBlock", "PointlessArithmeticExpression", "RedundantCast", "PointlessBitwiseExpression", "ConstantConditions"})
 class NeuQuant {
 
 	  protected static final int netsize = 256; /* number of colours used */

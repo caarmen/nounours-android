@@ -20,10 +20,7 @@
 package ca.rmen.nounours.android.handheld.compat;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.view.Display;
-
-import java.io.File;
 
 @TargetApi(8)
 class Api8Helper {
@@ -33,9 +30,5 @@ class Api8Helper {
 
     static int getRotation(Display display) {
         return display.getRotation();
-    }
-
-    static File getExternalFilesDir(Context context, String name) {
-        return context.getExternalFilesDir(name);
     }
 }

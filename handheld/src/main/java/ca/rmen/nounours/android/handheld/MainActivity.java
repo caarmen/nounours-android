@@ -113,8 +113,8 @@ public class MainActivity extends Activity {
                 findViewById(R.id.fullscreen_hint));
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
-        mRecordButton = (ImageButton) findViewById(R.id.btn_stop_recording);
+        final SurfaceView surfaceView = findViewById(R.id.surface_view);
+        mRecordButton = findViewById(R.id.btn_stop_recording);
         mRecordButton.setOnClickListener(mOnClickListener);
         ImageCache imageCache = new ImageCache();
         SoundCache soundCache = new SoundCache();

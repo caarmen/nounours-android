@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class FileUtil {
+class FileUtil {
 
     public static void copy(final InputStream in, final OutputStream out) throws IOException {
         try {

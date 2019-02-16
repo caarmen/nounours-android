@@ -58,7 +58,7 @@ public class NounoursDreamService extends DreamService {
         setInteractive(true);
         setFullscreen(true);
         setContentView(R.layout.dream);
-        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.surface_view);
+        SurfaceView surfaceView = findViewById(R.id.surface_view);
         NounoursSettings settings = SharedPreferenceSettings.getDreamSettings(this);
         settings.setEnableSound(false);
         mNounours = new AndroidNounours("DREAM",

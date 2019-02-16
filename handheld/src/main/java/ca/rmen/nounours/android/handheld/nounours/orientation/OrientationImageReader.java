@@ -62,7 +62,7 @@ class OrientationImageReader extends NounoursReader {
      * - MaxRoll: integer between -180 and 180.  Maximum roll.
      * </code>
      *
-     * @throws IOException
+     * @throws IOException if an error occurred reading the stream
      */
     public OrientationImageReader(InputStream is) throws IOException {
         super(is);

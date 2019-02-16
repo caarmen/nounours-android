@@ -53,11 +53,11 @@ public class SensorListener implements SensorEventListener {
     private boolean mIsTiltImage = false;
     private final Set<OrientationImage> mOrientationImages = new HashSet<>();
 
-    private AndroidNounours mNounours = null;
+    private final AndroidNounours mNounours;
     private final Context mContext;
 
     private float[] mLastAcceleration = null;
-    private float[] mLastMagneticField = null;
+    private float[] mLastMagneticField;
     private long mLastAnalysisTimestamp = 0;
 
     public SensorListener(AndroidNounours nounours,
