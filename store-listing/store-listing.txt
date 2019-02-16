@@ -1,0 +1,24 @@
+English:
+
+Title: Bugdroid Buddy watch face
+
+Short description: Bugdroid watch face
+
+Full description: In this watch face featuring the BugDroid character, you may animate the character with a simple tap, or let the character animate itself until the watch enters ambient mode. In ambient mode, the position of the character indicates the time. Its position around the watch face indicates the hour, and it's rotation about itself indicates the minutes. You may choose to display the time as well, in digital format.
+
+~Promo video: https://www.youtube.com/watch?v=X-FsBtEfOpE~
+Need a new video for bugdroid
+
+Français:
+Title: Cadran Bugdroid
+
+Short description: Bugdroid : cadran de montre
+
+Full description: Cadran de montre avec Bugdroid. Vous pouvez animer le personnage avec un seul tap, ou bien laisser le personnage s'animer tout seul jusqu'à ce que le cadran entre en mode ambiant. En mode ambiant, la position du personnage indique l'heure. Sa position autour du cadran de montre indique l'heure, et sa rotation autour de lui-même indique les minutes. Vous pouvez également opter pour afficher l'heure, en format numérique.
+
+Website: https://rmen.ca
+Email: carmen@rmen.ca
+Privacy policy: https://raw.githubusercontent.com/caarmen/nounours-android/master/PRIVACY-wear.md
+
+~Promo video: https://www.youtube.com/watch?v=X-FsBtEfOpE~
+Need a new video for bugdroid

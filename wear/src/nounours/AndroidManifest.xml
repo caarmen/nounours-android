@@ -16,29 +16,14 @@
     You should have received a copy of the GNU General Public License
     along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
-
-    <application
-        android:icon="@mipmap/ic_launcher_full"
-        android:label="@string/nounours_and_friends_app_name"
-        tools:replace="android:icon">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
         <activity
             android:name="ca.rmen.nounours.android.wear.CollegeSettingsActivity"
             android:label="@string/watch_face_settings">
             <intent-filter>
                 <action android:name=
                     "ca.rmen.nounours.android.wear.CONFIG_COLLEGE" />
-                <category android:name=
-                    "com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="ca.rmen.nounours.android.wear.BugdroidSettingsActivity"
-            android:label="@string/watch_face_settings">
-            <intent-filter>
-                <action android:name=
-                    "ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
                 <category android:name=
                     "com.google.android.wearable.watchface.category.WEARABLE_CONFIGURATION" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -61,30 +46,6 @@
             <meta-data
                 android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
                 android:value="ca.rmen.nounours.android.wear.CONFIG_COLLEGE" />
-
-            <intent-filter>
-                <action android:name="android.service.wallpaper.WallpaperService" />
-
-                <category android:name="com.google.android.wearable.watchface.category.WATCH_FACE" />
-            </intent-filter>
-        </service>
-        <service
-            android:name="ca.rmen.nounours.android.wear.BugdroidWatchFace"
-            android:label="@string/bugdroid_wear"
-            android:permission="android.permission.BIND_WALLPAPER" >
-            <meta-data
-                android:name="android.service.wallpaper"
-                android:resource="@xml/watch_face" />
-            <meta-data
-                android:name="com.google.android.wearable.watchface.preview"
-                android:resource="@drawable/preview_bugdroid_square" />
-            <meta-data
-                android:name="com.google.android.wearable.watchface.preview_circular"
-                android:resource="@drawable/preview_bugdroid_round" />
-            <!-- wearable configuration activity -->
-            <meta-data
-                android:name="com.google.android.wearable.watchface.wearableConfigurationAction"
-                android:value="ca.rmen.nounours.android.wear.CONFIG_BUGDROID" />
 
             <intent-filter>
                 <action android:name="android.service.wallpaper.WallpaperService" />
