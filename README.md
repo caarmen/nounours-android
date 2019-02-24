@@ -1,10 +1,4 @@
 # Nounours for Android
-
-<a href="https://f-droid.org/repository/browse/?fdid=ca.rmen.nounours" target="_blank">
-<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80"/></a>
-<a href="https://play.google.com/store/apps/details?id=ca.rmen.nounours" target="_blank">
-<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80"/></a>
-
 ## What is this?
 This app includes a series of images of a teddy bear.  By dragging his "features" (paws, ears,
 etc), the user changes the image, thereby moving the bear around.  Some features include:
