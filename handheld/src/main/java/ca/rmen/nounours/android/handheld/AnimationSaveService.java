@@ -31,6 +31,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.io.File;
 import java.util.List;
 
@@ -55,7 +57,8 @@ public class AnimationSaveService extends IntentService {
 
     public static final String ACTION_SAVE_ANIMATION = "ca.rmen.nounours.action.SAVE_ANIMATION";
     public static final String EXTRA_SHARE_INTENT = "ca.rmen.nounours.extra.SHARE_INTENT";
-    public static final int NOTIFICATION_ID = TAG.hashCode();
+    public static final int SAVING_NOTIFICATION_ID = 56111176;
+    public static final int SAVED_NOTIFICATION_ID = 561135;
 
     private static final String EXTRA_ANIMATION = "ca.rmen.nounours.extra.ANIMATION";
 
@@ -100,7 +103,11 @@ public class AnimationSaveService extends IntentService {
         Notification notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_in_progress_title, R.string.notif_save_animation_in_progress_content, getMainActivityIntent());
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, notification);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            startForeground(SAVING_NOTIFICATION_ID, notification);
+        } else {
+            notificationManager.notify(SAVING_NOTIFICATION_ID, notification);
+        }
 
         // Save the file
         File file = AnimationUtil.saveAnimation(this, animation);
@@ -119,16 +126,16 @@ public class AnimationSaveService extends IntentService {
                     getString(R.string.share),
                     pendingShareIntent);
             notification.flags = Notification.FLAG_AUTO_CANCEL;
-            notificationManager.notify(NOTIFICATION_ID, notification);
+            notificationManager.notify(SAVED_NOTIFICATION_ID, notification);
             // Also broadcast that the save is done.
             Intent broadcastIntent = new Intent(ACTION_SAVE_ANIMATION);
             broadcastIntent.putExtra(EXTRA_SHARE_INTENT, shareIntent);
-            sendBroadcast(broadcastIntent);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
         } else {
             // Notify that the save failed.
             notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_failed, R.string.notif_save_animation_failed, getMainActivityIntent());
             notification.flags = Notification.FLAG_AUTO_CANCEL;
-            notificationManager.notify(NOTIFICATION_ID, notification);
+            notificationManager.notify(SAVED_NOTIFICATION_ID, notification);
         }
 
         Log.v(TAG, "end saving animation " + animation);

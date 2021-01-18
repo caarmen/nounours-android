@@ -43,6 +43,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.util.Map;
 
 import ca.rmen.nounours.R;
@@ -190,7 +192,7 @@ public class MainActivity extends Activity {
             mSensorManager.registerListener(mSensorListener, mAccelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
             mSensorManager.registerListener(mSensorListener, mMagneticFieldSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
-        registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(AnimationSaveService.ACTION_SAVE_ANIMATION));
     }
 
     /**
@@ -207,7 +209,7 @@ public class MainActivity extends Activity {
         if (mSensorManager != null) {
             mSensorManager.unregisterListener(mSensorListener);
         }
-        unregisterReceiver(mBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
     }
 
 
@@ -418,7 +420,7 @@ public class MainActivity extends Activity {
                 // file saving takes a long time, and the user leaves the activity in the middle
                 // of the saving.  In that case, the user will have to tap on the notification
                 // see the share app list.
-                notificationManager.cancel(AnimationSaveService.NOTIFICATION_ID);
+                notificationManager.cancel(AnimationSaveService.SAVED_NOTIFICATION_ID);
                 Intent shareIntent = intent.getParcelableExtra(AnimationSaveService.EXTRA_SHARE_INTENT);
                 startActivity(shareIntent);
             }
