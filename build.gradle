@@ -42,11 +42,11 @@ allprojects {
     }
 }
 
-ext.compileSdkVersion=28
+ext.compileSdkVersion=30
 ext.buildToolsVersion="28.0.3"
 ext.handheldVersionName="3.4.8"
 ext.handheldVersionCode=348
 ext.wearVersionName="3.4.9"
 ext.wearVersionCode=349
-ext.targetSdkVersion=28
+ext.targetSdkVersion=30
 ext.libnounoursVersion="2.0.1"
