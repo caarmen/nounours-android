@@ -420,7 +420,7 @@ public class MainActivity extends Activity {
                 // file saving takes a long time, and the user leaves the activity in the middle
                 // of the saving.  In that case, the user will have to tap on the notification
                 // see the share app list.
-                notificationManager.cancel(AnimationSaveService.NOTIFICATION_ID);
+                notificationManager.cancel(AnimationSaveService.SAVED_NOTIFICATION_ID);
                 Intent shareIntent = intent.getParcelableExtra(AnimationSaveService.EXTRA_SHARE_INTENT);
                 startActivity(shareIntent);
             }

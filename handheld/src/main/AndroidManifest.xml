@@ -23,6 +23,7 @@
     <uses-sdk tools:overrideLibrary="net.margaritov.preference.colorpicker" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-feature
         android:name="android.hardware.screen.portrait"
