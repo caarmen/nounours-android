@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         wearAppUnbundled true
-        minSdkVersion 10
+        minSdkVersion 14
         targetSdkVersion rootProject.targetSdkVersion
         versionName rootProject.handheldVersionName
         versionCode rootProject.handheldVersionCode
@@ -77,5 +77,6 @@ android {
 dependencies {
     implementation "ca.rmen:libnounours:$libnounoursVersion"
     implementation 'com.robbypond:android-ColorPickerPreference:1.11.1'
+    implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0"
     implementation project(':common')
 }

@@ -31,6 +31,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import java.io.File;
 import java.util.List;
 
@@ -123,7 +125,7 @@ public class AnimationSaveService extends IntentService {
             // Also broadcast that the save is done.
             Intent broadcastIntent = new Intent(ACTION_SAVE_ANIMATION);
             broadcastIntent.putExtra(EXTRA_SHARE_INTENT, shareIntent);
-            sendBroadcast(broadcastIntent);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
         } else {
             // Notify that the save failed.
             notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_failed, R.string.notif_save_animation_failed, getMainActivityIntent());
