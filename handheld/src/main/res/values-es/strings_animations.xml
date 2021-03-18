@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2009 - 2021 Carmen Alvarez
+
+    This file is part of Nounours for Android.
+
+    Nounours for Android is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Nounours for Android is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+	<string name="spin">Torniquete</string>
+	<string name="cartwheel">La rueda</string>
+	<string name="headbang">Golpecitos</string>
+	<string name="disco">Disco</string>
+	<string name="clap">Aplausos</string>
+	<string name="sleepsound">Sonido de cuna</string>
+	<string name="shake">Temblor</string>
+	<string name="reverseSpin">Torniquete al revés</string>
+	<string name="ska">Macarenours</string>
+	<string name="boing">Boing !</string>
+	<string name="fly">Volar</string>
+	<string name="excited">Emocionar</string>
+	<string name="startle">Susto</string>
+</resources>
