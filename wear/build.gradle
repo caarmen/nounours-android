@@ -9,22 +9,25 @@ repositories {
 } 
 
 android {
+    namespace = "ca.rmen.nounours"
     compileSdkVersion rootProject.compileSdkVersion
-    buildToolsVersion rootProject.buildToolsVersion
 
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId "ca.rmen.nounours"
         minSdkVersion 23
         targetSdkVersion rootProject.targetSdkVersion
         versionName rootProject.wearVersionName
         versionCode rootProject.wearVersionCode
-        archivesBaseName += "-" + versionName
+        base.archivesName = project.name + "-" + defaultConfig.versionName
     }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     flavorDimensions "character"

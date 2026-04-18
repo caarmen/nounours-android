@@ -30,3 +30,4 @@
 -dontwarn org.apache.http.**
 
 -dontobfuscate
+-dontoptimize

@@ -101,6 +101,14 @@ public class MainActivity extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ImageButton btnStop = findViewById(R.id.btn_stop_recording);
+            btnStop.setOnApplyWindowInsetsListener((v, insets) -> {
+                int navBarHeight = insets.getSystemWindowInsetBottom();
+                v.setPadding(0, 0, 0, navBarHeight);
+                return insets;
+            });
+        }
 
         boolean isOldEmulator = Build.DEVICE.startsWith("generic") && ApiHelper.getAPILevel() < 9;
         if (!isOldEmulator) {

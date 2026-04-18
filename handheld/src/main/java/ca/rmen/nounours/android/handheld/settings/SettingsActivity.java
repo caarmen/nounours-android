@@ -119,7 +119,7 @@ public class SettingsActivity extends PreferenceActivity {
                 }
             } else if (preference.getKey().endsWith(SharedPreferenceSettings.PREF_BACKGROUND_COLOR)) {
                 // If we have no transparent themes, it doesn't make sense to have this setting.
-                if (getResources().getStringArray(R.array.transparentThemes).length == 0) {
+                if (getResources().getStringArray(ca.rmen.nounours.common.R.array.transparentThemes).length == 0) {
                     preferencesToHide.add(preference);
                 } else {
                     backgroundColorPreference = preference;
