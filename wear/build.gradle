@@ -9,8 +9,12 @@ repositories {
 } 
 
 android {
+    namespace = "ca.rmen.nounours"
     compileSdkVersion rootProject.compileSdkVersion
 
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         applicationId "ca.rmen.nounours"
         minSdkVersion 23

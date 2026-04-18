@@ -1,8 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
+    namespace = "ca.rmen.nounours.common"
     compileSdkVersion rootProject.compileSdkVersion
 
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         minSdkVersion 3
         targetSdkVersion rootProject.targetSdkVersion

@@ -1,8 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace = "ca.rmen.nounours"
     compileSdkVersion rootProject.compileSdkVersion
 
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
         wearAppUnbundled true
         minSdkVersion 14
