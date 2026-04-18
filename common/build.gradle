@@ -8,11 +8,8 @@ android {
         buildConfig = true
     }
     defaultConfig {
-        minSdkVersion 3
+        minSdkVersion 14
         targetSdkVersion rootProject.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-        base.archivesName = project.name + "-" + defaultConfig.versionName
     }
     buildTypes {
         release {
