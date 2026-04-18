@@ -43,7 +43,6 @@ allprojects {
 }
 
 ext.compileSdkVersion=30
-ext.buildToolsVersion="28.0.3"
 ext.handheldVersionName="3.5.2"
 ext.handheldVersionCode=352
 ext.wearVersionName="3.5.1"
