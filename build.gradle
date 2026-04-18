@@ -54,8 +54,8 @@ subprojects {
 }
 
 ext.compileSdkVersion=36
-ext.handheldVersionName="3.5.7"
-ext.handheldVersionCode=357
+ext.handheldVersionName="3.5.8"
+ext.handheldVersionCode=358
 ext.wearVersionName="3.5.1"
 ext.wearVersionCode=351
 ext.targetSdkVersion=36
