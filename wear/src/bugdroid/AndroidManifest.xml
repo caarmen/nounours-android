@@ -20,6 +20,7 @@
 
     <application>
         <activity
+            android:exported="true"
             android:name="ca.rmen.nounours.android.wear.BugdroidSettingsActivity"
             android:label="@string/watch_face_settings">
             <intent-filter>
@@ -32,6 +33,7 @@
         </activity>
         <service
             android:name="ca.rmen.nounours.android.wear.BugdroidWatchFace"
+            android:exported="true"
             android:label="@string/bugdroid_wear"
             android:permission="android.permission.BIND_WALLPAPER" >
             <meta-data
