@@ -70,6 +70,7 @@
 
         <service
             android:name=".android.handheld.AnimationSaveService"
+            android:foregroundServiceType="shortService"
             android:exported="false" />
         <service
             android:name=".android.handheld.lwp.LWPService"

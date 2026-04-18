@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.pm.ServiceInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -103,7 +104,9 @@ public class AnimationSaveService extends IntentService {
         Notification notification = NotificationCompat.createNotification(this, iconId, R.string.notif_save_animation_in_progress_title, R.string.notif_save_animation_in_progress_content, getMainActivityIntent());
         notification.flags = Notification.FLAG_ONGOING_EVENT;
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(SAVING_NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             startForeground(SAVING_NOTIFICATION_ID, notification);
         } else {
             notificationManager.notify(SAVING_NOTIFICATION_ID, notification);
