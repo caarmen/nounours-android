@@ -116,7 +116,7 @@ public class AnimationSaveService extends IntentService {
         if (file != null && file.exists()) {
             // Notify that the save is done.
             Intent shareIntent = getShareIntent(file);
-            PendingIntent pendingShareIntent = PendingIntent.getActivity(this, 0, shareIntent, 0);
+            PendingIntent pendingShareIntent = PendingIntent.getActivity(this, 0, shareIntent, PendingIntent.FLAG_IMMUTABLE);
             notification = NotificationCompat.createNotification(
                     this,
                     iconId,
@@ -147,7 +147,7 @@ public class AnimationSaveService extends IntentService {
      */
     private PendingIntent getMainActivityIntent() {
         Intent intent = new Intent(this, MainActivity.class);
-        return PendingIntent.getActivity(this, 0, intent, 0);
+        return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
     }
 
     /**
