@@ -6,6 +6,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        resValues = true
     }
     defaultConfig {
         wearAppUnbundled true
@@ -13,14 +14,14 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionName rootProject.handheldVersionName
         versionCode rootProject.handheldVersionCode
-        archivesBaseName += "-" + versionName
+        base.archivesName = project.name + "-" + defaultConfig.versionName
     }
 
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
         }
     }
 

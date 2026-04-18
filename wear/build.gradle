@@ -21,13 +21,13 @@ android {
         targetSdkVersion rootProject.targetSdkVersion
         versionName rootProject.wearVersionName
         versionCode rootProject.wearVersionCode
-        archivesBaseName += "-" + versionName
+        base.archivesName = project.name + "-" + defaultConfig.versionName
     }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     flavorDimensions "character"
