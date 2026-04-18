@@ -44,9 +44,9 @@ allprojects {
 
 ext.compileSdkVersion=30
 ext.buildToolsVersion="28.0.3"
-ext.handheldVersionName="3.5.0"
-ext.handheldVersionCode=350
-ext.wearVersionName="3.4.9"
-ext.wearVersionCode=349
+ext.handheldVersionName="3.5.2"
+ext.handheldVersionCode=352
+ext.wearVersionName="3.5.1"
+ext.wearVersionCode=351
 ext.targetSdkVersion=30
 ext.libnounoursVersion="2.0.1"
