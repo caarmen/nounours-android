@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2009 - 2021 Carmen Alvarez
+
+    This file is part of Nounours for Android.
+
+    Nounours for Android is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Nounours for Android is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Nounours for Android.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+	<string name="random">Aleatorio</string>
+	<string name="actions">Acciones</string>
+	<string name="about">Acerca de</string>
+	<string name="themes">Tema</string>
+	<string name="backgroundColor">Color de fondo</string>
+	<string name="abouttext"><![CDATA[
+<h1>%1$s versión %2$s</h1>
+Por Carmen Alvarez (<a href="mailto:c@rmen.ca">c@rmen.ca</a>)<br>
+Código fuente en <a href="https://github.com/caarmen/nounours-android">Github</a><br><br>
+<b>Agradecimientos :</b><br><br>
+Sergey Margaritov: <a href="https://github.com/attenzione/android-ColorPickerPreference">android-ColorPickerPreference</a><br><br>
+B-Roll (musique Macarenours) : <a href="http://incompetech.com">Kevin MacLeod</a><br><br>
+<a href="https://github.com/nbadal/android-gif-encoder">Nick Badal</a> y <a href="http://www.jappit.com/blog/2008/12/04/j2me-animated-gif-encoder/">Alessandro La Rosa</a>, por el codificador de gifs animados<br><br>
+El robot Android(TM) ha sido creado y compartido por Google y se utiliza bajo los términos de la Licencia Creative Commons 3.0 Atribución.]]></string>
+	<string name="help">Ayuda</string>
+	<string name="fullscreen">Pantalla completa</string>
+	<string name="fullscreen_hint">Toca las cuatro esquinas de la pantalla para salir del modo de pantalla completa.</string>
+	<string name="wallpaper">Fondo de pantalla animado</string>
+	<string name="daydream">Ajustes del salvapantallas</string>
+	<string name="dimTitle">Contrastar imagen</string>
+	<string name="dimSummary">Esto hace que los iconos sean más visibles</string>
+	<string name="grayscaleTitle">Blanco y negro</string>
+	<string name="enablesound">Activar sonido/vibración</string>
+    <string name="toast_remindMenuButton">Pulse el botón MENÚ para ver más opciones</string>
+	<string name="options">Opciones</string>
+	<string name="idleTimeout">Hora de dormir</string>
+	<string name="record_start">Grabar</string>
+	<string name="record_stop">Detener la grabación</string>
+	<string name="notif_save_animation_in_progress_title">Grabación&#8230;</string>
+	<string name="notif_save_animation_in_progress_content">Graba la animación del Nounours&#8230;</string>
+	<string name="notif_save_animation_done">Animación grabado</string>
+	<string name="notif_save_animation_failed">Error al grabar la animación</string>
+	<string name="share">Compartir</string>
+	<string name="share_app_chooser_title">Compartir vía</string>
+
+</resources>
