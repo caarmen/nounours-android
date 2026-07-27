@@ -1,4 +1,4 @@
-#
+#@3x.malak
 #   Copyright (c) 2015 Carmen Alvarez
 #
 #   This file is part of Nounours for Android.
